@@ -1,0 +1,45 @@
+{
+	"name": "iod",
+	"version": "0.0.0",
+	"description": "An Idol on Demand framework.",
+	"main": "index.js",
+	"jshintConfig": {
+		"quotmark": "single",
+		"unused": true,
+		"strict": true,
+		"maxlen": 100,
+		"index": 4,
+		"asi": true,
+		"expr": true,
+		"funcscope": true,
+		"node": true
+	},
+	"dependencies": {
+		"lodash": "^2.4.1",
+		"request": "^2.44.0",
+		"jjv": "^1.0.2",
+		"jjve": "^0.4.0",
+		"wildcard": "^1.1.0"
+	},
+	"devDependencies": {
+		"mocha": "^1.21.4",
+		"should": "^4.0.4",
+		"istanbul": "^0.3.2"
+	},
+	"scripts": {
+		"test": "node ./test.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/benzhou1/iod.git"
+	},
+	"keywords": [
+		"npm"
+	],
+	"author": "Ben Zhou <benzhou29@outlook.com>",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/benzhou1/iod/issues"
+	},
+	"homepage": "https://github.com/benzhou1/iod"
+}
