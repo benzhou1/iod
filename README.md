@@ -121,7 +121,7 @@ There are two types of versions:
 <a name="create" />
 ### create(apiKey, [Optional IODhost], [Optional IODport], callback)
 
-Creates an IOD object with specified api key and returns it as the second argument to `callback`. You can override the host and port other wise it will point to the Idol on Demand server. The returned IOD object contain schemas loaded with all the actions that are available to the specified `apiKey`.
+Creates an IOD object with specified `apiKey` and returns it as the second argument to `callback`. You can override the host and portm otherwise it will point to the Idol on Demand server. The returned IOD object contain schemas loaded with all the actions that are available to the specified `apiKey`.
 
 #### Parameters
 * `apiKey` - Your Idol on Demand api key
