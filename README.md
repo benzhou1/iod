@@ -59,7 +59,7 @@ IOD.create('my api key', function(err, IOD) {
 })
 ```
 
-## Documentation
+# Documentation
 
 ### Constants
 * [`ACTIONS`](#actions)
