@@ -2,7 +2,7 @@
 
 For the entire README, I will be refering to the IOD.js package as **IOD** and the Idol on Demand server as **Idol on Demand**.
 
-IOD is an Idol on Demand framework which makes it easy to send api requests to Idol on Demand. It is easy to make all the [different types of request](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm) along with the [different allowed actions](https://www.idolondemand.com/developer/docs/APIDiscovery.html).
+IOD is an Idol on Demand framework which makes it easy to send api requests to Idol on Demand. It is easy to make all the [different types of request](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm) along with the [different allowed actions](https://www.idolondemand.com/developer/docs/APIDiscovery.html) that are available to you.
 
 If you are new to what Idol on Demand has to offer, check out their website at: [Idol on Demand](http://www.idolondemand.com)
 
