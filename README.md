@@ -143,7 +143,7 @@ IOD.create('api key', function(err, IOD) {
 Makes an async request to Idol on Demand with options specified from `IODOpts`.
 
 #### Parameters
-* `IODOpts` - IOD options (see Async Schema)
+* `IODOpts` - IOD options (see Schema below)
 * `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
 
 <a name="asyncSchema" />
@@ -237,7 +237,7 @@ IOD.async(IODOpts, function(err, res) {
 Makes an sync request to Idol on Demand with options specified from `IODOpts`.
 
 #### Parameters
-* `IODOpts` - IOD options (see Sync Schema)
+* `IODOpts` - IOD options (see Schema below)
 * `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
 
 <a name="syncSchema" />
@@ -326,7 +326,7 @@ IOD.sync(IODOpts, function(err, res) {
 Makes a job request to Idol on Demand with options specified from `IODOpts`.
 
 #### Parameters
-* `IODOpts` - IOD options (see Job Schema)
+* `IODOpts` - IOD options (see Schema below)
 * `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
 
 <a name="jobSchema" />
@@ -479,7 +479,7 @@ IOD.job(IODOpts, function(err, res) {
 Makes a status request to Idol on Demand with options specified from `IODOpts`.
 
 #### Parameters
-* `IODOpts` - IOD options (see Status Schema)
+* `IODOpts` - IOD options (see Schema below)
 * `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
 
 <a name="statusSchema" />
@@ -529,7 +529,7 @@ IOD.status(IODOpts, function(err, res) {
 Makes a result request to Idol on Demand with options specified from `IODOpts`.
 
 #### Parameters
-* `IODOpts` - IOD options (see Result Schema)
+* `IODOpts` - IOD options (see Schema below)
 * `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
 
 <a name="resultSchema" />
@@ -579,7 +579,7 @@ IOD.result(IODOpts, function(err, res) {
 Makes a discovery api request to Idol on Demand with options specified from `IODOpts`.
 
 #### Parameters
-* `IODOpts` - IOD options (see Discovery Schema)
+* `IODOpts` - IOD options (see Schema below)
 * `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
 
 <a name="discoverySchema" />
