@@ -140,7 +140,7 @@ IOD.create('api key', function(err, IOD) {
 <a name="async" />
 ### async(IODOpts, callback)
 
-Makes an async request to Idol on Demand with options specified from `IODOpts`.
+Makes an async request to Idol on Demand with options specified from `IODOpts`. Async request returns a `jobId` in which case you can get the status/result of the action using the `status`/`result` methods. More information can be found [here](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm).
 
 #### Parameters
 * `IODOpts` - IOD options (see Schema below)
@@ -234,7 +234,7 @@ IOD.async(IODOpts, function(err, res) {
 <a name="sync" />
 ### sync(IODOpts, callback)
 
-Makes an sync request to Idol on Demand with options specified from `IODOpts`.
+Makes an sync request to Idol on Demand with options specified from `IODOpts`. Sync request returns the result of the action right away. More information can be found [here](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm).
 
 #### Parameters
 * `IODOpts` - IOD options (see Schema below)
@@ -323,7 +323,7 @@ IOD.sync(IODOpts, function(err, res) {
 <a name="job" />
 ### job(IODOpts, callback)
 
-Makes a job request to Idol on Demand with options specified from `IODOpts`.
+Makes a job request to Idol on Demand with options specified from `IODOpts`. Job request is asynchronous and allows you to send multiple actions at a time. It will return a `jobId` in which case you can get the status/result of the action by calling the `status`/`result` methods. More information can be found [here](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm).
 
 #### Parameters
 * `IODOpts` - IOD options (see Schema below)
@@ -476,7 +476,7 @@ IOD.job(IODOpts, function(err, res) {
 <a name="status" />
 ### status(IODOpts, callback)
 
-Makes a status request to Idol on Demand with options specified from `IODOpts`.
+Makes a status request to Idol on Demand with options specified from `IODOpts`. Status request returns the current status of a job based off `jobId`. More information can be found [here](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm).
 
 #### Parameters
 * `IODOpts` - IOD options (see Schema below)
@@ -526,7 +526,7 @@ IOD.status(IODOpts, function(err, res) {
 <a name="result" />
 ### result(IODOpts, callback)
 
-Makes a result request to Idol on Demand with options specified from `IODOpts`.
+Makes a result request to Idol on Demand with options specified from `IODOpts`. Result request waits until a job specified by `jobId` is finished or errored and returns the results. More information can be found [here](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm).
 
 #### Parameters
 * `IODOpts` - IOD options (see Schema below)
@@ -576,7 +576,7 @@ IOD.result(IODOpts, function(err, res) {
 <a name="discovery" />
 ### discovery(IODOpts, callback)
 
-Makes a discovery api request to Idol on Demand with options specified from `IODOpts`.
+Makes a discovery api request to Idol on Demand with options specified from `IODOpts`. More information about discovery actions can be found [here](https://www.idolondemand.com/developer/docs/APIDiscovery.html).
 
 #### Parameters
 * `IODOpts` - IOD options (see Schema below)
