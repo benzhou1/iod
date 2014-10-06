@@ -8,8 +8,126 @@ If you are new to what Idol on Demand has to offer, check out their website at: 
 
 IOD provides client side schema validation of all allowed actions before sending your request off to Idol on Demand. It uses the request package to handle all http request and file uploads for you. The only thing you need to know is how to create an `IODOpt` object. Each IOD request type has their own JSON schema for creating the `IODOpt` object described by [Json-Schema](http://json-schema.org).
 
-## Async Request
+# Quick Start Guide
 
+To make an Idol on Demand request, simply create an IOD object with the `create` method. Pass in your Idol on Demand api key, and a callback that accepts an error as the first argument and the IOD object that has been created as the second argument.
+
+The reason the create function accepts a callback is because it is asynchronous. IOD is going to take your api key and get all the allowed actions for the api key and load in all the schemas for each action.
+
+With the IOD object, you can make a request by simply creating an `IODOpts` object following the schema of your request type. In this example we will be making a `sync` request with `analyzesentiment` action.
+
+```javascript
+var iod = IOD.create('my api key', function(err, IOD) {
+	console.log('ERROR: ', err)
+	console.log('IOD: ', IOD)
+	
+	// IODOpts object for sync request with analyzesentiment action
+	var IODOpts = {
+		majorVersion: IOD.VERSIONS.MAJOR.V1,
+		action: IOD.ACTIONS.API.ANALYZESENTIMENT,
+		apiVersion: IOD.VERSIONS.API.V1,
+		method: 'get',
+		params: {
+			text: '=)'
+		}
+	}
+	
+	IOD.sync(IODOpts, function(err, res) {
+		console.log('SYNC ERROR: ', err)
+		console.log('RESPONSE: ', res)
+		
+		/* RESPONSE: {
+		  "positive": [
+		    {
+		      "sentiment": "=)",
+		      "topic": null,
+		      "score": 0.6280145725181376,
+		      "original_text": "=)",
+		      "original_length": 2,
+		      "normalized_text": "=)",
+		      "normalized_length": 2
+		    }
+		  ],
+		  "negative": [],
+		  "aggregate": {
+		    "sentiment": "positive",
+		    "score": 0.6280145725181376
+		  }
+		}
+		*/
+	})
+})
+```
+
+## Documentation
+
+### Constants
+* [`ACTIONS`](#actions)
+* [`TYPES`](#types)
+* [`VERSIONS`](#versions)
+
+### Schemas
+* [`ASYNC`](#asyncSchema)
+* [`SYNC`](#syncSchema)
+* [`JOB`](#jobSchema)
+* [`STATUS`](#statusSchema)
+* [`RESULT`](#resultSchema)
+* [`DISCOVERY`](#discoverySchema)
+
+### Methods
+* [`async`](#async)
+* [`sync`](#sync)
+* [`job`](#job)
+* [`status`](#status)
+* [`result`](#result)
+* [`discovery`](#discovery)
+
+# Constants
+
+<a name="actions" />
+#### `ACTIONS` - List of all the different allowed actions
+
+There are two types of actions:
+
+1. `ACTIONS.DISCOVERY`
+  * [`ACTIONS.DISCOVERY.API`](https://www.idolondemand.com/developer/docs/APIDiscovery.html)
+2. `ACTIONS.API`
+  * List of allowed actions and their aliases from [`API`](https://www.idolondemand.com/developer/docs/APIDiscovery.html).
+  * (e.g. `ACTIONS.API.EXTRACTEXT`)
+  
+<a name="types" />
+#### `TYPES` - List of all different request types
+
+1. [`TYPES.ASYNC`](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm)
+2. [`TYPES.SYNC`](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm)
+3. [`TYPES.JOB`](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm)
+4. [`TYPES.STATUS`](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm)
+5. [`TYPES.RESULT`](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm)
+6. [`TYPES.DISCOVERY`](https://www.idolondemand.com/developer/docs/APIDiscovery.html)
+
+<a name="versions" />
+#### `VERSIONS` - List of all versions
+
+There are two types of versions:
+
+1. `VERSIONS.MAJOR` (eg. /`<majorVersion>`/api/sync/listindex/v1)
+  * `VERSIONS.MAJOR.V1` - initial version
+2. `VERSIONS.API`(eg. /1/api/sync/listindex/`<apiVersion>`)
+  * `VERSIONS.API.V1` - initial version
+
+# Methods
+
+<a name="async" />
+### async(IODOpts, callback)
+
+Makes an async request to Idol on Demand with options specified from `IODOpts`.
+
+#### Parameters
+* `IODOpts` - IOD options (see Async Schema)
+* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
+
+<a name="asyncSchema" />
+#### Schema
 ```javascript
 {
 	"type": "object",
@@ -59,8 +177,37 @@ IOD provides client side schema validation of all allowed actions before sending
 }
 ```
 
-## Discovery Request
+#### Example
+```javascript
+// IODOpts for async request
+var IODOpts = {
+	majorVersion: IOD.VERSIONS.MAJOR.V1,
+	action: IOD.ACTIONS.API.ANALYZESENTIMENT,
+	apiVersion: IOD.VERSIONS.API.V1,
+	method: 'get',
+	params: {
+		text: '=)'
+	},
+	getResults: false
+}
 
+IOD.async(IODOpts, function(err, res) {
+	console.log('ERROR: ', err)
+	console.log('RESPONSE: ', res)
+})
+```
+
+<a name="async" />
+### sync(IODOpts, callback)
+
+Makes an sync request to Idol on Demand with options specified from `IODOpts`.
+
+#### Parameters
+* `IODOpts` - IOD options (see Sync Schema)
+* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
+
+<a name="asyncSchema" />
+#### Schema
 ```javascript
 {
 	"type": "object",
@@ -69,26 +216,73 @@ IOD provides client side schema validation of all allowed actions before sending
 		"majorVersion": {
 			"enum": majorVersions,
 			"default": "1",
-			"description": "Major version, eg. /<majorVersion>/discovery/api."
+			"description": "Major version, eg. /<majorVersion>/api/sync/listindex/v1."
 		},
-		// IOD request only allows get or post
+		/**
+		 * For list of available actions look at:
+		 * https://www.idolondemand.com/developer/docs/APIDiscovery.html
+		 */
+		"action": {
+			"enum": actions.API,
+			"description": "IOD action."
+		},
+		// For list of possible apiVersions look at versions.js
+		"apiVersion": {
+			"enum": apiVersions,
+			"default": "v1",
+			"description": "Api versions, eg. /1/api/sync/listindex/<apiVersion>."
+		},
 		"method": {
 			"enum": ["get", "post"],
 			"default": "get",
 			"description": "Http method"
 		},
-		// For list of possible actions look at actions.js `DISCOVERY`
-		"action": {
-			"enum": actions.DISCOVERY,
-			"description": "IOD descovery actions."
+		"params": {
+			"type": "object",
+			"description": "IOD action parameters. Should be key value pairs."
+		},
+		"files": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			},
+			"description": "IOD action input files. Should be array of file paths."
 		}
 	},
 	"required": [ "action" ]
 }
 ```
 
-## Job Request
+#### Example
+```javascript
+// IODOpts for sync request
+var IODOpts = {
+	majorVersion: IOD.VERSIONS.MAJOR.V1,
+	action: IOD.ACTIONS.API.ANALYZESENTIMENT,
+	apiVersion: IOD.VERSIONS.API.V1,
+	method: 'get',
+	params: {
+		text: '=)'
+	}
+}
 
+IOD.sync(IODOpts, function(err, res) {
+	console.log('ERROR: ', err)
+	console.log('RESPONSE: ', res)
+})
+```
+
+<a name="job" />
+### job(IODOpts, callback)
+
+Makes a job request to Idol on Demand with options specified from `IODOpts`.
+
+#### Parameters
+* `IODOpts` - IOD options (see Job Schema)
+* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
+
+<a name="jobSchema" />
+#### Schema
 ```javascript
 {
 	"type": "object",
@@ -161,34 +355,49 @@ IOD provides client side schema validation of all allowed actions before sending
 }
 ```
 
-## Result Request
-
+#### Example
 ```javascript
-{
-	"type": "object",
-	"properties": {
-		// For list of possible majorVersions look at versions.js
-		"majorVersion": {
-			"enum": majorVersions,
-			"default": "1",
-			"description": "Major version, eg. /<majorVersion>/job/result/jobid."
-		},
-		"method": {
-			"enum": ["get", "post"],
-			"default": "get",
-			"description": "Http method"
-		},
-		"jobId": {
-			"type": "string",
-			"description": "Job id returned from asynchronous request"
-		}
+// IODOpts for job request
+var IODOpts = {
+	majorVersion: IOD.VERSIONS.MAJOR.V1,
+	job: {
+		actions: [
+			{
+				name: IOD.ACTIONS.API.ANALYZESENTIMENT,
+				version: IOD.VERSIONS.API.V1,
+				params: {
+					text: '=)'
+				}
+			},
+			{
+				name: IOD.ACTIONS.API.ANALYZESENTIMENT,
+				version: IOD.VERSIONS.API.V1,
+				params: {
+					text: '=('
+				}
+			}
+		]
 	},
-	"required": [ "jobId" ]
+	getResults: false
 }
+
+IOD.job(IODOpts, function(err, res) {
+	console.log('ERROR: ', err)
+	console.log('RESPONSE: ', res)
+})
 ```
 
-## Status Request
+<a name="status" />
+### status(IODOpts, callback)
 
+Makes a status request to Idol on Demand with options specified from `IODOpts`.
+
+#### Parameters
+* `IODOpts` - IOD options (see Status Schema)
+* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
+
+<a name="statusSchema" />
+#### Schema
 ```javascript
 {
 	"type": "object",
@@ -213,8 +422,32 @@ IOD provides client side schema validation of all allowed actions before sending
 }
 ```
 
-## Sync Request
+#### Example
+```javascript
+// IODOpts for status request
+var IODOpts = {
+	majorVersion: IOD.VERSIONS.MAJOR.V1,
+	method: 'get',
+	jobId: 'Job id of your async/job request'
+}
 
+IOD.status(IODOpts, function(err, res) {
+	console.log('ERROR: ', err)
+	console.log('RESPONSE: ', res)
+})
+```
+
+<a name="result" />
+### result(IODOpts, callback)
+
+Makes a result request to Idol on Demand with options specified from `IODOpts`.
+
+#### Parameters
+* `IODOpts` - IOD options (see Result Schema)
+* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
+
+<a name="resultSchema" />
+#### Schema
 ```javascript
 {
 	"type": "object",
@@ -223,71 +456,77 @@ IOD provides client side schema validation of all allowed actions before sending
 		"majorVersion": {
 			"enum": majorVersions,
 			"default": "1",
-			"description": "Major version, eg. /<majorVersion>/api/sync/listindex/v1."
-		},
-		/**
-		 * For list of available actions look at:
-		 * https://www.idolondemand.com/developer/docs/APIDiscovery.html
-		 */
-		"action": {
-			"enum": actions.API,
-			"description": "IOD action."
-		},
-		// For list of possible apiVersions look at versions.js
-		"apiVersion": {
-			"enum": apiVersions,
-			"default": "v1",
-			"description": "Api versions, eg. /1/api/sync/listindex/<apiVersion>."
+			"description": "Major version, eg. /<majorVersion>/job/result/jobid."
 		},
 		"method": {
 			"enum": ["get", "post"],
 			"default": "get",
 			"description": "Http method"
 		},
-		"params": {
-			"type": "object",
-			"description": "IOD action parameters. Should be key value pairs."
+		"jobId": {
+			"type": "string",
+			"description": "Job id returned from asynchronous request"
+		}
+	},
+	"required": [ "jobId" ]
+}
+```
+
+#### Example
+```javascript
+// IODOpts for result request
+var IODOpts = {
+	majorVersion: IOD.VERSIONS.MAJOR.V1,
+	method: 'get',
+	jobId: 'Job id of your async/job request'
+}
+
+IOD.result(IODOpts, function(err, res) {
+	console.log('ERROR: ', err)
+	console.log('RESPONSE: ', res)
+})
+```
+
+<a name="discovery" />
+### discovery(IODOpts, callback)
+
+Makes a discovery api request to Idol on Demand with options specified from `IODOpts`.
+
+#### Parameters
+* `IODOpts` - IOD options (see Discovery Schema)
+* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
+
+<a name="discoverySchema" />
+#### Schema
+```javascript
+{
+	"type": "object",
+	"properties": {
+		// For list of possible majorVersions look at versions.js
+		"majorVersion": {
+			"enum": majorVersions,
+			"default": "1",
+			"description": "Major version, eg. /<majorVersion>/discovery/api."
 		},
-		"files": {
-			"type": "array",
-			"items": {
-				"type": "string"
-			},
-			"description": "IOD action input files. Should be array of file paths."
+		// IOD request only allows get or post
+		"method": {
+			"enum": ["get", "post"],
+			"default": "get",
+			"description": "Http method"
+		},
+		// For list of possible actions look at actions.js `DISCOVERY`
+		"action": {
+			"enum": actions.DISCOVERY,
+			"description": "IOD descovery actions."
 		}
 	},
 	"required": [ "action" ]
 }
 ```
 
-## Quick Start Guide
-To make an Idol on Demand request, simple create an IOD object with the `create` method. Pass in your Idol on Demand api key, Idol on Demand host, Idol on Demand port and a callback that accepts an error as the first argument and the IOD object that has been created as the second argument.
+#### Example
 ```javascript
-var iod = IOD.create('my api key', 'http://api.idolondemand.com', 80, function(err, IOD) {
-	console.log('ERROR: ', err)
-	console.log('IOD: ', IOD)
-})
-```
-The reason the create function accepts a callback is because it is asynchronous. IOD is going to take your api key and get all the allowed actions for the api key and load in all the schemas for each action.
-
-With the IOD object, you can make a request by simply creating an `IODOpts` object following the schema of your request type:
-
-#### Async IODOpts
-```javascript
-var IODOpts = {
-	majorVersion: IOD.VERSIONS.MAJOR.V1,
-	action: IOD.ACTIONS.API.ANALYZESENTIMENT,
-	apiVersion: IOD.VERSIONS.API.V1,
-	method: 'get',
-	params: {
-		text: '=)'
-	},
-	getResults: false
-}
-```
-
-#### Discovery IODOpts
-```javascript
+// IODOpts for discovery request
 var IODOpts = {
 	majorVersion: IOD.VERSIONS.MAJOR.V1,
 	method: 'get',
@@ -296,159 +535,12 @@ var IODOpts = {
 		max_results: 10
 	}
 }
-```
-
-#### Job IODOpts
-```javascript
-var IODOpts = {
-	majorVersion: IOD.VERSIONS.MAJOR.V1,
-	job: {
-		actions: [
-			{
-				name: IOD.ACTIONS.API.ANALYZESENTIMENT,
-				version: IOD.VERSIONS.API.V1,
-				params: {
-					text: '=)'
-				}
-			},
-			{
-				name: IOD.ACTIONS.API.ANALYZESENTIMENT,
-				version: IOD.VERSIONS.API.V1,
-				params: {
-					text: '=('
-				}
-			}
-		]
-	},
-	getResults: false
-}
-```
-
-#### Result IODOpts
-```javascript
-var IODOpts = {
-	majorVersion: IOD.VERSIONS.MAJOR.V1,
-	method: 'get',
-	jobId: 'Job id of your async/job request'
-}
-```
-
-#### Status IODOpts
-```javascript
-var IODOpts = {
-	majorVersion: IOD.VERSIONS.MAJOR.V1,
-	method: 'get',
-	jobId: 'Job id of your async/job request'
-}
-```
-
-#### Sync IODOpts
-```javascript
-var IODOpts = {
-	majorVersion: IOD.VERSIONS.MAJOR.V1,
-	action: IOD.ACTIONS.API.ANALYZESENTIMENT,
-	apiVersion: IOD.VERSIONS.API.V1,
-	method: 'get',
-	params: {
-		text: '=)'
-	}
-}
-```
-
-Finally you can make your request
-```javascript
-IOD.async(IODOpts, function(err, res) {
-	console.log('ERROR: ', err)
-	console.log('RES: ', res)
-})
 
 IOD.discovery(IODOpts, function(err, res) {
 	console.log('ERROR: ', err)
-	console.log('RES: ', res)
+	console.log('RESPONSE: ', res)
 })
-
-IOD.job(IODOpts, function(err, res) {
-	console.log('ERROR: ', err)
-	console.log('RES: ', res)
-})
-
-// And so on ...
 ```
-
-# Constants
-
-#### `ACTIONS` - List of all the different allowed actions
-
-There are two types of actions:
-
-1. `ACTIONS.DISCOVERY`
-  * [`ACTIONS.DISCOVERY.API`](https://www.idolondemand.com/developer/docs/APIDiscovery.html)
-2. `ACTIONS.API`
-  * List of allowed actions and their aliases from [`API`](https://www.idolondemand.com/developer/docs/APIDiscovery.html).
-  * (e.g. `ACTIONS.API.EXTRACTEXT`)
-  
-#### `TYPES` - List of all different request types
-
-1. [`TYPES.ASYNC`](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm)
-2. [`TYPES.SYNC`](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm)
-3. [`TYPES.JOB`](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm)
-4. [`TYPES.STATUS`](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm)
-5. [`TYPES.RESULT`](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm)
-6. [`TYPES.DISCOVERY`](https://www.idolondemand.com/developer/docs/APIDiscovery.html)
-
-#### `VERSIONS` - List of all versions
-
-There are two types of versions:
-
-1. `VERSIONS.MAJOR` (eg. /`<majorVersion>`/api/sync/listindex/v1)
-  * `VERSIONS.MAJOR.V1` - initial version
-2. `VERSIONS.API`(eg. /1/api/sync/listindex/`<apiVersion>`)
-  * `VERSIONS.API.V1` - initial version
-
-## Methods
-
-### async(IODOpts, callback)
-
-Makes an async request to Idol on Demand with options specified from `IODOpts`.
-
-* `IODOpts` - IOD options (see Async Schema)
-* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
-
-### sync(IODOpts, callback)
-
-Makes an sync request to Idol on Demand with options specified from `IODOpts`.
-
-* `IODOpts` - IOD options (see Sync Schema)
-* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
-
-### job(IODOpts, callback)
-
-Makes a job request to Idol on Demand with options specified from `IODOpts`.
-
-* `IODOpts` - IOD options (see Job Schema)
-* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
-
-### status(IODOpts, callback)
-
-Makes a status request to Idol on Demand with options specified from `IODOpts`.
-
-* `IODOpts` - IOD options (see Status Schema)
-* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
-
-### result(IODOpts, callback)
-
-Makes a result request to Idol on Demand with options specified from `IODOpts`.
-
-* `IODOpts` - IOD options (see Result Schema)
-* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
-
-### discovery(IODOpts, callback)
-
-Makes a discovery api request to Idol on Demand with options specified from `IODOpts`.
-
-* `IODOpts` - IOD options (see Discovery Schema)
-* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
-
 
 
 
