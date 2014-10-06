@@ -111,9 +111,9 @@ There are two types of actions:
 
 There are two types of versions:
 
-1. `VERSIONS.MAJOR` (eg. /`<majorVersion>`/api/sync/listindex/v1)
+1. `VERSIONS.MAJOR` (e.g. /`<majorVersion>`/api/sync/listindex/v1)
   * `VERSIONS.MAJOR.V1` - initial version
-2. `VERSIONS.API`(eg. /1/api/sync/listindex/`<apiVersion>`)
+2. `VERSIONS.API`(e.g. /1/api/sync/listindex/`<apiVersion>`)
   * `VERSIONS.API.V1` - initial version
 
 # Methods
