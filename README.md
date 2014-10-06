@@ -197,7 +197,21 @@ IOD.async(IODOpts, function(err, res) {
 })
 ```
 
-<a name="async" />
+#### Example with file
+```javascript
+// IODOpts for async request with a file. Using default values.
+var IODOpts = {
+	action: IOD.ACTIONS.API.ANALYZESENTIMENT,
+	files: ['path/to/file']
+}
+
+IOD.async(IODOpts, function(err, res) {
+	console.log('ERROR: ', err)
+	console.log('RESPONSE: ', res)
+})
+```
+
+<a name="sync" />
 ### sync(IODOpts, callback)
 
 Makes an sync request to Idol on Demand with options specified from `IODOpts`.
@@ -206,7 +220,7 @@ Makes an sync request to Idol on Demand with options specified from `IODOpts`.
 * `IODOpts` - IOD options (see Sync Schema)
 * `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
 
-<a name="asyncSchema" />
+<a name="syncSchema" />
 #### Schema
 ```javascript
 {
@@ -264,6 +278,20 @@ var IODOpts = {
 	params: {
 		text: '=)'
 	}
+}
+
+IOD.sync(IODOpts, function(err, res) {
+	console.log('ERROR: ', err)
+	console.log('RESPONSE: ', res)
+})
+```
+
+#### Example with file
+```javascript
+// IODOpts for sync request with a file. Using default values.
+var IODOpts = {
+	action: IOD.ACTIONS.API.ANALYZESENTIMENT,
+	files: ['path/to/file']
 }
 
 IOD.sync(IODOpts, function(err, res) {
@@ -379,6 +407,44 @@ var IODOpts = {
 		]
 	},
 	getResults: false
+}
+
+IOD.job(IODOpts, function(err, res) {
+	console.log('ERROR: ', err)
+	console.log('RESPONSE: ', res)
+})
+```
+
+#### Example with file
+```javascript
+// IODOpts for job request with a file. Using default values.
+var IODOpts = {
+	job: {
+		actions: [
+			{
+				name: IOD.ACTIONS.API.ANALYZESENTIMENT,
+				params: {
+					file: 'name for the file'
+				}
+			},
+			{
+				name: IOD.ACTIONS.API.ANALYZESENTIMENT,
+				params: {
+					file: 'another name for the file1'
+				}
+			}
+		]
+	},
+	files: [
+		{
+			name: 'name for the file',
+			path: 'path/to/file'
+		},
+		{
+			name: 'another name for the file1',
+			path: 'path/to/file1'
+		},
+	]
 }
 
 IOD.job(IODOpts, function(err, res) {
