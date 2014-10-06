@@ -86,7 +86,7 @@ IOD.create('my api key', function(err, IOD) {
 # Constants
 
 <a name="actions" />
-#### `ACTIONS` - List of all the different allowed actions
+#### `ACTIONS` - Object with properties containing all the different allowed actions
 
 There are two types of actions:
 
@@ -97,7 +97,7 @@ There are two types of actions:
   * (e.g. `ACTIONS.API.EXTRACTEXT`)
   
 <a name="types" />
-#### `TYPES` - List of all different request types
+#### `TYPES` - Object with properties containing the all different request types
 
 1. [`TYPES.ASYNC`](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm)
 2. [`TYPES.SYNC`](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm)
@@ -107,7 +107,7 @@ There are two types of actions:
 6. [`TYPES.DISCOVERY`](https://www.idolondemand.com/developer/docs/APIDiscovery.html)
 
 <a name="versions" />
-#### `VERSIONS` - List of all versions
+#### `VERSIONS` - Object with properties containing all the versions
 
 There are two types of versions:
 
