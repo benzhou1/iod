@@ -75,6 +75,7 @@ var iod = IOD.create('my api key', function(err, IOD) {
 * [`DISCOVERY`](#discoverySchema)
 
 ### Methods
+* [`create`](#create)
 * [`async`](#async)
 * [`sync`](#sync)
 * [`job`](#job)
@@ -116,6 +117,25 @@ There are two types of versions:
   * `VERSIONS.API.V1` - initial version
 
 # Methods
+
+<a name="create" />
+### create(apiKey, [Optional IODhost], [Optional IODport], callback)
+
+Creates an IOD object with specified api key and returns it as the second argument to `callback`. You can override the host and port other wise it will point to the Idol on Demand server. The returned IOD object contain schemas loaded with all the actions that are available to the specified `apiKey`.
+
+#### Parameters
+* `apiKey` - Your Idol on Demand api key
+* `IODhost` - Can override Idol on Demand host (for developers)
+* `IODport` - Can override Idol on Demand port (for developers)
+* `callback` - `Callback(err, IOD)` that accepts an error as its first argument `err` and an IOD object as the second arugument `IOD`
+
+#### Example
+```javascript
+IOD.create('api key', function(err, IOD) {
+	console.log('ERROR: ', err)
+	console.log('IOD: ', IOD)
+})
+```
 
 <a name="async" />
 ### async(IODOpts, callback)
