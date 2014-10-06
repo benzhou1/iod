@@ -25,23 +25,30 @@ var CONSTANTS = require('./lib/constants')
  * @constructor
  * @throws {Error}
  * 	If api key does not exists.
- * 	If host does not exists.
- * 	If port does not exists.
  * 	If host does not contain protocol
  */
 var IOD = function(apiKey, host, port) {
 	var iod = this
 
 	if (!apiKey) throw Error('IOD apiKey is missing!')
-	else if (!host) throw Error('IOD host is missing!')
-	else if (!port) throw Error('IOD port is missing!')
-	else if (!url.parse(host, false, true).protocol) {
+	else if (host && !url.parse(host, false, true).protocol) {
 		throw Error('Protocol not found on host: ' + host)
 	}
 
+	var httpHost = 'http://api.idolondemand.com'
+	var httpsHost = 'https://api.idolondemand.com'
+	var httpPort = 80
+	var httpsPort = 443
+
+	// If Https port point to Https host and vice versa
+	if (host == null && port === httpsPort) host = httpsHost
+	else if (host == null && port === httpPort) host = httpHost
+	else if (port == null && host && host.toLowerCase() === httpsHost) port = httpsPort
+	else if (port == null && host && host.toLowerCase() === httpHost) port = httpPort
+
 	iod.apiKey = apiKey
-	iod.host = host
-	iod.port = port
+	iod.host = host || httpsHost
+	iod.port = port || httpsPort
 
 	SchemaU.initSchemas(iod)
 
@@ -54,11 +61,20 @@ module.exports = {
 	 * Automatically gets all the available actions for specified api key.
 	 *
 	 * @param {string} apiKey - Api key
-	 * @param {string} host - IOD host
-	 * @param {integer} port - IOD port
+	 * @param {string} host - Optional IOD host
+	 * @param {integer} port - Optional IOD port
 	 * @param {function} callback - Callback(err, IOD)
 	 */
 	create: function(apiKey, host, port, callback) {
+		if (_.isFunction(host)) {
+			callback = host
+			host = undefined
+		}
+		else if (_.isFunction(port)) {
+			callback = port
+			port = undefined
+		}
+
 		var iod = new IOD(apiKey, host, port)
 
 		IodU.getAvailableApis(iod, async.doneFn(callback, function(apis) {
