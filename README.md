@@ -17,7 +17,7 @@ The reason the create function accepts a callback is because it is asynchronous.
 With the IOD object, you can make a request by simply creating an `IODOpts` object following the schema of your request type. In this example we will be making a `sync` request with `analyzesentiment` action.
 
 ```javascript
-var iod = IOD.create('my api key', function(err, IOD) {
+IOD.create('my api key', function(err, IOD) {
 	console.log('ERROR: ', err)
 	console.log('IOD: ', IOD)
 	
