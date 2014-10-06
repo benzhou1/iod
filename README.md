@@ -375,15 +375,79 @@ IOD.job(IODOpts, function(err, res) {
 // And so on ...
 ```
 
+# Constants
 
+#### `ACTIONS` - List of all the different allowed actions
 
+There are two types of actions:
 
+1. `ACTIONS.DISCOVERY`
+  * [`ACTIONS.DISCOVERY.API`](https://www.idolondemand.com/developer/docs/APIDiscovery.html)
+2. `ACTIONS.API`
+  * List of allowed actions and their aliases from [`API`](https://www.idolondemand.com/developer/docs/APIDiscovery.html).
+  * (e.g. `ACTIONS.API.EXTRACTEXT`)
+  
+#### `TYPES` - List of all different request types
 
+1. [`TYPES.ASYNC`](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm)
+2. [`TYPES.SYNC`](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm)
+3. [`TYPES.JOB`](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm)
+4. [`TYPES.STATUS`](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm)
+5. [`TYPES.RESULT`](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm)
+6. [`TYPES.DISCOVERY`](https://www.idolondemand.com/developer/docs/APIDiscovery.html)
 
+#### `VERSIONS` - List of all versions
 
+There are two types of versions:
 
+1. `VERSIONS.MAJOR` (eg. /`<majorVersion>`/api/sync/listindex/v1)
+  * `VERSIONS.MAJOR.V1` - initial version
+2. `VERSIONS.API`(eg. /1/api/sync/listindex/`<apiVersion>`)
+  * `VERSIONS.API.V1` - initial version
 
+## Methods
 
+### async(IODOpts, callback)
+
+Makes an async request to Idol on Demand with options specified from `IODOpts`.
+
+* `IODOpts` - IOD options (see Async Schema)
+* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
+
+### sync(IODOpts, callback)
+
+Makes an sync request to Idol on Demand with options specified from `IODOpts`.
+
+* `IODOpts` - IOD options (see Sync Schema)
+* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
+
+### job(IODOpts, callback)
+
+Makes a job request to Idol on Demand with options specified from `IODOpts`.
+
+* `IODOpts` - IOD options (see Job Schema)
+* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
+
+### status(IODOpts, callback)
+
+Makes a status request to Idol on Demand with options specified from `IODOpts`.
+
+* `IODOpts` - IOD options (see Status Schema)
+* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
+
+### result(IODOpts, callback)
+
+Makes a result request to Idol on Demand with options specified from `IODOpts`.
+
+* `IODOpts` - IOD options (see Result Schema)
+* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
+
+### discovery(IODOpts, callback)
+
+Makes a discovery api request to Idol on Demand with options specified from `IODOpts`.
+
+* `IODOpts` - IOD options (see Discovery Schema)
+* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
 
 
 
