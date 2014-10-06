@@ -1,16 +1,16 @@
 #IOD.js
 
-For the entire README, I will be refering to the IOD.js package as **IOD** and the Idol on Demand server as **Idol on Demand**.
+For the entire README, I will be refering to the IOD.js package as **IOD** and the IDOL onDemand server as **IDOL onDemand**.
 
-IOD is an Idol on Demand framework which makes it easy to send api requests to Idol on Demand. It is easy to make all the [different types of request](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm) along with the [different allowed actions](https://www.idolondemand.com/developer/docs/APIDiscovery.html) that are available to you.
+IOD is an IDOL onDemand framework which makes it easy to send api requests to IDOL onDemand. It is easy to make all the [different types of request](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm) along with the [different allowed actions](https://www.idolondemand.com/developer/docs/APIDiscovery.html) that are available to you.
 
-If you are new to what Idol on Demand has to offer, check out their website at: [Idol on Demand](http://www.idolondemand.com)
+If you are new to what IDOL onDemand has to offer, check out their website at: [IDOL onDemand](http://www.idolondemand.com)
 
-IOD provides client side schema validation of all allowed actions before sending your request off to Idol on Demand. It uses the request package to handle all http request and file uploads for you. The only thing you need to know is how to create an `IODOpt` object. Each IOD request type has their own JSON schema for creating the `IODOpt` object described by [Json-Schema](http://json-schema.org).
+IOD provides client side schema validation of all allowed actions before sending your request off to IDOL onDemand. It uses the request package to handle all http request and file uploads for you. The only thing you need to know is how to create an `IODOpt` object. Each IOD request type has their own JSON schema for creating the `IODOpt` object described by [Json-Schema](http://json-schema.org).
 
 # Quick Start Guide
 
-To make an Idol on Demand request, simply create an IOD object with the `create` method. Pass in your Idol on Demand api key, and a callback that accepts an error as the first argument and the IOD object that has been created as the second argument.
+To make an IDOL onDemand request, simply create an IOD object with the `create` method. Pass in your IDOL onDemand api key, and a callback that accepts an error as the first argument and the IOD object that has been created as the second argument.
 
 The reason the create function accepts a callback is because it is asynchronous. IOD is going to take your api key and get all the allowed actions for the api key and load in all the schemas for each action.
 
@@ -121,12 +121,12 @@ There are two types of versions:
 <a name="create" />
 ### create(apiKey, [Optional IODhost], [Optional IODport], callback)
 
-Creates an IOD object with specified `apiKey` and returns it as the second argument to `callback`. You can override the host and portm otherwise it will point to the Idol on Demand server. The returned IOD object contain schemas loaded with all the actions that are available to the specified `apiKey`.
+Creates an IOD object with specified `apiKey` and returns it as the second argument to `callback`. You can override the host and portm otherwise it will point to the IDOL onDemand server. The returned IOD object contain schemas loaded with all the actions that are available to the specified `apiKey`.
 
 #### Parameters
-* `apiKey` - Your Idol on Demand api key
-* `IODhost` - Can override Idol on Demand host (for developers)
-* `IODport` - Can override Idol on Demand port (for developers)
+* `apiKey` - Your IDOL onDemand api key
+* `IODhost` - Can override IDOL onDemand host (for developers)
+* `IODport` - Can override IDOL onDemand port (for developers)
 * `callback` - `Callback(err, IOD)` that accepts an error as its first argument `err` and an IOD object as the second arugument `IOD`
 
 #### Example
@@ -140,11 +140,11 @@ IOD.create('api key', function(err, IOD) {
 <a name="async" />
 ### async(IODOpts, callback)
 
-Makes an async request to Idol on Demand with options specified from `IODOpts`. Async request returns a `jobId` in which case you can get the status/result of the action using the `status`/`result` methods. More information can be found [here](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm).
+Makes an async request to IDOL onDemand with options specified from `IODOpts`. Async request returns a `jobId` in which case you can get the status/result of the action using the `status`/`result` methods. More information can be found [here](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm).
 
 #### Parameters
 * `IODOpts` - IOD options (see Schema below)
-* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
+* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from IDOL onDemand as its second `res`.
 
 <a name="asyncSchema" />
 #### Schema
@@ -234,11 +234,11 @@ IOD.async(IODOpts, function(err, res) {
 <a name="sync" />
 ### sync(IODOpts, callback)
 
-Makes an sync request to Idol on Demand with options specified from `IODOpts`. Sync request returns the result of the action right away. More information can be found [here](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm).
+Makes an sync request to IDOL onDemand with options specified from `IODOpts`. Sync request returns the result of the action right away. More information can be found [here](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm).
 
 #### Parameters
 * `IODOpts` - IOD options (see Schema below)
-* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
+* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from IDOL onDemand as its second `res`.
 
 <a name="syncSchema" />
 #### Schema
@@ -323,11 +323,11 @@ IOD.sync(IODOpts, function(err, res) {
 <a name="job" />
 ### job(IODOpts, callback)
 
-Makes a job request to Idol on Demand with options specified from `IODOpts`. Job request is asynchronous and allows you to send multiple actions at a time. It will return a `jobId` in which case you can get the status/result of the action by calling the `status`/`result` methods. More information can be found [here](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm).
+Makes a job request to IDOL onDemand with options specified from `IODOpts`. Job request is asynchronous and allows you to send multiple actions at a time. It will return a `jobId` in which case you can get the status/result of the action by calling the `status`/`result` methods. More information can be found [here](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm).
 
 #### Parameters
 * `IODOpts` - IOD options (see Schema below)
-* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
+* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from IDOL onDemand as its second `res`.
 
 <a name="jobSchema" />
 #### Schema
@@ -476,11 +476,11 @@ IOD.job(IODOpts, function(err, res) {
 <a name="status" />
 ### status(IODOpts, callback)
 
-Makes a status request to Idol on Demand with options specified from `IODOpts`. Status request returns the current status of a job based off `jobId`. More information can be found [here](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm).
+Makes a status request to IDOL onDemand with options specified from `IODOpts`. Status request returns the current status of a job based off `jobId`. More information can be found [here](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm).
 
 #### Parameters
 * `IODOpts` - IOD options (see Schema below)
-* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
+* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from IDOL onDemand as its second `res`.
 
 <a name="statusSchema" />
 #### Schema
@@ -526,11 +526,11 @@ IOD.status(IODOpts, function(err, res) {
 <a name="result" />
 ### result(IODOpts, callback)
 
-Makes a result request to Idol on Demand with options specified from `IODOpts`. Result request waits until a job specified by `jobId` is finished or errored and returns the results. More information can be found [here](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm).
+Makes a result request to IDOL onDemand with options specified from `IODOpts`. Result request waits until a job specified by `jobId` is finished or errored and returns the results. More information can be found [here](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm).
 
 #### Parameters
 * `IODOpts` - IOD options (see Schema below)
-* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
+* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from IDOL onDemand as its second `res`.
 
 <a name="resultSchema" />
 #### Schema
@@ -576,11 +576,11 @@ IOD.result(IODOpts, function(err, res) {
 <a name="discovery" />
 ### discovery(IODOpts, callback)
 
-Makes a discovery api request to Idol on Demand with options specified from `IODOpts`. More information about discovery actions can be found [here](https://www.idolondemand.com/developer/docs/APIDiscovery.html).
+Makes a discovery api request to IDOL onDemand with options specified from `IODOpts`. More information about discovery actions can be found [here](https://www.idolondemand.com/developer/docs/APIDiscovery.html).
 
 #### Parameters
 * `IODOpts` - IOD options (see Schema below)
-* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from Idol on Demand as its second `res`.
+* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from IDOL onDemand as its second `res`.
 
 <a name="discoverySchema" />
 #### Schema
