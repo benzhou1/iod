@@ -35,41 +35,47 @@ describe('#IOD.DISCOVERY', function() {
 						},
 
 						function three(done) {
-							IODOpts = {
-								majorVersion: env.IOD.VERSIONS.MAJOR.V1,
-								action: 'invalid action'
-							}
+							IODOpts.majorVersion = env.IOD.VERSIONS.MAJOR.V1,
+							IODOpts.action = 'invalid action'
 							env.IOD.discovery(IODOpts, U.beforeDoneFn(env, 'three', done))
 						},
 
 						function four(done) {
-							IODOpts = {
-								majorVersion: env.IOD.VERSIONS.MAJOR.V1,
-								action: env.IOD.ACTIONS.DISCOVERY.API,
-								method: 'invalid method'
-							}
-							env.IOD.discovery(IODOpts, U.beforeDoneFn(env, 'three', done))
+							IODOpts.action = env.IOD.ACTIONS.DISCOVERY.API,
+							IODOpts.method =  'invalid method'
+							env.IOD.discovery(IODOpts, U.beforeDoneFn(env, 'four', done))
+						},
+
+						function five(done) {
+							IODOpts.method = 'get'
+							IODOpts.params = 'not an object'
+							env.IOD.discovery(IODOpts, U.beforeDoneFn(env, 'five', done))
 						}
 					], callback)
+				})
 
-					it('should contain errors', function() {
-						U.shouldError(this.schema.one)
-					})
+				it('should contain errors', function() {
+					U.shouldError(this.schema.one)
+				})
 
-					it('should have invalid major version', function() {
-						U.shouldError(this.schema.two)
-						U.findSchemaMsgError(this.schema.two.error, 'enum', 'majorVersion')
-					})
+				it('should have invalid major version', function() {
+					U.shouldError(this.schema.two)
+					U.findSchemaMsgError(this.schema.two.error, 'enum', 'majorVersion')
+				})
 
-					it('should have invalid action', function() {
-						U.shouldError(this.schema.three)
-						U.findSchemaMsgError(this.schema.three.error, 'enum', 'action')
-					})
+				it('should have invalid action', function() {
+					U.shouldError(this.schema.three)
+					U.findSchemaMsgError(this.schema.three.error, 'enum', 'action')
+				})
 
-					it('should have invalid method', function() {
-						U.shouldError(this.schema.four)
-						U.findSchemaMsgError(this.schema.four.error, 'enum', 'method')
-					})
+				it('should have invalid method', function() {
+					U.shouldError(this.schema.four)
+					U.findSchemaMsgError(this.schema.four.error, 'enum', 'method')
+				})
+
+				it('should have invalid params', function() {
+					U.shouldError(this.schema.five)
+					U.findSchemaMsgError(this.schema.five.error, 'type', 'params')
 				})
 			})
 
