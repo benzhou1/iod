@@ -55,35 +55,36 @@ var IOD = function(apiKey, host, port) {
 	_.bindAll.apply(_, [iod].concat(_.functions(IOD.prototype)))
 }
 
-module.exports = {
-	/**
-	 * Returns new initialized IOD object.
-	 * Automatically gets all the available actions for specified api key.
-	 *
-	 * @param {string} apiKey - Api key
-	 * @param {string} host - Optional IOD host
-	 * @param {integer} port - Optional IOD port
-	 * @param {function} callback - Callback(err, IOD)
-	 */
-	create: function(apiKey, host, port, callback) {
-		if (_.isFunction(host)) {
-			callback = host
-			host = undefined
-		}
-		else if (_.isFunction(port)) {
-			callback = port
-			port = undefined
-		}
+module.exports = IOD
 
-		var iod = new IOD(apiKey, host, port)
-
-		IodU.getAvailableApis(iod, async.doneFn(callback, function(apis) {
-			_.defaults(iod.ACTIONS, { API: IodU.actionsT(apis) })
-			SchemaU.addSchemas(iod, apis)
-
-			return iod
-		}))
+/**
+ * Returns new initialized IOD object.
+ * Automatically gets all the available actions for specified api key.
+ *
+ * @param {string} apiKey - Api key
+ * @param {string} host - Optional IOD host
+ * @param {integer} port - Optional IOD port
+ * @param {function} callback - Callback(err, IOD)
+ */
+IOD.create = function(apiKey, host, port, callback) {
+	if (_.isFunction(host)) {
+		callback = host
+		host = undefined
 	}
+	else if (_.isFunction(port)) {
+		callback = port
+		port = undefined
+	}
+
+	var iod = new IOD(apiKey, host, port)
+
+	IodU.getAvailableApis(iod, async.doneFn(callback, function(apis) {
+		_.defaults(iod.ACTIONS, { API: IodU.actionsT(apis) })
+		SchemaU.addReqTypeSchemas(iod)
+		SchemaU.addActionSchemas(iod, apis)
+
+		return iod
+	}))
 }
 
 /**
