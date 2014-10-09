@@ -10,26 +10,9 @@ var should = require('should')
 var T = require('../lib/transform')
 var async = require('../lib/async-ext')
 
-/**
- * Array of different tests.
- * Replace with your own api key to test.
- */
-var tests = [
-	{
-		test: 'Http',
-		apiKey: '<your own api key>',
-		host: 'http://api.idolondemand.com',
-		port: 80
-	},
-	{
-		test: 'Https',
-		apiKey: '<your own api key>',
-		host: 'https://api.idolondemand.com',
-		port: 443
-	}
-]
+var apiKey = '6ee6cbee-f94b-4688-a697-259fd8545d94'
 
-exports.tests = tests
+exports.tests = []
 
 /**
  * Sets 60 seconds as timeout for test.
@@ -38,6 +21,15 @@ exports.tests = tests
  */
 exports.timeout = function(that) {
 	that.timeout(60000)
+}
+
+var cachedIOD = null
+
+exports.paths = {
+	APIV1: T.walk(['VERSIONS', 'API', 'V1']),
+	MAJORV1: T.walk(['VERSIONS', 'MAJOR', 'V1']),
+	SENTIMENT: T.walk(['ACTIONS', 'API', 'ANALYZESENTIMENT']),
+	STOREOBJ: T.walk(['ACTIONS', 'API', 'STOREOBJECT'])
 }
 
 /**
@@ -51,24 +43,16 @@ exports.timeout = function(that) {
  * @param {object} env - Environment object
  * @param {function} callback - Callback(err | null)
  */
-exports.createIOD = function(testIndex, env, callback) {
-	var setIOD = function(err, IOD) {
-		env.IOD = IOD
-		env.err = err
-		callback()
-	}
-
-	var test = tests[testIndex]
-	var cachedIOD = test.IOD
-
-	if (cachedIOD) setIOD(null, cachedIOD)
+exports.createIOD = function(fn) {
+	if (cachedIOD) fn(null, cachedIOD)
 	else {
-		IOD.create(test.apiKey, test.host, test.port,
-			async.split(function(IOD) {
-				test.IOD = IOD
-				setIOD(null, IOD)
-			}, callback)
-		)
+		IOD.create(apiKey, function(err, IOD) {
+			if (err) fn(err)
+			else {
+				cachedIOD = IOD
+				fn(null, IOD)
+			}
+		})
 	}
 }
 
@@ -116,12 +100,16 @@ exports.beforeDoneFn = function(env, path, callback) {
  * @param {string} msg - Message
  * @param {string} key - Key in path
  */
-exports.findSchemaMsgError = function(errors, msg, key) {
+exports.shouldBeInSchemaError = function(msg, key, env) {
+	var errors = env.error
 	var error = _.find(T.maybeToArray(errors), function(error) {
 		return _.contains(error.message, msg) &&
 			_.contains(error.path, key)
 	})
+
+	if (!error) console.log('findSchemaMsgError - env.error: ', JSON.stringify(env.error,  null, 2))
 	should.exists(error)
+	return env
 }
 
 /**
@@ -130,8 +118,9 @@ exports.findSchemaMsgError = function(errors, msg, key) {
  * @param {object} env - Object
  */
 exports.shouldError = function(env) {
+	if (!env.error) console.log('shouldError - env: ', JSON.stringify(env,  null, 2))
 	should.exists(env.error)
-	should.not.exists(env.response)
+	return env
 }
 
 /**
@@ -156,11 +145,11 @@ exports.findErrorInRes = function(res) {
  * @param {object} env - Object
  */
 exports.shouldBeSuccessful = function(env) {
-	var error = exports.findErrorInRes(env.response)
+	if (env.error) console.log('shouldBeSuccessful - env.error: ',
+		JSON.stringify(env.error, null, 2))
 
-	should.exists(env.response)
 	should.not.exists(env.error)
-	error.should.be.false
+	return env
 }
 
 /**
@@ -169,8 +158,12 @@ exports.shouldBeSuccessful = function(env) {
  * @param {string} str - String
  * @param {string} contains - Other string
  */
-exports.shouldContain = function(str, contains) {
-	_.contains(str, contains).should.be.true
+exports.shouldBeInError = function(contains, env) {
+	var contain = _.contains(env.error, contains)
+
+	if (!contain) console.log('shouldContain - env,error: ', env.error)
+	contain.should.be.true
+	return env
 }
 
 /**
@@ -181,6 +174,7 @@ exports.shouldContain = function(str, contains) {
 exports.shouldBeJobId = function(env) {
 	env.response.should.have.property('jobID')
 	_.size(env.response).should.eql(1)
+	return env
 }
 
 /**
