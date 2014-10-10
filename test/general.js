@@ -7,9 +7,7 @@
 var U = require('./utils')
 var iod = require('../index')
 var should = require('should')
-
 var async = require('../lib/async-ext')
-var apply = async.apply
 
 describe('#GENERAL', function() {
 	U.timeout(this)

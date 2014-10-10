@@ -8,12 +8,33 @@ var _ = require('lodash')
 var IOD = require('../index')
 var should = require('should')
 var T = require('../lib/transform')
-var async = require('../lib/async-ext')
 
 var apiKey = '<your api key>'
+var host = null // override host
+var port = null // override port
 
 // New instance of IOD class.
-exports.IOD = new IOD(apiKey)
+exports.IOD = new IOD(apiKey, host, port)
+
+/**
+ * Creates an IOD object via the create method, if we haven't done so already.
+ * Caches create IOD object.
+ * Returns IOD as second argument to `fn`
+ *
+ * @param {function} fn - Function(err, IOD)
+ */
+exports.createIOD = function(fn) {
+	if (cachedIOD) fn(null, cachedIOD)
+	else {
+		IOD.create(apiKey, host, port, function(err, IOD) {
+			if (err) fn(err)
+			else {
+				cachedIOD = IOD
+				fn(null, IOD)
+			}
+		})
+	}
+}
 
 // Cached IOD for IOD objects created via create method.
 var cachedIOD = null
@@ -34,14 +55,14 @@ var commonPaths = {
  * Common RequestSchemaTests.
  */
 var commonReqSchemaTests = {
-	empty: function(IOD) {
+	empty: function() {
 		return {
 			name: 'empty IODOpts',
 			IODOpts: {},
 			it: [ exports.shouldError ]
 		}
 	},
-	invalidMajorVer: function(IOD) {
+	invalidMajorVer: function() {
 		return {
 			name: 'invalid majorVersion',
 			IODOpts: { majorVersion: 'invalid' },
@@ -198,26 +219,6 @@ exports.createJobAction = function(IODOpts, i) {
  */
 exports.timeout = function(that) {
 	that.timeout(60000)
-}
-
-/**
- * Creates an IOD object via the create method, if we haven't done so already.
- * Caches create IOD object.
- * Returns IOD as second argument to `fn`
- *
- * @param {function} fn - Function(err, IOD)
- */
-exports.createIOD = function(fn) {
-	if (cachedIOD) fn(null, cachedIOD)
-	else {
-		IOD.create(apiKey, function(err, IOD) {
-			if (err) fn(err)
-			else {
-				cachedIOD = IOD
-				fn(null, IOD)
-			}
-		})
-	}
 }
 
 /**

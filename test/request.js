@@ -30,7 +30,7 @@ var ReqTests = requireDir(__dirname + '/request-types')
 // Include tests
 var include = []
 // Exclude tests
-var exclude = ['async', 'discovery']
+var exclude = []
 
 if (!_.isEmpty(include)) ReqTests = _.pick(ReqTests, include)
 if (!_.isEmpty(exclude)) ReqTests = _.omit(ReqTests, exclude)
@@ -203,8 +203,7 @@ function itActionTest(ActionTest, reqTest, action) {
 	_.each(ActionTest.tests(U.IOD), function(actionTest) {
 		if (reqTest.skip && reqTest.skip(actionTest)) return
 		it(actionTest.name, function() {
-			T.seq(reqTest.itFn(actionTest))
-				(this[action][reqTest.name][actionTest.name])
+			T.seq(reqTest.itFn(actionTest))(this[action][reqTest.name][actionTest.name])
 		})
 	})
 }

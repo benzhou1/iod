@@ -6,7 +6,6 @@
 
 var _ = require('lodash')
 var U = require('../utils')
-var T = require('../../lib/transform')
 
 /**
  * Only supports specific type of actions.

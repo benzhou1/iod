@@ -6,7 +6,6 @@
 
 var _ = require('lodash')
 var U = require('../utils')
-var T = require('../../lib/transform')
 
 /**
  * Only supports specific type of actions.
@@ -54,7 +53,7 @@ exports.tests = [
 		beforeFn: function(IOD, ActionTest, done) {
 			IOD.async(ActionTest.IODOpts, done)
 		},
-		itFn: function(ActionTest) {
+		itFn: function() {
 			return [
 				U.shouldBeSuccessful,
 				U.shouldBeJobId
@@ -71,7 +70,7 @@ exports.tests = [
 			var IODOpts = _.defaults({ method: 'post' }, ActionTest.IODOpts)
 			IOD.async(IODOpts, done)
 		},
-		itFn: function(ActionTest) {
+		itFn: function() {
 			return [
 				U.shouldBeSuccessful,
 				U.shouldBeJobId

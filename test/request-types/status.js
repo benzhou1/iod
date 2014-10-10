@@ -4,9 +4,7 @@
 
 'use strict';
 
-var _ = require('lodash')
 var U = require('../utils')
-var T = require('../../lib/transform')
 
 /**
  * Only supports specific type of actions.
@@ -62,7 +60,7 @@ exports.tests = [
 				IOD.status({ jobId: res.jobID }, done)
 			})
 		},
-		itFn: function(ActionTest) {
+		itFn: function() {
 			return [
 				U.shouldBeSuccessful,
 				U.shouldBeStatus
@@ -88,7 +86,7 @@ exports.tests = [
 				}, done)
 			})
 		},
-		itFn: function(ActionTest) {
+		itFn: function() {
 			return [
 				U.shouldBeSuccessful,
 				U.shouldBeStatus

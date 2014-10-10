@@ -180,7 +180,7 @@ exports.tests = [
 			var IODOpts = transformIODOptsForJob(ActionTest.IODOpts)
 			IOD.job(IODOpts, done)
 		},
-		itFn: function(ActionTest) {
+		itFn: function() {
 			return [
 				U.shouldBeSuccessful,
 				U.shouldBeJobId
