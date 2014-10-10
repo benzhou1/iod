@@ -1,5 +1,18 @@
 /**
  * Main test file that runs all request type test against each action test.
+ * Include is a list of request-type test to include in the run.
+ * Exclude is a list of request-type test to exclude in the run.
+ *
+ * Every request-type has RequestSchemaTests and RequestTests.
+ * Every action has ActionSchemaTests and ActionTests.
+ *
+ * Terminology:
+ * 	request-type - refers to each filename listed under /test/request-types
+ * 	action - refers to each filename listed under /test/actions
+ * 	RequestSchemaTests - test for validating request-type schema
+ * 	RequestTests - test for validating request-type endpoints
+ *  ActionSchemaTests - test for validating action schema
+ *  ActionTests - test with specific action for running with RequestTests
  */
 
 'use strict';
@@ -14,10 +27,20 @@ var requireDir = require('require-dir')
 var Actions = requireDir(__dirname + '/actions')
 var ReqTests = requireDir(__dirname + '/request-types')
 
+// Include tests
+var include = []
+// Exclude tests
+var exclude = ['async', 'discovery']
+
+if (!_.isEmpty(include)) ReqTests = _.pick(ReqTests, include)
+if (!_.isEmpty(exclude)) ReqTests = _.omit(ReqTests, exclude)
+
+// Runs RequestSchemaTest and RequestTest for every request-type
 _.each(ReqTests, function(ReqTest, reqType) {
 	describe('#' + reqType.toUpperCase(), function() {
 		U.timeout(this)
 
+		// Runs RequestSchemaTest for current request-type
 		describe('#Schema Validation', function() {
 			before(function(callback) {
 				this.schema = {}
@@ -44,9 +67,24 @@ _.each(ReqTests, function(ReqTest, reqType) {
 			})
 		})
 
+		/**
+		 * Runs every ActionSchemaTest and ActionTest for every action, against
+		 * current request-type.
+		 */
 		_.each(Actions, function(ActionTest, action) {
+			/**
+			 * If current action type does not match the supported type of current
+			 * request-type then move on to next action.
+			 */
+			if (ActionTest.type !== ReqTest.type) return
+
 			describe('#' + action.toUpperCase(), function() {
+				/**
+				 * If current request-type does not support ActionSchemaTest,
+				 * don't run ActionSchemaTest.
+				 */
 				if (!ReqTest.noActionSchema) {
+					// Run ActionSchemaTest for current action
 					describe('#Schema Validation', function() {
 						before(function(callback) {
 							this[action] = this[action] || {}
@@ -59,6 +97,10 @@ _.each(ReqTests, function(ReqTest, reqType) {
 								var beforeFns = _.map(ActionTest.schemaTests(IOD),
 									function(ActSchemaTest) {
 										return function(done) {
+											/**
+											 * Need to transform ActionSchemaTest IODOpts
+											 * for jobs to handle.
+											 */
 											var IODOpts = reqType === IOD.TYPES.JOB ?
 												transformIODOptsForJob(ActSchemaTest.IODOpts) :
 												ActSchemaTest.IODOpts
@@ -81,7 +123,9 @@ _.each(ReqTests, function(ReqTest, reqType) {
 					})
 				}
 
+				// Runs every RequestTest for current request-type
 				_.each(ReqTest.tests, function(reqTest) {
+					// Runs with IOD created via the create method
 					describe('[CREATE IOD]' + reqTest.name, function() {
 						before(function(callback) {
 							this[action] = this[action] || {}
@@ -90,31 +134,24 @@ _.each(ReqTests, function(ReqTest, reqType) {
 
 							U.createIOD(function(err, IOD) {
 								if (err) return callback()
-
-								ActionTest.prepare(IOD, function(data) {
-									var beforeFns = []
-									_.each(ActionTest.tests(IOD, data), function(actionTest) {
-										beforeFns = beforeFns.concat(function(done) {
-											if (reqTest.skip && reqTest.skip(actionTest)) {
-												return done()
-											}
-											reqTest.beforeFn(IOD, actionTest,
-												U.beforeDoneFn(env, actionTest.name, done))
-										})
-									})
-
-									async.waterfall(beforeFns, callback)
-								})
+								beforeActionTest(IOD, reqTest, ActionTest, env, callback)
 							})
 						})
 
-						_.each(ActionTest.tests(), function(actionTest) {
-							if (reqTest.skip && reqTest.skip(actionTest)) return
-							it(actionTest.name, function() {
-								T.seq(reqTest.itFn(actionTest))
-									(this[action][reqTest.name][actionTest.name])
-							})
+						itActionTest(ActionTest, reqTest, action)
+					})
+
+					// Runs with IOD created via a new instance
+					describe('[NEW IOD]' + reqTest.name, function() {
+						before(function(callback) {
+							this[action] = this[action] || {}
+							this[action][reqTest.name] = {}
+							var env = this[action][reqTest.name]
+
+							beforeActionTest(U.IOD, reqTest, ActionTest, env, callback)
 						})
+
+						itActionTest(ActionTest, reqTest, action)
 					})
 				})
 			})
@@ -122,13 +159,66 @@ _.each(ReqTests, function(ReqTest, reqType) {
 	})
 })
 
-function transformIODOptsForJob(IODOpts) {
-	var action = { name: IODOpts.action }
-	if (IODOpts.params) action.params =  IODOpts.params
+/**
+ * Runs every ActionTests for current action.
+ *
+ * @param {IOD} IOD - IOD object
+ * @param {object} reqTest - RequestTest
+ * @param {object} ActionTest - ActionTest
+ * @param {object} env - Environment object
+ * @param {function} callback - Callback()
+ */
+function beforeActionTest(IOD, reqTest, ActionTest, env, callback) {
+	// Makes preparations before running all ActionTest
+	ActionTest.prepare(IOD, function(data) {
+		var beforeFns = []
 
+		// Collect every ActionTest to run with current RequestTest
+		_.each(ActionTest.tests(IOD, data), function(actionTest) {
+			beforeFns = beforeFns.concat(function(done) {
+				/**
+				 * If current RequestTest does not support the current
+				 * ActionTest then skip.
+				 */
+				if (reqTest.skip && reqTest.skip(actionTest)) {
+					return done()
+				}
+				reqTest.beforeFn(IOD, actionTest,
+					U.beforeDoneFn(env, actionTest.name, done))
+			})
+		})
+
+		async.waterfall(beforeFns, callback)
+	})
+}
+
+/**
+ * Runs every ActionTests validation it checks.
+ *
+ * @param {object} ActionTest - ActionTest
+ * @param {object} reqTest - RequestTest
+ * @param {string} action - Current action
+ */
+function itActionTest(ActionTest, reqTest, action) {
+	_.each(ActionTest.tests(U.IOD), function(actionTest) {
+		if (reqTest.skip && reqTest.skip(actionTest)) return
+		it(actionTest.name, function() {
+			T.seq(reqTest.itFn(actionTest))
+				(this[action][reqTest.name][actionTest.name])
+		})
+	})
+}
+
+/**
+ * Transform IODOpts into IODOpts of job request.
+ *
+ * @param {object} IODOpts - IOD options
+ * @returns {object} Transformed IODOpts
+ */
+function transformIODOptsForJob(IODOpts) {
 	return {
 		job: {
-			actions: [action]
+			actions: [U.createJobAction(IODOpts)]
 		}
 	}
 }

@@ -10,22 +10,29 @@ var should = require('should')
 var T = require('../lib/transform')
 var async = require('../lib/async-ext')
 
-var apiKey = '6ee6cbee-f94b-4688-a697-259fd8545d94'
+var apiKey = '<your api key>'
 
-exports.tests = []
+// New instance of IOD class.
+exports.IOD = new IOD(apiKey)
 
-
-
+// Cached IOD for IOD objects created via create method.
 var cachedIOD = null
 
+/**
+ * Common object walk paths.
+ */
 var commonPaths = {
 	APIV1: T.walk(['VERSIONS', 'API', 'V1']),
 	MAJORV1: T.walk(['VERSIONS', 'MAJOR', 'V1']),
 	SENTIMENT: T.walk(['ACTIONS', 'API', 'ANALYZESENTIMENT']),
+	API: T.walk(['ACTIONS', 'DISCOVERY', 'API']),
 	STOREOBJ: T.walk(['ACTIONS', 'API', 'STOREOBJECT']),
 	REF: T.walk(['actions', 0, 'result', 'reference'])
 }
 
+/**
+ * Common RequestSchemaTests.
+ */
 var commonReqSchemaTests = {
 	empty: function(IOD) {
 		return {
@@ -157,6 +164,34 @@ exports.paths = commonPaths
 exports.reqSchemaTests = commonReqSchemaTests
 
 /**
+ * Returns stringified value `v` with 2 space separation.
+ *
+ * @param {*} v - Some value
+ * @returns {string}
+ */
+exports.prettyPrint = function(v) {
+	return JSON.stringify(v, null, 2)
+}
+
+/**
+ * Converts a specified IOD options `IODOpts` into a new IODOpts suited for job request.
+ *
+ * @param {object} IODOpts - IOD options
+ * @param {number} i - File name count
+ * @returns {object} - Transformed IODOpts
+ */
+exports.createJobAction = function(IODOpts, i) {
+	var action = { name: IODOpts.action }
+	if (IODOpts.params) action.params =  IODOpts.params
+	if (IODOpts.files) {
+		action.params = action.params || {}
+		action.params.file = 'file' + i
+	}
+
+	return action
+}
+
+/**
  * Sets 60 seconds as timeout for test.
  *
  * @param {object} that - this
@@ -166,15 +201,11 @@ exports.timeout = function(that) {
 }
 
 /**
- * Creates an IOD object given `testIndex` which maps to one of the tests
- * shown above.
- * If IOD object is already created for that test just returned the cached IOD
- * object.
- * IOD object is assigned to `env` object in place.
+ * Creates an IOD object via the create method, if we haven't done so already.
+ * Caches create IOD object.
+ * Returns IOD as second argument to `fn`
  *
- * @param {number} testIndex - Test index
- * @param {object} env - Environment object
- * @param {function} callback - Callback(err | null)
+ * @param {function} fn - Function(err, IOD)
  */
 exports.createIOD = function(fn) {
 	if (cachedIOD) fn(null, cachedIOD)
@@ -225,7 +256,17 @@ exports.beforeDoneFn = function(env, path, callback) {
 	}
 }
 
-
+/**
+ * Given a environment object `env` look for a schema error.
+ * Find a schema error where the message contains a the string `msg` and the path
+ * contains the string `key`
+ * Verify that specified schema error is found.
+ *
+ * @param {string} msg - Message to contain in schema error message
+ * @param {string} key - Property to contain in schema error path
+ * @param {object} env - Environment object
+ * @returns {object} - env
+ */
 exports.shouldBeInSchemaError = function(msg, key, env) {
 	var error = _.find(T.maybeToArray(env.error), function(error) {
 		var message = T.attempt(T.walk(['error', 0, 'message']), error.message)(error)
@@ -235,44 +276,45 @@ exports.shouldBeInSchemaError = function(msg, key, env) {
 	})
 
 	if (!error) console.log('shouldBeInSchemaError - env.error: ',
-		JSON.stringify(env.error,  null, 2))
+		exports.prettyPrint(env.error))
 	should.exists(error)
 	return env
 }
 
-
+/**
+ * Validates that environment object `env` contains an error.
+ *
+ * @param {object} env - Environment object
+ * @returns {object} - env
+ */
 exports.shouldError = function(env) {
-	if (!env.error) console.log('shouldError - env: ', JSON.stringify(env,  null, 2))
+	if (!env.error) console.log('shouldError - env: ', exports.prettyPrint(env))
 	should.exists(env.error)
 	return env
 }
 
 /**
- * Recursively traverse though every key in IOD response until an error is found.
+ * Validates that environment object `env` does not contain an error.
  *
- * @param {object} res - IOD response
- * @returns {boolean} - Found
+ * @param {object} env - Environment object
+ * @returns {object} - env
  */
-exports.findErrorInRes = function(res) {
-	if (!res || !_.isObject(res) || _.isEmpty(res)) return false
-	else if (res.error != null) return true
-	else {
-		return _.some(res, function(val, key) {
-			return exports.findErrorInRes(res[key])
-		})
-	}
-}
-
-
 exports.shouldBeSuccessful = function(env) {
 	if (env.error) console.log('shouldBeSuccessful - env.error: ',
-		JSON.stringify(env.error, null, 2))
+		exports.prettyPrint(env.error))
 
 	should.not.exists(env.error)
 	return env
 }
 
-
+/**
+ * Validates that environment object `env` has an error and that it contains
+ * specified string `contains`
+ *
+ * @param {string} contains - String to contain in error
+ * @param {object} env - Environment object
+ * @returns {object} - env
+ */
 exports.shouldBeInError = function(contains, env) {
 	var error = T.attempt(T.walk(['error', 0, 'error']), env.error)(env)
 	var contain = _.contains(error, contains)
@@ -285,7 +327,8 @@ exports.shouldBeInError = function(contains, env) {
 /**
  * Response should contain only jobId.
  *
- * @param {object} env - Object
+ * @param {object} env - Environment object
+ * @returns {object} - env
  */
 exports.shouldBeJobId = function(env) {
 	env.response.should.have.property('jobID')
@@ -322,7 +365,13 @@ exports.shouldHaveMultResults = function(env) {
 	})
 }
 
-
+/**
+ * Validates that environment object `env` contains all the properties that a status
+ * response should have.
+ *
+ * @param {object} env - Environment object
+ * @returns {object} - env
+ */
 exports.shouldBeStatus = function(env) {
 	env.response.should.have.properties('status', 'jobID', 'actions')
 	env.response.actions.should.be.an.Array

@@ -9,6 +9,11 @@ var U = require('../utils')
 var T = require('../../lib/transform')
 
 /**
+ * Only supports specific type of actions.
+ */
+exports.type = 'api'
+
+/**
  * Returns list of Schema Tests for async request type.
  * Schema Tests consist of: {
  * 	{string} name - Name of test,

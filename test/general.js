@@ -18,48 +18,50 @@ describe('#GENERAL', function() {
 		this.gen = {}
 		var gen = this.gen
 
-		async.waterfall([
-			apply(U.createIOD, 0, gen),
+		U.createIOD(function(err, IOD) {
+			if (err) return callback()
 
-			function withDefHostPort(done) {
-				iod.create(U.tests[0].apiKey, U.beforeDoneFn(gen, 'defhostdefport', done))
-			},
+			async.waterfall([
+				function withDefHostPort(done) {
+					iod.create(IOD.apiKey, U.beforeDoneFn(gen, 'defhostdefport', done))
+				},
 
-			function withDefHostHttpPort(done) {
-				iod.create(U.tests[0].apiKey, null, 80,
-					U.beforeDoneFn(gen, 'defhosthttpport', done))
-			},
+				function withDefHostHttpPort(done) {
+					iod.create(IOD.apiKey, null, 80,
+						U.beforeDoneFn(gen, 'defhosthttpport', done))
+				},
 
-			function withDefHostHttpsPort(done) {
-				iod.create(U.tests[0].apiKey, null, 443,
-					U.beforeDoneFn(gen, 'defhosthttpsport', done))
-			},
+				function withDefHostHttpsPort(done) {
+					iod.create(IOD.apiKey, null, 443,
+						U.beforeDoneFn(gen, 'defhosthttpsport', done))
+				},
 
-			function withHttpHostDefPort(done) {
-				iod.create(U.tests[0].apiKey, 'http://api.idolondemand.com', null,
-					U.beforeDoneFn(gen, 'httphostdefport', done))
-			},
+				function withHttpHostDefPort(done) {
+					iod.create(IOD.apiKey, 'http://api.idolondemand.com', null,
+						U.beforeDoneFn(gen, 'httphostdefport', done))
+				},
 
-			function withHttpsHostDefPort(done) {
-				iod.create(U.tests[0].apiKey, 'https://api.idolondemand.com', null,
-					U.beforeDoneFn(gen, 'httpshostdefport', done))
-			},
+				function withHttpsHostDefPort(done) {
+					iod.create(IOD.apiKey, 'https://api.idolondemand.com', null,
+						U.beforeDoneFn(gen, 'httpshostdefport', done))
+				},
 
-			function invalidHost(done) {
-				iod.create(gen.IOD.apiKey, 'http://blah', gen.IOD.port,
-					U.beforeDoneFn(gen, 'host', done))
-			},
+				function invalidHost(done) {
+					iod.create(IOD.apiKey, 'http://blah', IOD.port,
+						U.beforeDoneFn(gen, 'host', done))
+				},
 
-			function invalidPort(done) {
-				iod.create(gen.IOD.apiKey, gen.IOD.host, 1111,
-					U.beforeDoneFn(gen, 'port', done))
-			},
+				function invalidPort(done) {
+					iod.create(IOD.apiKey, IOD.host, 1111,
+						U.beforeDoneFn(gen, 'port', done))
+				},
 
-			function invalidApiKey(done) {
-				iod.create('blah', gen.IOD.host, gen.IOD.port,
-					U.beforeDoneFn(gen, 'apiKey', done))
-			}
-		], callback)
+				function invalidApiKey(done) {
+					iod.create('blah', IOD.host, IOD.port,
+						U.beforeDoneFn(gen, 'apiKey', done))
+				}
+			], callback)
+		})
 	})
 
 	it('should throw when IOD apiKey is missing', function() {

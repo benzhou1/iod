@@ -11,10 +11,9 @@ var async = require('../lib/async-ext')
 
 describe('#IOD', function() {
 	U.timeout(this)
-	var iod = new IOD(U.tests[0].apiKey)
 
 	it('should be new instance of IOD', function() {
-		should.exists(iod)
+		should.exists(U.IOD)
 	})
 
 	describe('.sync', function() {
@@ -25,12 +24,12 @@ describe('#IOD', function() {
 
 			async.waterfall([
 				function syncError(done) {
-					iod.sync(IODOpts, U.beforeDoneFn(env, 'err', done))
+					U.IOD.sync(IODOpts, U.beforeDoneFn(env, 'err', done))
 				},
 
 				function syncSuccess(done) {
 					IODOpts.params = { text: '=)' }
-					iod.sync(IODOpts, U.beforeDoneFn(env, 'res', done))
+					U.IOD.sync(IODOpts, U.beforeDoneFn(env, 'res', done))
 				}
 			], callback)
 		})
@@ -55,17 +54,17 @@ describe('#IOD', function() {
 
 			async.waterfall([
 				function asyncError(done) {
-					iod.async(IODOpts, U.beforeDoneFn(env, 'err', done))
+					U.IOD.async(IODOpts, U.beforeDoneFn(env, 'err', done))
 				},
 
 				function asyncSuccess(done) {
 					IODOpts.params = { text: '=)' }
-					iod.async(IODOpts, U.beforeDoneFn(env, 'res', done))
+					U.IOD.async(IODOpts, U.beforeDoneFn(env, 'res', done))
 				},
 
 				function asyncResults(done) {
 					IODOpts.getResults = true
-					iod.async(IODOpts, U.beforeDoneFn(env, 'result', done))
+					U.IOD.async(IODOpts, U.beforeDoneFn(env, 'result', done))
 				}
 			], callback)
 		})
@@ -106,17 +105,17 @@ describe('#IOD', function() {
 
 			async.waterfall([
 				function jobError(done) {
-					iod.job(IODOpts, U.beforeDoneFn(env, 'err', done))
+					U.IOD.job(IODOpts, U.beforeDoneFn(env, 'err', done))
 				},
 
 				function jobSuccess(done) {
 					IODOpts.job.actions[0].params = { text: '=)' }
-					iod.job(IODOpts, U.beforeDoneFn(env, 'res', done))
+					U.IOD.job(IODOpts, U.beforeDoneFn(env, 'res', done))
 				},
 
 				function jobResults(done) {
 					IODOpts.getResults = true
-					iod.job(IODOpts, U.beforeDoneFn(env, 'result', done))
+					U.IOD.job(IODOpts, U.beforeDoneFn(env, 'result', done))
 				}
 			], callback)
 		})
@@ -148,11 +147,11 @@ describe('#IOD', function() {
 						action: 'analyzesentiment',
 						params: { text: '=)' }
 					}
-					iod.async(IODOpts, U.beforeDoneFn(env, 'async', done))
+					U.IOD.async(IODOpts, U.beforeDoneFn(env, 'async', done))
 				},
 
 				function getStatus(done) {
-					iod.status({ jobId: env.async.response.jobID },
+					U.IOD.status({ jobId: env.async.response.jobID },
 						U.beforeDoneFn(env, 'status', done))
 				}
 			], callback)
@@ -180,11 +179,11 @@ describe('#IOD', function() {
 						action: 'analyzesentiment',
 						params: { text: '=)' }
 					}
-					iod.async(IODOpts, U.beforeDoneFn(env, 'async', done))
+					U.IOD.async(IODOpts, U.beforeDoneFn(env, 'async', done))
 				},
 
 				function getResult(done) {
-					iod.result({ jobId: env.async.response.jobID },
+					U.IOD.result({ jobId: env.async.response.jobID },
 						U.beforeDoneFn(env, 'result', done))
 				}
 			], callback)

@@ -9,7 +9,12 @@ var U = require('../utils')
 var T = require('../../lib/transform')
 
 /**
- * Set to true to not run ActionSchema tests for result request type.
+ * Only supports specific type of actions.
+ */
+exports.type = 'api'
+
+/**
+ * Set to true to not run ActionSchemaTest for result request type.
  */
 exports.noActionSchema = true
 
@@ -50,9 +55,9 @@ exports.tests = [
 		beforeFn: function(IOD, ActionTest, done) {
 			IOD.async(ActionTest.IODOpts, function(err, res) {
 				if (err) throw new Error('Failed to get jobId for result test: ' +
-					JSON.stringify(err, null, 2))
+					U.prettyPrint(err))
 				else if (!res.jobID) throw new Error('JobId not found: ' +
-					JSON.stringify(res, null, 2))
+					U.prettyPrint(res))
 
 				IOD.result({ jobId: res.jobID }, done)
 			})
@@ -70,9 +75,9 @@ exports.tests = [
 		beforeFn: function(IOD, ActionTest, done) {
 			IOD.async(ActionTest.IODOpts, function(err, res) {
 				if (err) throw new Error('Failed to get jobId for result test: ' +
-					JSON.stringify(err, null, 2))
+					U.prettyPrint(err))
 				else if (!res.jobID) throw new Error('JobId not found: ' +
-					JSON.stringify(res, null, 2))
+					U.prettyPrint(res))
 
 				IOD.result({
 					jobId: res.jobID,

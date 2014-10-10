@@ -1,5 +1,5 @@
 /**
- * Test data for sync request type.
+ * Test data for discovery request type.
  */
 
 'use strict';
@@ -11,10 +11,15 @@ var T = require('../../lib/transform')
 /**
  * Only supports specific type of actions.
  */
-exports.type = 'api'
+exports.type = 'discovery'
 
 /**
- * Returns list of Schema Tests for sync request type.
+ * Set to true to not run ActionSchema tests for status request type.
+ */
+exports.noActionSchema = true
+
+/**
+ * Returns list of Schema Tests for discovery request type.
  * Schema Tests consist of: {
  * 	{string} name - Name of test,
  * 	{object} IODOpts - IOD options,
@@ -29,16 +34,14 @@ exports.schemaTests = function(IOD) {
 		U.reqSchemaTests.empty(IOD),
 		U.reqSchemaTests.invalidMajorVer(IOD),
 		U.reqSchemaTests.invalidAction(IOD),
-		U.reqSchemaTests.invalidApiVer(IOD),
 		U.reqSchemaTests.invalidMethod(IOD),
-		U.reqSchemaTests.invalidParams(IOD),
-		U.reqSchemaTests.invalidFiles(IOD)
+		U.reqSchemaTests.invalidParams(IOD)
 	]
 }
 
 /**
- * List of sync tests.
- * Sync Tests consist of: {
+ * List of status tests.
+ * Status Tests consist of: {
  * 	{string} name - Name of test,
  * 	{function} beforeFn - function that executes test,
  *	{function} itFn - Returns array of functions to execute that validates test,
@@ -49,25 +52,24 @@ exports.schemaTests = function(IOD) {
  */
 exports.tests = [
 	{
-		name: '[GET] - should have gotten results',
+		name: '[GET] - should have gotten 5 apis',
 		beforeFn: function(IOD, ActionTest, done) {
-			IOD.sync(ActionTest.IODOpts, done)
+			IOD.discovery(ActionTest.IODOpts, done)
 		},
 		itFn: function(ActionTest) {
 			return ActionTest.it
-		},
-		skip: function(ActionTest) {
-			return !!ActionTest.IODOpts.files
 		}
 	},
 	{
-		name: '[POST] - should have gotten results',
+		name: '[POST] - should have gotten 5 apis',
 		beforeFn: function(IOD, ActionTest, done) {
-			var IODOpts = _.defaults({ method: 'post' }, ActionTest.IODOpts)
-			IOD.sync(IODOpts, done)
+			var IODOpts = _.defaults({ method: 'post'}, ActionTest.IODOpts)
+			IOD.discovery(IODOpts, done)
+
 		},
 		itFn: function(ActionTest) {
 			return ActionTest.it
 		}
 	}
 ]
+
