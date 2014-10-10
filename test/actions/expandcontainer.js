@@ -1,5 +1,5 @@
 /**
- * Test data for analyzesentiment action.
+ * Test data for expandcontainer action.
  */
 
 'use strict';
@@ -9,7 +9,7 @@ var U = require('../utils')
 var should = require('should')
 var T = require('../../lib/transform')
 
-var action = 'analyzesentiment'
+var action = 'expandcontainer'
 var filePath = __dirname + '/../files/' + action
 
 /**
@@ -33,16 +33,29 @@ exports.schemaTests = function(IOD) {
 		U.actSchemaTests.noinput(IOD, 'SENTIMENT', action),
 
 		{
-			name: 'invalid enum for language',
+			name: 'invalid number for depth',
 			IODOpts: {
-				action: T.attempt(U.paths.SENTIMENT, action)(IOD),
+				action: T.attempt(U.paths.EXPANDCONT, action)(IOD),
 				params: {
-					language: 'blah'
+					depth: 'blah'
 				}
 			},
 			it: [
 				U.shouldError,
-				_.partial(U.shouldBeInSchemaError, 'enum', 'language')
+				_.partial(U.shouldBeInSchemaError, 'type', 'depth')
+			]
+		},
+		{
+			name: 'invalid array for password',
+			IODOpts: {
+				action: T.attempt(U.paths.EXPANDCONT, action)(IOD),
+				params: {
+					password: { key: 'not array' }
+				}
+			},
+			it: [
+				U.shouldError,
+				_.partial(U.shouldBeInSchemaError, 'type', 'password')
 			]
 		}
 	]
@@ -63,37 +76,39 @@ exports.schemaTests = function(IOD) {
  */
 exports.tests = function(IOD, data) {
 	/**
-	 * Validates that results have required properties, either directly from response
-	 * or from results. For job request we might have two results, attempt to get second
-	 * result as well.
+	 * Validates that results contains `files` property and that is is not empty, either
+	 * directly from response or from results. For job request we might have two results,
+	 * attempt to get second result as well.
 	 *
 	 * @param {object} env - Environment object
 	 */
 	var shouldHaveResults = function(env) {
 		var results = T.attempt(T.walk(['response', 'actions', 0, 'result']))(env)
 		var results2 = T.attempt(T.walk(['response', 'actions', 1, 'result']))(env)
-		var shouldHaveSentimentKeys = function(v) {
-			if (!v.positive || !v.negative || !v.aggregate) {
-				console.log('Results for analyzesentiment fails test: ', U.prettyPrint(v))
+		var shouldHaveExpanded = function(v) {
+			if (!v.files || _.size(v.files) === 0) {
+				console.log('Results for expandcontainer fails test: ', U.prettyPrint(v))
 			}
-			v.should.have.properties('positive', 'negative', 'aggregate')
+			should.exists(v.files)
+			_.size(v.files).should.not.be.eql(0)
 		}
 
-		if (!results) shouldHaveSentimentKeys(env.response)
+		if (!results) shouldHaveExpanded(env.response)
 		else {
-			shouldHaveSentimentKeys(results)
-			if (results2) shouldHaveSentimentKeys(results2)
+			shouldHaveExpanded(results)
+			if (results2) shouldHaveExpanded(results2)
 		}
 	}
 
 	return [
 		{
-			name: 'text==),language=eng',
+			name: 'url=idolondemand.com/example.zip,password=[1,2,3],depth=2',
 			IODOpts: {
-				action: T.attempt(U.paths.SENTIMENT, action)(IOD),
+				action: T.attempt(U.paths.EXPANDCONT, action)(IOD),
 				params: {
-					text: '=)',
-					language: 'eng'
+					url: 'https://www.idolondemand.com/sample-content/documents/example.zip',
+					password: ['1', '2', '3'],
+					depth: 2
 				}
 			},
 			it: [
@@ -102,26 +117,13 @@ exports.tests = function(IOD, data) {
 			]
 		},
 		{
-			name: 'url=idolondemand.com,language=eng',
+			name: 'reference=expandcontainer,password=[1,2,3],depth=2',
 			IODOpts: {
-				action: T.attempt(U.paths.SENTIMENT, action)(IOD),
-				params: {
-					url: 'http://www.idolondemand.com',
-					language: 'eng'
-				}
-			},
-			it: [
-				U.shouldBeSuccessful,
-				shouldHaveResults
-			]
-		},
-		{
-			name: 'reference=analyzesentiment,language=eng',
-			IODOpts: {
-				action: T.attempt(U.paths.SENTIMENT, action)(IOD),
+				action: T.attempt(U.paths.EXPANDCONT, action)(IOD),
 				params: {
 					reference: T.attempt(T.get('ref'))(data),
-					language: 'eng'
+					password: ['1', '2', '3'],
+					depth: 2
 				}
 			},
 			it: [
@@ -130,11 +132,12 @@ exports.tests = function(IOD, data) {
 			]
 		},
 		{
-			name: 'file==),language=eng',
+			name: 'file=expandcontainer,password=[1,2,3],depth=2',
 			IODOpts: {
-				action: T.attempt(U.paths.SENTIMENT, action)(IOD),
+				action: T.attempt(U.paths.EXPANDCONT, action)(IOD),
 				params: {
-					language: 'eng'
+					password: ['1', '2', '3'],
+					depth: 2
 				},
 				files: [filePath]
 			},
@@ -144,11 +147,12 @@ exports.tests = function(IOD, data) {
 			]
 		},
 		{
-			name: 'file=invalid,language=eng',
+			name: 'file=invalid,password=[1,2,3],depth=2',
 			IODOpts: {
-				action: T.attempt(U.paths.SENTIMENT, action)(IOD),
+				action: T.attempt(U.paths.EXPANDCONT, action)(IOD),
 				params: {
-					language: 'eng'
+					password: ['1', '2', '3'],
+					depth: 2
 				},
 				files: ['invalid file path']
 			},

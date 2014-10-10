@@ -46,6 +46,7 @@ var commonPaths = {
 	APIV1: T.walk(['VERSIONS', 'API', 'V1']),
 	MAJORV1: T.walk(['VERSIONS', 'MAJOR', 'V1']),
 	SENTIMENT: T.walk(['ACTIONS', 'API', 'ANALYZESENTIMENT']),
+	EXPANDCONT: T.walk(['ACTIONS', 'API', 'EXPANDCONTAINER']),
 	API: T.walk(['ACTIONS', 'DISCOVERY', 'API']),
 	STOREOBJ: T.walk(['ACTIONS', 'API', 'STOREOBJECT']),
 	REF: T.walk(['actions', 0, 'result', 'reference'])
@@ -181,8 +182,27 @@ var commonReqSchemaTests = {
 	}
 }
 
+/**
+ * Common ActionSchemaTests
+ */
+var commonActionSchemaTests = {
+	noinput: function(IOD, path, action) {
+		return {
+			name: 'no inputs',
+			IODOpts: {
+				action: T.attempt(commonPaths[path], action)(IOD)
+			},
+			it: [
+				exports.shouldError,
+				_.partial(exports.shouldBeInError, 'inputs')
+			]
+		}
+	}
+}
+
 exports.paths = commonPaths
 exports.reqSchemaTests = commonReqSchemaTests
+exports.actSchemaTests = commonActionSchemaTests
 
 /**
  * Returns stringified value `v` with 2 space separation.

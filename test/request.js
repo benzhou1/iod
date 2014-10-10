@@ -1,7 +1,9 @@
 /**
  * Main test file that runs all request type test against each action test.
- * Include is a list of request-type test to include in the run.
- * Exclude is a list of request-type test to exclude in the run.
+ * IncludeReq is a list of request-type test to include in the run.
+ * ExcludeReq is a list of request-type test to exclude in the run.
+ * IncludeAct is a list of action test to include in the run.
+ * ExcludeAct is a list of action test to exclude in the run.
  *
  * Every request-type has RequestSchemaTests and RequestTests.
  * Every action has ActionSchemaTests and ActionTests.
@@ -27,13 +29,20 @@ var requireDir = require('require-dir')
 var Actions = requireDir(__dirname + '/actions')
 var ReqTests = requireDir(__dirname + '/request-types')
 
-// Include tests
-var include = []
-// Exclude tests
-var exclude = []
+// Include request-type tests
+var includeReq = []
+// Exclude request-type tests
+var excludeReq = []
+// Include action tests
+var includeAct = []
+// Exclude action tests
+// Quota for expandcontainer is 500, don't run unless we really have to
+var excludeAct = ['expandcontainer']
 
-if (!_.isEmpty(include)) ReqTests = _.pick(ReqTests, include)
-if (!_.isEmpty(exclude)) ReqTests = _.omit(ReqTests, exclude)
+if (!_.isEmpty(includeReq)) ReqTests = _.pick(ReqTests, includeReq)
+if (!_.isEmpty(excludeReq)) ReqTests = _.omit(ReqTests, excludeReq)
+if (!_.isEmpty(includeAct)) Actions = _.pick(Actions, includeAct)
+if (!_.isEmpty(excludeAct)) Actions = _.omit(Actions, excludeAct)
 
 // Runs RequestSchemaTest and RequestTest for every request-type
 _.each(ReqTests, function(ReqTest, reqType) {

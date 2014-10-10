@@ -5,7 +5,6 @@
 'use strict';
 
 var U = require('./utils')
-var IOD = require('../index')
 var should = require('should')
 var async = require('../lib/async-ext')
 
