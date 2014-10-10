@@ -46,34 +46,40 @@ _.each(ReqTests, function(ReqTest, reqType) {
 
 		_.each(Actions, function(ActionTest, action) {
 			describe('#' + action.toUpperCase(), function() {
-				describe('#Schema Validation', function() {
-					before(function(callback) {
-						this[action] = this[action] || {}
-						this[action].actSchema = {}
-						var env = this[action].actSchema
+				if (!ReqTest.noActionSchema) {
+					describe('#Schema Validation', function() {
+						before(function(callback) {
+							this[action] = this[action] || {}
+							this[action].actSchema = {}
+							var env = this[action].actSchema
 
-						U.createIOD(function(err, IOD) {
-							if (err) return callback()
+							U.createIOD(function(err, IOD) {
+								if (err) return callback()
 
-							var beforeFns = _.map(ActionTest.schemaTests(IOD),
-								function(ActSchemaTest) {
-									return function(done) {
-										IOD[reqType](ActSchemaTest.IODOpts,
-											U.beforeDoneFn(env, ActSchemaTest.name, done))
+								var beforeFns = _.map(ActionTest.schemaTests(IOD),
+									function(ActSchemaTest) {
+										return function(done) {
+											var IODOpts = reqType === IOD.TYPES.JOB ?
+												transformIODOptsForJob(ActSchemaTest.IODOpts) :
+												ActSchemaTest.IODOpts
+
+											IOD[reqType](IODOpts,
+												U.beforeDoneFn(env, ActSchemaTest.name, done))
+										}
 									}
-								}
-							)
+								)
 
-							async.waterfall(beforeFns, callback)
+								async.waterfall(beforeFns, callback)
+							})
+						})
+
+						_.each(ActionTest.schemaTests(), function(ActSchemaTest) {
+							it('[ACTIONSCHEMA] - ' + ActSchemaTest.name, function() {
+								T.seq(ActSchemaTest.it)(this[action].actSchema[ActSchemaTest.name])
+							})
 						})
 					})
-
-					_.each(ActionTest.schemaTests(), function(ActSchemaTest) {
-						it('[ACTIONSCHEMA] - ' + ActSchemaTest.name, function() {
-							T.seq(ActSchemaTest.it)(this[action].actSchema[ActSchemaTest.name])
-						})
-					})
-				})
+				}
 
 				_.each(ReqTest.tests, function(reqTest) {
 					describe('[CREATE IOD]' + reqTest.name, function() {
@@ -115,3 +121,14 @@ _.each(ReqTests, function(ReqTest, reqType) {
 		})
 	})
 })
+
+function transformIODOptsForJob(IODOpts) {
+	var action = { name: IODOpts.action }
+	if (IODOpts.params) action.params =  IODOpts.params
+
+	return {
+		job: {
+			actions: [action]
+		}
+	}
+}

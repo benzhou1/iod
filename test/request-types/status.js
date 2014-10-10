@@ -1,5 +1,5 @@
 /**
- * Test data for async request type.
+ * Test data for status request type.
  */
 
 'use strict';
@@ -9,7 +9,12 @@ var U = require('../utils')
 var T = require('../../lib/transform')
 
 /**
- * Returns list of Schema Tests for async request type.
+ * Set to true to not run ActionSchema tests for status request type.
+ */
+exports.noActionSchema = true
+
+/**
+ * Returns list of Schema Tests for status request type.
  * Schema Tests consist of: {
  * 	{string} name - Name of test,
  * 	{object} IODOpts - IOD options,
@@ -23,18 +28,14 @@ exports.schemaTests = function(IOD) {
 	return [
 		U.reqSchemaTests.empty(IOD),
 		U.reqSchemaTests.invalidMajorVer(IOD),
-		U.reqSchemaTests.invalidAction(IOD),
-		U.reqSchemaTests.invalidApiVer(IOD),
 		U.reqSchemaTests.invalidMethod(IOD),
-		U.reqSchemaTests.invalidParams(IOD),
-		U.reqSchemaTests.invalidFiles(IOD),
-		U.reqSchemaTests.invalidGetResults(IOD)
+		U.reqSchemaTests.invalidJobId(IOD)
 	]
 }
 
 /**
- * List of async tests.
- * Async Tests consist of: {
+ * List of status tests.
+ * Status Tests consist of: {
  * 	{string} name - Name of test,
  * 	{function} beforeFn - function that executes test,
  *	{function} itFn - Returns array of functions to execute that validates test,
@@ -45,14 +46,21 @@ exports.schemaTests = function(IOD) {
  */
 exports.tests = [
 	{
-		name: '[GET] - should have jobId',
+		name: '[GET] - should have gotten status',
 		beforeFn: function(IOD, ActionTest, done) {
-			IOD.async(ActionTest.IODOpts, done)
+			IOD.async(ActionTest.IODOpts, function(err, res) {
+				if (err) throw new Error('Failed to get jobId for status test: ' +
+					JSON.stringify(err, null, 2))
+				else if (!res.jobID) throw new Error('JobId not found: ' +
+					JSON.stringify(res, null, 2))
+
+				IOD.status({ jobId: res.jobID }, done)
+			})
 		},
 		itFn: function(ActionTest) {
 			return [
 				U.shouldBeSuccessful,
-				U.shouldBeJobId
+				U.shouldBeStatus
 			]
 		},
 		skip: function(ActionTest) {
@@ -61,46 +69,29 @@ exports.tests = [
 		}
 	},
 	{
-		name: '[POST] - should have jobId',
+		name: '[POST] - should have gotten status',
 		beforeFn: function(IOD, ActionTest, done) {
-			var IODOpts = _.defaults({ method: 'post' }, ActionTest.IODOpts)
-			IOD.async(IODOpts, done)
+			IOD.async(ActionTest.IODOpts, function(err, res) {
+				if (err) throw new Error('Failed to get jobId for status test: ' +
+					JSON.stringify(err, null, 2))
+				else if (!res.jobID) throw new Error('JobId not found: ' +
+					JSON.stringify(res, null, 2))
+
+				IOD.status({
+					jobId: res.jobID,
+					method: 'post'
+				}, done)
+			})
 		},
 		itFn: function(ActionTest) {
 			return [
 				U.shouldBeSuccessful,
-				U.shouldBeJobId
+				U.shouldBeStatus
 			]
 		},
 		skip: function(ActionTest) {
 			return !!ActionTest.shouldError
 		}
-	},
-	{
-		name: '[GET] - should have waited and gotten results',
-		beforeFn: function(IOD, ActionTest, done) {
-			var IODOpts = _.defaults({ getResults: true }, ActionTest.IODOpts)
-			IOD.async(IODOpts, done)
-		},
-		itFn: function(ActionTest) {
-			return ActionTest.it
-		},
-		skip: function(ActionTest) {
-			return !!ActionTest.IODOpts.files
-		}
-	},
-	{
-		name: '[POST] - should have waited and gotten results',
-		beforeFn: function(IOD, ActionTest, done) {
-			var IODOpts = _.defaults({
-				method: 'post',
-				getResults: true
-			}, ActionTest.IODOpts)
-
-			IOD.async(IODOpts, done)
-		},
-		itFn: function(ActionTest) {
-			return ActionTest.it
-		}
 	}
 ]
+

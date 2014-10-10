@@ -14,6 +14,148 @@ var apiKey = '6ee6cbee-f94b-4688-a697-259fd8545d94'
 
 exports.tests = []
 
+
+
+var cachedIOD = null
+
+var commonPaths = {
+	APIV1: T.walk(['VERSIONS', 'API', 'V1']),
+	MAJORV1: T.walk(['VERSIONS', 'MAJOR', 'V1']),
+	SENTIMENT: T.walk(['ACTIONS', 'API', 'ANALYZESENTIMENT']),
+	STOREOBJ: T.walk(['ACTIONS', 'API', 'STOREOBJECT']),
+	REF: T.walk(['actions', 0, 'result', 'reference'])
+}
+
+var commonReqSchemaTests = {
+	empty: function(IOD) {
+		return {
+			name: 'empty IODOpts',
+			IODOpts: {},
+			it: [ exports.shouldError ]
+		}
+	},
+	invalidMajorVer: function(IOD) {
+		return {
+			name: 'invalid majorVersion',
+			IODOpts: { majorVersion: 'invalid' },
+			it: [
+				exports.shouldError,
+				_.partial(exports.shouldBeInSchemaError, 'enum', 'majorVersion')
+			]
+		}
+	},
+	invalidAction: function(IOD) {
+		return {
+			name: 'invalid action',
+			IODOpts: {
+			majorVersion: T.attempt(commonPaths.MAJORV1)(IOD),
+				action: 'invalid action'
+			},
+			it: [
+				exports.shouldError,
+				_.partial(exports.shouldBeInSchemaError, 'enum', 'action')
+			]
+		}
+	},
+	invalidApiVer: function(IOD) {
+		return {
+			name: 'invalid apiVersion',
+				IODOpts: {
+				majorVersion: T.attempt(commonPaths.MAJORV1)(IOD),
+				action: T.attempt(commonPaths.SENTIMENT)(IOD),
+				apiVersion: 'invalid api version'
+			},
+			it: [
+				exports.shouldError,
+				_.partial(exports.shouldBeInSchemaError, 'enum', 'apiVersion')
+			]
+		}
+	},
+	invalidMethod: function(IOD) {
+		return {
+			name: 'invalid method',
+			IODOpts: {
+				majorVersion: T.attempt(commonPaths.MAJORV1)(IOD),
+				action: T.attempt(commonPaths.SENTIMENT)(IOD),
+				apiVersion: T.attempt(commonPaths.APIV1)(IOD),
+				method: 'invalid method'
+			},
+			it: [
+				exports.shouldError,
+				_.partial(exports.shouldBeInSchemaError, 'enum', 'method')
+			]
+		}
+	},
+	invalidParams: function(IOD) {
+		return {
+			name: 'params not an object',
+			IODOpts: {
+				majorVersion: T.attempt(commonPaths.MAJORV1)(IOD),
+				action: T.attempt(commonPaths.SENTIMENT)(IOD),
+				apiVersion: T.attempt(commonPaths.APIV1)(IOD),
+				method: 'get',
+				params: 'string params'
+			},
+			it: [
+				exports.shouldError,
+				_.partial(exports.shouldBeInSchemaError, 'type', 'params')
+			]
+		}
+	},
+	invalidFiles: function(IOD) {
+		return {
+			name: 'files not an array',
+			IODOpts: {
+				majorVersion: T.attempt(commonPaths.MAJORV1)(IOD),
+				action: T.attempt(commonPaths.SENTIMENT)(IOD),
+				apiVersion: T.attempt(commonPaths.APIV1)(IOD),
+				method: 'get',
+				params: { text: '=)'},
+				files: { key: 'not array' }
+			},
+			it: [
+				exports.shouldError,
+				_.partial(exports.shouldBeInSchemaError, 'type', 'files')
+			]
+		}
+	},
+	invalidJobId: function(IOD) {
+		return {
+			name: 'jodId not a string',
+			IODOpts: {
+				majorVersion: T.attempt(commonPaths.MAJORV1)(IOD),
+				method: 'get',
+				jobId: {}
+			},
+			it: [
+				exports.shouldError,
+				_.partial(exports.shouldBeInSchemaError, 'type', 'jobId')
+			]
+		}
+	},
+	invalidGetResults: function(IOD) {
+		return {
+			name: 'getResults not a boolean',
+			IODOpts: {
+				majorVersion: T.attempt(commonPaths.MAJORV1)(IOD),
+				action: T.attempt(commonPaths.SENTIMENT)(IOD),
+				apiVersion: T.attempt(commonPaths.APIV1)(IOD),
+				method: 'get',
+				params: { text: '=)'},
+				files: ['files'],
+				getResults: 'not a boolean'
+			},
+			it: [
+				exports.shouldError,
+				_.partial(exports.shouldBeInSchemaError, 'type', 'getResults')
+			]
+		}
+	}
+}
+
+exports.paths = commonPaths
+exports.reqSchemaTests = commonReqSchemaTests
+
 /**
  * Sets 60 seconds as timeout for test.
  *
@@ -21,15 +163,6 @@ exports.tests = []
  */
 exports.timeout = function(that) {
 	that.timeout(60000)
-}
-
-var cachedIOD = null
-
-exports.paths = {
-	APIV1: T.walk(['VERSIONS', 'API', 'V1']),
-	MAJORV1: T.walk(['VERSIONS', 'MAJOR', 'V1']),
-	SENTIMENT: T.walk(['ACTIONS', 'API', 'ANALYZESENTIMENT']),
-	STOREOBJ: T.walk(['ACTIONS', 'API', 'STOREOBJECT'])
 }
 
 /**
@@ -92,31 +225,22 @@ exports.beforeDoneFn = function(env, path, callback) {
 	}
 }
 
-/**
- * Look through array of errors and find one that contains specified message and
- * contains specified path.
- *
- * @param {array} errors - List of errors
- * @param {string} msg - Message
- * @param {string} key - Key in path
- */
+
 exports.shouldBeInSchemaError = function(msg, key, env) {
-	var errors = env.error
-	var error = _.find(T.maybeToArray(errors), function(error) {
-		return _.contains(error.message, msg) &&
-			_.contains(error.path, key)
+	var error = _.find(T.maybeToArray(env.error), function(error) {
+		var message = T.attempt(T.walk(['error', 0, 'message']), error.message)(error)
+		var path = T.attempt(T.walk(['error', 0, 'path']), error.path)(error)
+
+		return _.contains(message, msg) && _.contains(path, key)
 	})
 
-	if (!error) console.log('findSchemaMsgError - env.error: ', JSON.stringify(env.error,  null, 2))
+	if (!error) console.log('shouldBeInSchemaError - env.error: ',
+		JSON.stringify(env.error,  null, 2))
 	should.exists(error)
 	return env
 }
 
-/**
- * Should contain error and no response
- *
- * @param {object} env - Object
- */
+
 exports.shouldError = function(env) {
 	if (!env.error) console.log('shouldError - env: ', JSON.stringify(env,  null, 2))
 	should.exists(env.error)
@@ -139,11 +263,7 @@ exports.findErrorInRes = function(res) {
 	}
 }
 
-/**
- * Should contain no errors in response and should contain no errors.
- *
- * @param {object} env - Object
- */
+
 exports.shouldBeSuccessful = function(env) {
 	if (env.error) console.log('shouldBeSuccessful - env.error: ',
 		JSON.stringify(env.error, null, 2))
@@ -152,16 +272,12 @@ exports.shouldBeSuccessful = function(env) {
 	return env
 }
 
-/**
- * Specified string should contain other string.
- *
- * @param {string} str - String
- * @param {string} contains - Other string
- */
-exports.shouldBeInError = function(contains, env) {
-	var contain = _.contains(env.error, contains)
 
-	if (!contain) console.log('shouldContain - env,error: ', env.error)
+exports.shouldBeInError = function(contains, env) {
+	var error = T.attempt(T.walk(['error', 0, 'error']), env.error)(env)
+	var contain = _.contains(error, contains)
+
+	if (!contain) console.log('shouldBeInError - env,error: ', env.error)
 	contain.should.be.true
 	return env
 }
@@ -206,14 +322,11 @@ exports.shouldHaveMultResults = function(env) {
 	})
 }
 
-/**
- * Response should be a status, not result.
- *
- * @param {object} env - Object
- */
+
 exports.shouldBeStatus = function(env) {
-	env.response.should.have.property('actions')
+	env.response.should.have.properties('status', 'jobID', 'actions')
 	env.response.actions.should.be.an.Array
-	env.response.actions[0].should.have
-		.properties('status', 'action', 'version')
+	_.size(env.response.actions).should.eql(1)
+	env.response.actions[0].should.have.properties('status', 'action', 'version')
+	return env
 }

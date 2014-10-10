@@ -61,6 +61,7 @@ exports.schemaTests = function(IOD) {
  * 	{string} name - Name of test,
  * 	{object} IODOpts - IOD options,
  *	{function} it - Array of functions to execute that validates test,
+ *	{boolean} shouldError - True if test is expected to error
  * }
  *
  * @param {IOD} IOD - IOD object
@@ -138,6 +139,21 @@ exports.tests = function(IOD, data) {
 				U.shouldBeSuccessful,
 				shouldHaveResults
 			]
+		},
+		{
+			name: 'file=invalid,language=eng',
+			IODOpts: {
+				action: T.attempt(U.paths.SENTIMENT)(IOD),
+				params: {
+					language: 'eng'
+				},
+				files: ['invalid file path']
+			},
+			it: [
+				U.shouldError,
+				_.partial(U.shouldBeInError, 'ENOENT')
+			],
+			shouldError: true
 		}
 	]
 }
@@ -160,7 +176,7 @@ exports.prepare = function(IOD, done) {
 		if (err) throw new Error('Failed to prepare for analyzesentiment tests: ' +
 			JSON.stringify(err, null, 2))
 		else {
-			var ref = T.attempt(T.walk(['actions', 0, 'result', 'reference']))(res)
+			var ref = T.attempt(U.paths.REF)(res)
 			if (!ref) throw new Error('Could not find reference from store object: ' +
 				JSON.stringify(res, null, 2))
 
