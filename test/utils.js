@@ -10,7 +10,7 @@ var should = require('should')
 var T = require('../lib/transform')
 var SchemaU = require('../lib/schema')
 
-var apiKey = '<your api key>'
+var apiKey = '6ee6cbee-f94b-4688-a697-259fd8545d94'
 var host = null // override host
 var port = null // override port
 
@@ -56,6 +56,7 @@ var commonPaths = {
 	EXPLODECONT: T.walk(['ACTIONS', 'API', 'EXPLODECONTAINER']),
 	OCRDOC: T.walk(['ACTIONS', 'API', 'OCRDOCUMENT']),
 	OCR: T.walk(['ACTIONS', 'API', 'OCR']),
+	EXTRACTTEXT: T.walk(['ACTIONS', 'API', 'EXTRACTTEXT']),
 	API: T.walk(['ACTIONS', 'DISCOVERY', 'API']),
 	STOREOBJ: T.walk(['ACTIONS', 'API', 'STOREOBJECT']),
 	REF: T.walk(['actions', 0, 'result', 'reference'])
@@ -434,11 +435,11 @@ exports.prepareReference = function(IOD, action, filePath, done) {
 		getResults: true
 	}
 	IOD.async(IODOpts, function(err, res) {
-		if (err) throw new Error('Failed to prepare for analyzesentiment tests: ' +
+		if (err) throw new Error('Failed to prepare for tests: ' +
 			exports.prettyPrint(err))
 		else {
 			var ref = T.attempt(commonPaths.REF)(res)
-			if (!ref) throw new Error('Could not find reference from store object: ' +
+			if (!ref) throw new Error('Could not find reference from storeobject: ' +
 				exports.prettyPrint(res))
 
 			done(ref)
