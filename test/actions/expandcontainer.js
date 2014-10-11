@@ -150,7 +150,7 @@ exports.tests = function(IOD, data) {
  * @throws {Error} - If couldn't find reference in results
  */
 exports.prepare = function(IOD, done) {
-	U.prepareReference(IOD, filePath, function(ref) {
+	U.prepareReference(IOD, action, filePath, function(ref) {
 		done({ ref: ref })
 	})
 }

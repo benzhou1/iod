@@ -1,5 +1,5 @@
 /**
- * Test data for analyzesentiment action.
+ * Test data for ocrdocument action.
  */
 
 'use strict';
@@ -9,8 +9,8 @@ var U = require('../utils')
 var should = require('should')
 var T = require('../../lib/transform')
 
-var action = 'analyzesentiment'
-var alias = 'detectsentiment'
+var action = 'ocrdocument'
+var alias = 'ocr'
 var filePath = __dirname + '/../files/' + action
 
 /**
@@ -31,19 +31,19 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.actSchemaTests.noinput(IOD, 'SENTIMENT', action),
+		U.actSchemaTests.noinput(IOD, 'OCRDOC', action),
 
 		{
-			name: 'invalid enum for language',
+			name: 'invalid enum for mode',
 			IODOpts: {
-				action: T.attempt(U.paths.DETECTSENT, alias)(IOD),
+				action: T.attempt(U.paths.OCR, alias)(IOD),
 				params: {
-					language: 'blah'
+					mode: 'blah'
 				}
 			},
 			it: [
 				U.shouldError,
-				_.partial(U.shouldBeInSchemaError, 'enum', 'language')
+				_.partial(U.shouldBeInSchemaError, 'enum', 'mode')
 			]
 		}
 	]
@@ -65,12 +65,12 @@ exports.schemaTests = function(IOD) {
 exports.tests = function(IOD, data) {
 	return [
 		{
-			name: 'text==),language=eng',
+			name: 'url=idolondemand.com/bowers.jpg,mode=document_photo',
 			IODOpts: {
-				action: T.attempt(U.paths.SENTIMENT, action)(IOD),
+				action: T.attempt(U.paths.OCRDOC, action)(IOD),
 				params: {
-					text: '=)',
-					language: 'eng'
+					url: 'https://www.idolondemand.com/sample-content/images/bowers.jpg',
+					mode: 'document_photo'
 				}
 			},
 			it: [
@@ -79,12 +79,12 @@ exports.tests = function(IOD, data) {
 			]
 		},
 		{
-			name: 'url=idolondemand.com,language=eng',
+			name: 'reference=ocrdocument,mode=document_photo',
 			IODOpts: {
-				action: T.attempt(U.paths.DETECTSENT, alias)(IOD),
+				action: T.attempt(U.paths.OCR, alias)(IOD),
 				params: {
-					url: 'http://www.idolondemand.com',
-					language: 'eng'
+					reference: T.attempt(T.get('ref'))(data),
+					mode: 'document_photo'
 				}
 			},
 			it: [
@@ -93,39 +93,25 @@ exports.tests = function(IOD, data) {
 			]
 		},
 		{
-			name: 'reference=analyzesentiment,language=eng',
+			name: 'file=ocrdocument,mode=document_photo',
 			IODOpts: {
-				action: T.attempt(U.paths.SENTIMENT, action)(IOD),
+				action: T.attempt(U.paths.OCRDOC, action)(IOD),
 				params: {
-					reference: T.attempt(T.get('ref'))(data),
-					language: 'eng'
-				}
-			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
-		},
-		{
-			name: 'file==),language=eng',
-			IODOpts: {
-				action: T.attempt(U.paths.DETECTSENT, alias)(IOD),
-				params: {
-					language: 'eng'
+					mode: 'document_photo'
 				},
 				files: [filePath]
 			},
 			it: [
 				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, alias)
+				_.partial(U.shouldHaveResults, action)
 			]
 		},
 		{
-			name: 'file=invalid,language=eng',
+			name: 'file=invalid,mode=document_photo',
 			IODOpts: {
-				action: T.attempt(U.paths.SENTIMENT, action)(IOD),
+				action: T.attempt(U.paths.OCR, alias)(IOD),
 				params: {
-					language: 'eng'
+					mode: 'document_photo'
 				},
 				files: ['invalid file path']
 			},

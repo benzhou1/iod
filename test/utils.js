@@ -41,8 +41,8 @@ exports.createIOD = function(fn) {
 var cachedIOD = null
 exports.cachedIOD = cachedIOD
 
-// Cached reference via store object
-var cachedRef = null
+// Cached reference for each action via store object
+var cachedRef = {}
 
 /**
  * Common object walk paths.
@@ -419,13 +419,14 @@ exports.shouldBeStatus = function(env) {
  * Return cached if available.
  *
  * @param {IOD} IOD - IOD object
+ * @param {string} action - Action name
  * @param {string} filePath - Path to file to store
  * @param {function} done - Done(reference)
  * @throws {Error} - If error on storeobject action
  * @throws {Error} - If couldn't find reference in results
  */
-exports.prepareReference = function(IOD, filePath, done) {
-	if (cachedRef) return done(cachedRef)
+exports.prepareReference = function(IOD, action, filePath, done) {
+	if (cachedRef[action]) return done(cachedRef[action])
 
 	var IODOpts = {
 		action: T.attempt(commonPaths.STOREOBJ, 'storeobject')(IOD),
