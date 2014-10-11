@@ -8,6 +8,7 @@ var _ = require('lodash')
 var IOD = require('../index')
 var should = require('should')
 var T = require('../lib/transform')
+var SchemaU = require('../lib/schema')
 
 var apiKey = '<your api key>'
 var host = null // override host
@@ -38,6 +39,10 @@ exports.createIOD = function(fn) {
 
 // Cached IOD for IOD objects created via create method.
 var cachedIOD = null
+exports.cachedIOD = cachedIOD
+
+// Cached reference via store object
+var cachedRef = null
 
 /**
  * Common object walk paths.
@@ -46,7 +51,11 @@ var commonPaths = {
 	APIV1: T.walk(['VERSIONS', 'API', 'V1']),
 	MAJORV1: T.walk(['VERSIONS', 'MAJOR', 'V1']),
 	SENTIMENT: T.walk(['ACTIONS', 'API', 'ANALYZESENTIMENT']),
+	DETECTSENT: T.walk(['ACTIONS', 'API', 'DETECTSENTIMENT']),
 	EXPANDCONT: T.walk(['ACTIONS', 'API', 'EXPANDCONTAINER']),
+	EXPLODECONT: T.walk(['ACTIONS', 'API', 'EXPLODECONTAINER']),
+	OCRDOC: T.walk(['ACTIONS', 'API', 'OCRDOCUMENT']),
+	OCR: T.walk(['ACTIONS', 'API', 'OCR']),
 	API: T.walk(['ACTIONS', 'DISCOVERY', 'API']),
 	STOREOBJ: T.walk(['ACTIONS', 'API', 'STOREOBJECT']),
 	REF: T.walk(['actions', 0, 'result', 'reference'])
@@ -358,32 +367,35 @@ exports.shouldBeJobId = function(env) {
 }
 
 /**
- * Response should contain response from analyzesentiment.
+ * Response should match response schema for specified `action`.
+ * If response is from job, apply schema validation for every action result.
  *
- * @param {object} env - Object
+ * @param {string} action - Action name
+ * @param {object} env - Environment object
  */
-exports.shouldHaveResults = function(env) {
-	env.response.should.have.property('actions')
-	env.response.actions.should.be.an.Array
-	env.response.actions[0].should.have.property('result')
-	env.response.actions[0].result.should.have
-		.properties('positive', 'negative', 'aggregate')
-}
+exports.shouldHaveResults = function(action, env) {
+	var jobActionResults = env.response.actions
+	var shouldMatchResSchema = function(result) {
+		var errors = SchemaU.validateWithPrettyErr(cachedIOD, action + '.response',
+			result)
 
-/**
- * Response should contain multiple responses from analyzesentiment.
- *
- * @param {object} env - Object
- */
-exports.shouldHaveMultResults = function(env) {
-	env.response.should.have.property('actions')
-	env.response.actions.should.be.an.Array
-	_.size(env.response.actions).should.not.eql(1)
+		if (errors) {
+			console.log('Results did not match ' + action +
+				'\'s response schema: ', exports.prettyPrint(errors))
+			console.log('Results: ', exports.prettyPrint(result))
+		}
 
-	_.each(env.response.actions, function(action) {
-		action.should.have.property('result')
-		action.result.should.have.properties('positive', 'negative', 'aggregate')
-	})
+		should.not.exist(errors)
+		return errors
+	}
+
+	if (jobActionResults) {
+		_.each(jobActionResults, function(actionRes) {
+			if (shouldMatchResSchema(actionRes.result)) return false
+		})
+	}
+	else shouldMatchResSchema(env.response)
+	return env
 }
 
 /**
@@ -399,4 +411,36 @@ exports.shouldBeStatus = function(env) {
 	_.size(env.response.actions).should.eql(1)
 	env.response.actions[0].should.have.properties('status', 'action', 'version')
 	return env
+}
+
+/**
+ * Given a file path `filePath` store file in IDOL onDemand via storeobject action.
+ * Cached reference from results.
+ * Return cached if available.
+ *
+ * @param {IOD} IOD - IOD object
+ * @param {string} filePath - Path to file to store
+ * @param {function} done - Done(reference)
+ * @throws {Error} - If error on storeobject action
+ * @throws {Error} - If couldn't find reference in results
+ */
+exports.prepareReference = function(IOD, filePath, done) {
+	if (cachedRef) return done(cachedRef)
+
+	var IODOpts = {
+		action: T.attempt(commonPaths.STOREOBJ, 'storeobject')(IOD),
+		files: [filePath],
+		getResults: true
+	}
+	IOD.async(IODOpts, function(err, res) {
+		if (err) throw new Error('Failed to prepare for analyzesentiment tests: ' +
+			exports.prettyPrint(err))
+		else {
+			var ref = T.attempt(commonPaths.REF)(res)
+			if (!ref) throw new Error('Could not find reference from store object: ' +
+				exports.prettyPrint(res))
+
+			done(ref)
+		}
+	})
 }

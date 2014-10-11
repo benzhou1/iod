@@ -21,16 +21,20 @@ describe('#IOD', function() {
 			var env = this.sync
 			var IODOpts = { action: 'analyzesentiment' }
 
-			async.waterfall([
-				function syncError(done) {
-					U.IOD.sync(IODOpts, U.beforeDoneFn(env, 'err', done))
-				},
+			U.createIOD(function(err) {
+				if (err) return callback()
 
-				function syncSuccess(done) {
-					IODOpts.params = { text: '=)' }
-					U.IOD.sync(IODOpts, U.beforeDoneFn(env, 'res', done))
-				}
-			], callback)
+				async.waterfall([
+					function syncError(done) {
+						U.IOD.sync(IODOpts, U.beforeDoneFn(env, 'err', done))
+					},
+
+					function syncSuccess(done) {
+						IODOpts.params = { text: '=)' }
+						U.IOD.sync(IODOpts, U.beforeDoneFn(env, 'res', done))
+					}
+				], callback)
+			})
 		})
 
 		it('should get error from IDOL onDemand server', function() {
@@ -80,7 +84,7 @@ describe('#IOD', function() {
 
 		it('should get successful response from IDOL onDemand server', function() {
 			U.shouldBeSuccessful(this.async.result)
-			U.shouldHaveResults(this.async.result)
+			U.shouldHaveResults('analyzesentiment', this.async.result)
 		})
 	})
 
@@ -131,7 +135,7 @@ describe('#IOD', function() {
 
 		it('should get successful response from IDOL onDemand server', function() {
 			U.shouldBeSuccessful(this.job.result)
-			U.shouldHaveMultResults(this.job.result)
+			U.shouldHaveResults('analyzesentiment', this.job.result)
 		})
 	})
 
@@ -195,7 +199,7 @@ describe('#IOD', function() {
 
 		it('should get successful response from IDOL onDemand server', function() {
 			U.shouldBeSuccessful(this.result.result)
-			U.shouldHaveResults(this.result.result)
+			U.shouldHaveResults('analyzesentiment', this.result.result)
 		})
 	})
 })

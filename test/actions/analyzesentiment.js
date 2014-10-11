@@ -10,6 +10,7 @@ var should = require('should')
 var T = require('../../lib/transform')
 
 var action = 'analyzesentiment'
+var alias = 'detectsentiment'
 var filePath = __dirname + '/../files/' + action
 
 /**
@@ -35,7 +36,7 @@ exports.schemaTests = function(IOD) {
 		{
 			name: 'invalid enum for language',
 			IODOpts: {
-				action: T.attempt(U.paths.SENTIMENT, action)(IOD),
+				action: T.attempt(U.paths.DETECTSENT, alias)(IOD),
 				params: {
 					language: 'blah'
 				}
@@ -62,30 +63,6 @@ exports.schemaTests = function(IOD) {
  * @returns {Array} - List of ActionTests
  */
 exports.tests = function(IOD, data) {
-	/**
-	 * Validates that results have required properties, either directly from response
-	 * or from results. For job request we might have two results, attempt to get second
-	 * result as well.
-	 *
-	 * @param {object} env - Environment object
-	 */
-	var shouldHaveResults = function(env) {
-		var results = T.attempt(T.walk(['response', 'actions', 0, 'result']))(env)
-		var results2 = T.attempt(T.walk(['response', 'actions', 1, 'result']))(env)
-		var shouldHaveSentimentKeys = function(v) {
-			if (!v.positive || !v.negative || !v.aggregate) {
-				console.log('Results for analyzesentiment fails test: ', U.prettyPrint(v))
-			}
-			v.should.have.properties('positive', 'negative', 'aggregate')
-		}
-
-		if (!results) shouldHaveSentimentKeys(env.response)
-		else {
-			shouldHaveSentimentKeys(results)
-			if (results2) shouldHaveSentimentKeys(results2)
-		}
-	}
-
 	return [
 		{
 			name: 'text==),language=eng',
@@ -98,13 +75,13 @@ exports.tests = function(IOD, data) {
 			},
 			it: [
 				U.shouldBeSuccessful,
-				shouldHaveResults
+				_.partial(U.shouldHaveResults, action)
 			]
 		},
 		{
 			name: 'url=idolondemand.com,language=eng',
 			IODOpts: {
-				action: T.attempt(U.paths.SENTIMENT, action)(IOD),
+				action: T.attempt(U.paths.DETECTSENT, alias)(IOD),
 				params: {
 					url: 'http://www.idolondemand.com',
 					language: 'eng'
@@ -112,7 +89,7 @@ exports.tests = function(IOD, data) {
 			},
 			it: [
 				U.shouldBeSuccessful,
-				shouldHaveResults
+				_.partial(U.shouldHaveResults, alias)
 			]
 		},
 		{
@@ -126,13 +103,13 @@ exports.tests = function(IOD, data) {
 			},
 			it: [
 				U.shouldBeSuccessful,
-				shouldHaveResults
+				_.partial(U.shouldHaveResults, action)
 			]
 		},
 		{
 			name: 'file==),language=eng',
 			IODOpts: {
-				action: T.attempt(U.paths.SENTIMENT, action)(IOD),
+				action: T.attempt(U.paths.DETECTSENT, alias)(IOD),
 				params: {
 					language: 'eng'
 				},
@@ -140,7 +117,7 @@ exports.tests = function(IOD, data) {
 			},
 			it: [
 				U.shouldBeSuccessful,
-				shouldHaveResults
+				_.partial(U.shouldHaveResults, alias)
 			]
 		},
 		{
@@ -170,20 +147,7 @@ exports.tests = function(IOD, data) {
  * @throws {Error} - If couldn't find reference in results
  */
 exports.prepare = function(IOD, done) {
-	var IODOpts = {
-		action: T.attempt(U.paths.STOREOBJ, 'storeobject')(IOD),
-		files: [filePath],
-		getResults: true
-	}
-	IOD.async(IODOpts, function(err, res) {
-		if (err) throw new Error('Failed to prepare for analyzesentiment tests: ' +
-			U.prettyPrint(err))
-		else {
-			var ref = T.attempt(U.paths.REF)(res)
-			if (!ref) throw new Error('Could not find reference from store object: ' +
-				U.prettyPrint(res))
-
-			done({ ref: ref })
-		}
+	U.prepareReference(IOD, filePath, function(ref) {
+		done({ ref: ref })
 	})
 }

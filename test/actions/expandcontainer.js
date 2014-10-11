@@ -10,6 +10,7 @@ var should = require('should')
 var T = require('../../lib/transform')
 
 var action = 'expandcontainer'
+var alias = 'explodecontainer'
 var filePath = __dirname + '/../files/' + action
 
 /**
@@ -35,7 +36,7 @@ exports.schemaTests = function(IOD) {
 		{
 			name: 'invalid number for depth',
 			IODOpts: {
-				action: T.attempt(U.paths.EXPANDCONT, action)(IOD),
+				action: T.attempt(U.paths.EXPLODECONT, alias)(IOD),
 				params: {
 					depth: 'blah'
 				}
@@ -75,31 +76,6 @@ exports.schemaTests = function(IOD) {
  * @returns {Array} - List of ActionTests
  */
 exports.tests = function(IOD, data) {
-	/**
-	 * Validates that results contains `files` property and that is is not empty, either
-	 * directly from response or from results. For job request we might have two results,
-	 * attempt to get second result as well.
-	 *
-	 * @param {object} env - Environment object
-	 */
-	var shouldHaveResults = function(env) {
-		var results = T.attempt(T.walk(['response', 'actions', 0, 'result']))(env)
-		var results2 = T.attempt(T.walk(['response', 'actions', 1, 'result']))(env)
-		var shouldHaveExpanded = function(v) {
-			if (!v.files || _.size(v.files) === 0) {
-				console.log('Results for expandcontainer fails test: ', U.prettyPrint(v))
-			}
-			should.exists(v.files)
-			_.size(v.files).should.not.be.eql(0)
-		}
-
-		if (!results) shouldHaveExpanded(env.response)
-		else {
-			shouldHaveExpanded(results)
-			if (results2) shouldHaveExpanded(results2)
-		}
-	}
-
 	return [
 		{
 			name: 'url=idolondemand.com/example.zip,password=[1,2,3],depth=2',
@@ -113,13 +89,13 @@ exports.tests = function(IOD, data) {
 			},
 			it: [
 				U.shouldBeSuccessful,
-				shouldHaveResults
+				_.partial(U.shouldHaveResults, action)
 			]
 		},
 		{
 			name: 'reference=expandcontainer,password=[1,2,3],depth=2',
 			IODOpts: {
-				action: T.attempt(U.paths.EXPANDCONT, action)(IOD),
+				action: T.attempt(U.paths.EXPLODECONT, alias)(IOD),
 				params: {
 					reference: T.attempt(T.get('ref'))(data),
 					password: ['1', '2', '3'],
@@ -128,7 +104,7 @@ exports.tests = function(IOD, data) {
 			},
 			it: [
 				U.shouldBeSuccessful,
-				shouldHaveResults
+				_.partial(U.shouldHaveResults, alias)
 			]
 		},
 		{
@@ -143,13 +119,13 @@ exports.tests = function(IOD, data) {
 			},
 			it: [
 				U.shouldBeSuccessful,
-				shouldHaveResults
+				_.partial(U.shouldHaveResults, action)
 			]
 		},
 		{
 			name: 'file=invalid,password=[1,2,3],depth=2',
 			IODOpts: {
-				action: T.attempt(U.paths.EXPANDCONT, action)(IOD),
+				action: T.attempt(U.paths.EXPLODECONT, alias)(IOD),
 				params: {
 					password: ['1', '2', '3'],
 					depth: 2
@@ -174,20 +150,7 @@ exports.tests = function(IOD, data) {
  * @throws {Error} - If couldn't find reference in results
  */
 exports.prepare = function(IOD, done) {
-	var IODOpts = {
-		action: T.attempt(U.paths.STOREOBJ, 'storeobject')(IOD),
-		files: [filePath],
-		getResults: true
-	}
-	IOD.async(IODOpts, function(err, res) {
-		if (err) throw new Error('Failed to prepare for analyzesentiment tests: ' +
-			U.prettyPrint(err))
-		else {
-			var ref = T.attempt(U.paths.REF)(res)
-			if (!ref) throw new Error('Could not find reference from store object: ' +
-				U.prettyPrint(res))
-
-			done({ ref: ref })
-		}
+	U.prepareReference(IOD, filePath, function(ref) {
+		done({ ref: ref })
 	})
 }

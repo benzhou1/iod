@@ -28,6 +28,8 @@ var CONSTANTS = require('./lib/constants')
  * 	If host does not contain protocol
  */
 var IOD = function(apiKey, host, port) {
+	// TODO: add ability to specify/override request options
+	// TODO: need to document specify/override request options
 	var iod = this
 
 	if (!apiKey) throw Error('IOD apiKey is missing!')
@@ -55,6 +57,7 @@ var IOD = function(apiKey, host, port) {
 	_.bindAll.apply(_, [iod].concat(_.functions(IOD.prototype)))
 }
 
+// TODO: document creating new IOD instance
 module.exports = IOD
 
 /**
@@ -79,7 +82,11 @@ IOD.create = function(apiKey, host, port, callback) {
 	var iod = new IOD(apiKey, host, port)
 
 	IodU.getAvailableApis(iod, async.doneFn(callback, function(apis) {
-		_.defaults(iod.ACTIONS, { API: IodU.actionsT(apis) })
+		var apiEnums = _.mapValues(apis, function(value, actionName) {
+			return actionName.toLowerCase()
+		})
+
+		_.defaults(iod.ACTIONS, { API: apiEnums })
 		SchemaU.addReqTypeSchemas(iod)
 		SchemaU.addActionSchemas(iod, apis)
 
