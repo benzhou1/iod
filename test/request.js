@@ -30,11 +30,11 @@ var Actions = requireDir(__dirname + '/actions')
 var ReqTests = requireDir(__dirname + '/request-types')
 
 // Include request-type tests
-var includeReq = ['async']
+var includeReq = []
 // Exclude request-type tests
 var excludeReq = []
 // Include action tests
-var includeAct = ['extracttext']
+var includeAct = []
 // Exclude action tests
 // Quota for expandcontainer is 500, don't run unless we really have to
 var excludeAct = ['expandcontainer']

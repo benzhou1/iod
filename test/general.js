@@ -45,7 +45,7 @@ describe('#GENERAL', function() {
 				},
 
 				function invalidHost(done) {
-					iod.create(IOD.apiKey, 'http://blah', IOD.port,
+					iod.create(IOD.apiKey, 'http://blah',
 						U.beforeDoneFn(gen, 'host', done))
 				},
 

@@ -130,7 +130,8 @@ exports.tests = function(IOD, data) {
 			IODOpts: {
 				action: T.attempt(U.paths.EXTRACTTEXT, action)(IOD),
 				params: _.defaults({
-					url: 'https://www.idolondemand.com/sample-content/documents/HP_License_terms_may2012.doc'
+					url: 'https://www.idolondemand.com/sample-content/documents/' +
+						'HP_License_terms_may2012.doc'
 				}, defParams)
 			},
 			it: [
@@ -138,46 +139,46 @@ exports.tests = function(IOD, data) {
 				_.partial(U.shouldHaveResults, action)
 			]
 		},
-//		{
-//			name: 'reference=extracttext,et,em,addMeta,refPre,pass',
-//			IODOpts: {
-//				action: T.attempt(U.paths.EXTRACTTEXT, action)(IOD),
-//				params: _.defaults({
-//					reference: T.attempt(T.get('ref'))(data)
-//				}, defParams)
-//			},
-//			it: [
-//				U.shouldBeSuccessful,
-//				_.partial(U.shouldHaveResults, action)
-//			]
-//		},
-//		{
-//			name: 'file=extracttext,et,em,addMeta,refPre,pass',
-//			IODOpts: {
-//				action: T.attempt(U.paths.EXTRACTTEXT, action)(IOD),
-//				params: defParams,
-//				files: [filePath]
-//			},
-//			it: [
-//				U.shouldBeSuccessful,
-//				_.partial(U.shouldHaveResults, action)
-//			]
-//		},
-//		{
-//			name: 'file=invalid,et,em,addMeta,refPre,pass',
-//			IODOpts: {
-//				action: T.attempt(U.paths.EXTRACTTEXT, action)(IOD),
-//				params: {
-//					mode: 'document_photo'
-//				},
-//				files: ['invalid file path']
-//			},
-//			it: [
-//				U.shouldError,
-//				_.partial(U.shouldBeInError, 'ENOENT')
-//			],
-//			shouldError: true
-//		}
+		{
+			name: 'reference=extracttext,et,em,addMeta,refPre,pass',
+			IODOpts: {
+				action: T.attempt(U.paths.EXTRACTTEXT, action)(IOD),
+				params: _.defaults({
+					reference: T.attempt(T.get('ref'))(data)
+				}, defParams)
+			},
+			it: [
+				U.shouldBeSuccessful,
+				_.partial(U.shouldHaveResults, action)
+			]
+		},
+		{
+			name: 'file=extracttext,et,em,addMeta,refPre,pass',
+			IODOpts: {
+				action: T.attempt(U.paths.EXTRACTTEXT, action)(IOD),
+				params: defParams,
+				files: [filePath]
+			},
+			it: [
+				U.shouldBeSuccessful,
+				_.partial(U.shouldHaveResults, action)
+			]
+		},
+		{
+			name: 'file=invalid,et,em,addMeta,refPre,pass',
+			IODOpts: {
+				action: T.attempt(U.paths.EXTRACTTEXT, action)(IOD),
+				params: {
+					mode: 'document_photo'
+				},
+				files: ['invalid file path']
+			},
+			it: [
+				U.shouldError,
+				_.partial(U.shouldBeInError, 'ENOENT')
+			],
+			shouldError: true
+		}
 	]
 }
 

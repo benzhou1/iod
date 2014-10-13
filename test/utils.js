@@ -10,7 +10,7 @@ var should = require('should')
 var T = require('../lib/transform')
 var SchemaU = require('../lib/schema')
 
-var apiKey = '6ee6cbee-f94b-4688-a697-259fd8545d94'
+var apiKey = '<your api key>'
 var host = null // override host
 var port = null // override port
 
@@ -233,10 +233,10 @@ exports.prettyPrint = function(v) {
  */
 exports.createJobAction = function(IODOpts, i) {
 	var action = { name: IODOpts.action }
-	if (IODOpts.params) action.params =  IODOpts.params
+	if (IODOpts.params) action.params = IODOpts.params
 	if (IODOpts.files) {
 		action.params = action.params || {}
-		action.params.file = 'file' + i
+		action.params = _.defaults({ file: 'file' + i }, action.params)
 	}
 
 	return action

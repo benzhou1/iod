@@ -47,6 +47,20 @@ describe('#TRANSFORM', function() {
 		})
 	})
 
+	describe('.maybeFromArray', function() {
+		it('should be first element in array', function() {
+			T.maybeFromArray(['blah']).should.be.eql('blah')
+		})
+
+		it('should be original value', function() {
+			T.maybeFromArray([1, 2]).should.be.eql([1, 2])
+			T.maybeFromArray('string').should.be.eql('string')
+			T.maybeFromArray(1).should.be.eql(1)
+			T.maybeFromArray(true).should.be.eql(true)
+			T.maybeFromArray({}).should.be.eql({})
+		})
+	})
+
 	describe('.compactObj', function() {
 		it('should be compacted object', function() {
 			var obj = {
@@ -72,6 +86,16 @@ describe('#TRANSFORM', function() {
 	describe('.toString', function() {
 		it('should not of converted array to string', function() {
 			T.toString([1, 2, 3]).should.be.eql([1, 2, 3])
+		})
+
+		it('should of converted array elements to strings', function() {
+			var obj = { key1: 'val1', key2: 'val2' }
+
+			T.toString([true, obj, 1]).should.be.eql(['true', JSON.stringify(obj), '1'])
+		})
+
+		it('should return first element of array', function() {
+			T.toString([true]).should.be.eql('true')
 		})
 
 		it('should be stringified object', function() {
