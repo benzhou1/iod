@@ -4,6 +4,7 @@
  * ExcludeReq is a list of request-type test to exclude in the run.
  * IncludeAct is a list of action test to include in the run.
  * ExcludeAct is a list of action test to exclude in the run.
+ * actionSchemaOnly is a boolean that says to either run only the ActionSchemaTests.
  *
  * Every request-type has RequestSchemaTests and RequestTests.
  * Every action has ActionSchemaTests and ActionTests.
@@ -38,6 +39,8 @@ var includeAct = []
 // Exclude action tests
 // Quota for expandcontainer is 500, don't run unless we really have to
 var excludeAct = ['expandcontainer']
+// Set to true to run only ActionSchemaTests
+var actionSchemaOnly = false
 
 if (!_.isEmpty(includeReq)) ReqTests = _.pick(ReqTests, includeReq)
 if (!_.isEmpty(excludeReq)) ReqTests = _.omit(ReqTests, excludeReq)
@@ -132,37 +135,40 @@ _.each(ReqTests, function(ReqTest, reqType) {
 					})
 				}
 
-				// Runs every RequestTest for current request-type
-				_.each(ReqTest.tests, function(reqTest) {
-					// Runs with IOD created via the create method
-					describe('[CREATE IOD]' + reqTest.name, function() {
-						before(function(callback) {
-							this[action] = this[action] || {}
-							this[action][reqTest.name] = {}
-							var env = this[action][reqTest.name]
+				// If set don't run ActionTests
+				if (!actionSchemaOnly) {
+					// Runs every RequestTest for current request-type
+					_.each(ReqTest.tests, function(reqTest) {
+						// Runs with IOD created via the create method
+						describe('[CREATE IOD]' + reqTest.name, function() {
+							before(function(callback) {
+								this[action] = this[action] || {}
+								this[action][reqTest.name] = {}
+								var env = this[action][reqTest.name]
 
-							U.createIOD(function(err, IOD) {
-								if (err) return callback()
-								beforeActionTest(IOD, reqTest, ActionTest, env, callback)
+								U.createIOD(function(err, IOD) {
+									if (err) return callback()
+									beforeActionTest(IOD, reqTest, ActionTest, env, callback)
+								})
 							})
+
+							itActionTest(ActionTest, reqTest, action)
 						})
 
-						itActionTest(ActionTest, reqTest, action)
-					})
+						// Runs with IOD created via a new instance
+						describe('[NEW IOD]' + reqTest.name, function() {
+							before(function(callback) {
+								this[action] = this[action] || {}
+								this[action][reqTest.name] = {}
+								var env = this[action][reqTest.name]
 
-					// Runs with IOD created via a new instance
-					describe('[NEW IOD]' + reqTest.name, function() {
-						before(function(callback) {
-							this[action] = this[action] || {}
-							this[action][reqTest.name] = {}
-							var env = this[action][reqTest.name]
+								beforeActionTest(U.IOD, reqTest, ActionTest, env, callback)
+							})
 
-							beforeActionTest(U.IOD, reqTest, ActionTest, env, callback)
+							itActionTest(ActionTest, reqTest, action)
 						})
-
-						itActionTest(ActionTest, reqTest, action)
 					})
-				})
+				}
 			})
 		})
 	})
@@ -224,9 +230,15 @@ function itActionTest(ActionTest, reqTest, action) {
  * @returns {object} Transformed IODOpts
  */
 function transformIODOptsForJob(IODOpts) {
-	return {
-		job: {
-			actions: [U.createJobAction(IODOpts)]
-		}
+	IODOpts.job = {
+		actions: [U.createJobAction(IODOpts, 1)]
 	}
+	IODOpts.files = _.map(IODOpts.files, function(filePath, i) {
+		return {
+			name: 'file' + (i+1),
+			path: filePath
+		}
+	})
+
+	return IODOpts
 }

@@ -33,6 +33,37 @@ exports.schemaTests = function(IOD) {
 		U.actSchemaTests.noinput(IOD, 'EXTRACTTEXT', action),
 
 		{
+			name: 'unequal pair length file-additional_metadata',
+			IODOpts: {
+				action: T.attempt(U.paths.EXTRACTTEXT, action)(IOD),
+				params: {
+					additional_metadata: [
+						{ addMeta: 'addMeta' },
+						{ addMeta: 'addMeta' }
+					]
+				},
+				files: [filePath, filePath, filePath]
+			},
+			it: [
+				U.shouldError,
+				_.partial(U.shouldBeInError, 'pairs')
+			]
+		},
+		{
+			name: 'unequal pair length file-reference_prefix',
+			IODOpts: {
+				action: T.attempt(U.paths.EXTRACTTEXT, action)(IOD),
+				params: {
+					reference_prefix: ['prefix', 'prefix']
+				},
+				files: [filePath, filePath, filePath]
+			},
+			it: [
+				U.shouldError,
+				_.partial(U.shouldBeInError, 'pairs')
+			]
+		},
+		{
 			name: 'invalid boolean for extract_text',
 			IODOpts: {
 				action: T.attempt(U.paths.EXTRACTTEXT, action)(IOD),
