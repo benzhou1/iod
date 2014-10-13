@@ -187,7 +187,7 @@ exports.tests = [
 			]
 		},
 		skip: function(ActionTest) {
-			return !!ActionTest.shouldError
+			return !!ActionTest.shouldError || !!ActionTest.multFiles
 		}
 	},
 	{
@@ -200,6 +200,9 @@ exports.tests = [
 		},
 		itFn: function(ActionTest) {
 			return ActionTest.it
+		},
+		skip: function(ActionTest) {
+			return !!ActionTest.multFiles
 		}
 	}
 ]

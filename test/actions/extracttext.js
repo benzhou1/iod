@@ -107,6 +107,7 @@ exports.schemaTests = function(IOD) {
  * 	{object} IODOpts - IOD options,
  *	{function} it - Array of functions to execute that validates test,
  *	{boolean} shouldError - True if test is expected to error
+ *	{boolean} multFiles - True if test contains multiple files
  * }
  *
  * @param {IOD} IOD - IOD object
@@ -163,6 +164,26 @@ exports.tests = function(IOD, data) {
 				U.shouldBeSuccessful,
 				_.partial(U.shouldHaveResults, action)
 			]
+		},
+		{
+			name: 'file=multiple,et,em,addMeta,refPre,pass',
+			IODOpts: {
+				action: T.attempt(U.paths.EXTRACTTEXT, action)(IOD),
+				params: _.defaults({
+					additional_metadata: [
+						{ addMeta: 'addMeta' },
+						{ addMeta: 'addMeta' },
+						{ addMeta: 'addMeta' }
+					],
+					reference_prefix: ['prefix', 'prefix', 'prefix']
+				}, defParams),
+				files: [filePath, filePath, filePath]
+			},
+			it: [
+				U.shouldBeSuccessful,
+				_.partial(U.shouldHaveResults, action)
+			],
+			multFiles: true
 		},
 		{
 			name: 'file=invalid,et,em,addMeta,refPre,pass',
