@@ -31,50 +31,10 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.actSchemaTests.noinput(IOD, 'RECBAR', action),
-
-		{
-			name: 'invalid array for barcode_type',
-			IODOpts: {
-				action: T.attempt(U.paths.READBAR, alias)(IOD),
-				params: {
-					url: 'url',
-					barcode_type: { key: 'not array' }
-				}
-			},
-			it: [
-				U.shouldError,
-				_.partial(U.shouldBeInSchemaError, 'type', 'barcode_type')
-			]
-		},
-		{
-			name: 'invalid enum for barcode_orientation',
-			IODOpts: {
-				action: T.attempt(U.paths.RECBAR, action)(IOD),
-				params: {
-					url: 'url',
-					barcode_orientation: 'invalid enum'
-				}
-			},
-			it: [
-				U.shouldError,
-				_.partial(U.shouldBeInSchemaError, 'enum', 'barcode_orientation')
-			]
-		},
-		{
-			name: 'invalid enum for barcode_type',
-			IODOpts: {
-				action: T.attempt(U.paths.READBAR, alias)(IOD),
-				params: {
-					url: 'url',
-					barcode_type: 'invalid enum'
-				}
-			},
-			it: [
-				U.shouldError,
-				_.partial(U.shouldBeInSchemaError, 'enum', 'barcode_type')
-			]
-		}
+		U.noInputs(IOD, 'RECBAR', action),
+		U.invalidArrayString(IOD, 'barcode_type', 'READBAR', alias),
+		U.invalidEnumValue(IOD, 'barcode_orientation', 'RECBAR', action),
+		U.invalidEnumValue(IOD, 'barcode_type', 'READBAR', alias)
 	]
 }
 

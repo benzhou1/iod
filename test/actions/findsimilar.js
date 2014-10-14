@@ -1,5 +1,5 @@
 /**
- * Test data for findrelatedconcepts action.
+ * Test data for findsimilar action.
  */
 
 'use strict';
@@ -9,8 +9,7 @@ var U = require('../utils')
 var should = require('should')
 var T = require('../../lib/transform')
 
-var action = 'findrelatedconcepts'
-var alias = 'dynamicthesaurus'
+var action = 'findsimilar'
 var filePath = __dirname + '/../files/' + action
 
 /**
@@ -31,14 +30,26 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.noInputs(IOD, 'FRC', action),
-		U.invalidStringType(IOD, 'field_text', 'DT', alias),
-		U.invalidStringType(IOD, 'indexes', 'FRC', action),
-		U.invalidStringType(IOD, 'min_date', 'DT', alias),
-		U.invalidStringType(IOD, 'max_date', 'FRC', action),
-		U.invalidNumberType(IOD, 'min_score', 'DT', alias),
-		U.invalidNumberType(IOD, 'sample_size', 'FRC', action),
-		U.invalidNumberType(IOD, 'max_results', 'DT', alias)
+		U.noInputs(IOD, 'FINDSIM', action),
+		U.invalidStringType(IOD, 'field_text', 'FINDSIM', action),
+		U.invalidStringType(IOD, 'indexes', 'FINDSIM', action),
+		U.invalidStringType(IOD, 'min_date', 'FINDSIM', action),
+		U.invalidStringType(IOD, 'max_date', 'FINDSIM', action),
+		U.invalidNumberType(IOD, 'min_score', 'FINDSIM', action),
+		U.invalidNumberType(IOD, 'start', 'FINDSIM', action),
+		U.invalidMinimum(IOD, 'start', 0, 'FINDSIM', action),
+		U.invalidNumberType(IOD, 'max_page_results', 'FINDSIM', action),
+		U.invalidMinimum(IOD, 'max_page_results', 0, 'FINDSIM', action),
+		U.invalidNumberType(IOD, 'absolute_max_results', 'FINDSIM', action),
+		U.invalidMinimum(IOD, 'absolute_max_results', 0, 'FINDSIM', action),
+		U.invalidEnumValue(IOD, 'print', 'FINDSIM', action),
+		U.invalidStringType(IOD, 'print_fields', 'FINDSIM', action),
+		U.invalidEnumValue(IOD, 'highlight', 'FINDSIM', action),
+		U.invalidEnumValue(IOD, 'sort', 'FINDSIM', action),
+		U.invalidBooleanType(IOD, 'total_results', 'FINDSIM', action),
+		U.invalidStringType(IOD, 'start_tag', 'FINDSIM', action),
+		U.invalidStringType(IOD, 'end_tag', 'FINDSIM', action),
+		U.invalidEnumValue(IOD, 'summary', 'FINDSIM', action)
 	]
 }
 
@@ -58,19 +69,28 @@ exports.schemaTests = function(IOD) {
 exports.tests = function(IOD, data) {
 	var defParams = {
 		field_text: 'EXISTS{}:WIKIPEDIA_CATEGORY',
-		sample_size: 1,
-		max_results: 1,
+		start: 1,
+		max_page_results: 1,
+		absolute_max_results: 1,
 		indexes: 'wiki_eng',
+		print: 'none',
+		print_fields: 'content',
+		highlight: 'off',
 		min_date: 'blah',
 		max_date: 'blah',
-		min_score: 1
+		min_score: 1,
+		sort: 'off',
+		total_results: true,
+		start_tag: '<u>',
+		end_tag: '</u>',
+		summary: 'off'
 	}
 
 	return [
 		{
-			name: 'text=cats and dogs,ft,ss,mr,indexes,md,maxd,ms',
+			name: 'text=cats and dogs,ft,srt,mpr,i,p,pf,hl,md,mxd,ms,s,tr,st,et,sum',
 			IODOpts: {
-				action: T.attempt(U.paths.FRC, action)(IOD),
+				action: T.attempt(U.paths.FINDSIM, action)(IOD),
 				params: _.defaults({ text: 'cats and dogs' }, defParams)
 			},
 			it: [
@@ -79,22 +99,22 @@ exports.tests = function(IOD, data) {
 			]
 		},
 		{
-			name: 'url=idolondemand.com,ft,ss,mr,indexes,md,maxd,ms',
+			name: 'url=idolondemand.com,ft,srt,mpr,i,p,pf,hl,md,mxd,ms,s,tr,st,et,sum',
 			IODOpts: {
-				action: T.attempt(U.paths.DT, alias)(IOD),
+				action: T.attempt(U.paths.FINDSIM, action)(IOD),
 				params: _.defaults({
 					url: 'http://www.idolondemand.com'
 				}, defParams)
 			},
 			it: [
 				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, alias)
+				_.partial(U.shouldHaveResults, action)
 			]
 		},
 		{
-			name: 'reference=findrelatedconcepts,ft,ss,mr,indexes,md,maxd,ms',
+			name: 'reference=findsimilar,ft,srt,mpr,i,p,pf,hl,md,mxd,ms,s,tr,st,et,sum',
 			IODOpts: {
-				action: T.attempt(U.paths.FRC, action)(IOD),
+				action: T.attempt(U.paths.FINDSIM, action)(IOD),
 				params: _.defaults({
 					reference: T.attempt(T.get('ref'))(data)
 				}, defParams)
@@ -105,21 +125,21 @@ exports.tests = function(IOD, data) {
 			]
 		},
 		{
-			name: 'file=cats and dogs,ft,ss,mr,indexes,md,maxd,ms',
+			name: 'file=cats and dogs,ft,srt,mpr,i,p,pf,hl,md,mxd,ms,s,tr,st,et,sum',
 			IODOpts: {
-				action: T.attempt(U.paths.DT, alias)(IOD),
+				action: T.attempt(U.paths.FINDSIM, action)(IOD),
 				params: defParams,
 				files: [filePath]
 			},
 			it: [
 				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, alias)
+				_.partial(U.shouldHaveResults, action)
 			]
 		},
 		{
-			name: 'file=invalid,ft,ss,mr,indexes,md,maxd,ms',
+			name: 'file=invalid,ft,srt,mpr,i,p,pf,hl,md,mxd,ms,s,tr,st,et,sum',
 			IODOpts: {
-				action: T.attempt(U.paths.FRC, action)(IOD),
+				action: T.attempt(U.paths.FINDSIM, action)(IOD),
 				params: defParams,
 				files: ['invalid file path']
 			},
@@ -141,7 +161,8 @@ exports.tests = function(IOD, data) {
  * @throws {Error} - If couldn't find reference in results
  */
 exports.prepare = function(IOD, done) {
-	U.prepareReference(IOD, action, filePath, function(ref) {
+	// Can use same reference as findrelatedconcepts
+	U.prepareReference(IOD, 'findrelatedconcepts', filePath, function(ref) {
 		done({ ref: ref })
 	})
 }

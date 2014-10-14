@@ -31,7 +31,11 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.actSchemaTests.noinput(IOD, 'VIEWDOC', action),
+		U.noInputs(IOD, 'VIEWDOC', action),
+		U.invalidBooleanType(IOD, 'raw_html', 'VIEW', alias),
+		U.invalidArrayString(IOD, 'highlight_expression', 'VIEWDOC', action),
+		U.invalidArrayString(IOD, 'start_tag', 'VIEW', alias),
+		U.invalidArrayString(IOD, 'end_tag', 'VIEWDOC', action),
 
 		{
 			name: 'unequal pair length highlight_expression-start_tag',
@@ -61,62 +65,6 @@ exports.schemaTests = function(IOD) {
 			it: [
 				U.shouldError,
 				_.partial(U.shouldBeInError, 'pairs')
-			]
-		},
-		{
-			name: 'invalid boolean for raw_html',
-			IODOpts: {
-				action: T.attempt(U.paths.VIEWDOC, action)(IOD),
-				params: {
-					url: 'url',
-					raw_html: 'not a boolean'
-				}
-			},
-			it: [
-				U.shouldError,
-				_.partial(U.shouldBeInSchemaError, 'type', 'raw_html')
-			]
-		},
-		{
-			name: 'invalid array for highlight_expression',
-			IODOpts: {
-				action: T.attempt(U.paths.VIEW, alias)(IOD),
-				params: {
-					url: 'url',
-					highlight_expression: { key: 'not array' }
-				}
-			},
-			it: [
-				U.shouldError,
-				_.partial(U.shouldBeInSchemaError, 'type', 'highlight_expression')
-			]
-		},
-		{
-			name: 'invalid array for start_tag',
-			IODOpts: {
-				url: 'url',
-				action: T.attempt(U.paths.VIEWDOC, action)(IOD),
-				params: {
-					start_tag: { key: 'not array' }
-				}
-			},
-			it: [
-				U.shouldError,
-				_.partial(U.shouldBeInSchemaError, 'type', 'start_tag')
-			]
-		},
-		{
-			name: 'invalid array for end_tag',
-			IODOpts: {
-				action: T.attempt(U.paths.VIEW, alias)(IOD),
-				params: {
-					url: 'url',
-					end_tag: { key: 'not array' }
-				}
-			},
-			it: [
-				U.shouldError,
-				_.partial(U.shouldBeInSchemaError, 'type', 'end_tag')
 			]
 		}
 	]

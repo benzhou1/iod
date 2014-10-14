@@ -31,50 +31,10 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.actSchemaTests.noinput(IOD, 'RECIMAGE', action),
-
-		{
-			name: 'invalid enum for indexes',
-			IODOpts: {
-				action: T.attempt(U.paths.DETIMAGE, alias)(IOD),
-				params: {
-					url: 'url',
-					indexes: 'invalid enum'
-				}
-			},
-			it: [
-				U.shouldError,
-				_.partial(U.shouldBeInSchemaError, 'enum', 'indexes')
-			]
-		},
-		{
-			name: 'invalid enum for image_type',
-			IODOpts: {
-				action: T.attempt(U.paths.RECIMAGE, alias)(IOD),
-				params: {
-					url: 'url',
-					image_type: 'invalid enum'
-				}
-			},
-			it: [
-				U.shouldError,
-				_.partial(U.shouldBeInSchemaError, 'enum', 'image_type')
-			]
-		},
-		{
-			name: 'invalid array for image_type',
-			IODOpts: {
-				action: T.attempt(U.paths.RECIMAGE, alias)(IOD),
-				params: {
-					url: 'url',
-					image_type: { key: 'not an array' }
-				}
-			},
-			it: [
-				U.shouldError,
-				_.partial(U.shouldBeInSchemaError, 'type', 'image_type')
-			]
-		}
+		U.noInputs(IOD, 'RECIMAGE', action),
+		U.invalidEnumValue(IOD, 'indexes', 'DETIMAGE', alias),
+		U.invalidEnumValue(IOD, 'image_type', 'RECIMAGE', action),
+		U.invalidArrayString(IOD, 'image_type', 'DETIMAGE', alias)
 	]
 }
 

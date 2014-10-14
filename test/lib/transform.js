@@ -10,6 +10,16 @@ var should = require('should')
 var T = require('../../lib/transform')
 
 describe('#TRANSFORM', function() {
+	describe('.maplet', function() {
+		it ('should have gotten singleton object', function() {
+			T.maplet('string')('string').should.eql({ string: 'string' })
+			T.maplet('array')([1, 2, 3]).should.eql({ array: [1, 2, 3] })
+			T.maplet('boolean')(true).should.eql({ boolean: true })
+			T.maplet('obj')({ key: 'va1' }).should.eql({ obj: { key: 'va1' } })
+			T.maplet('number')(1).should.eql({ number: 1 })
+		})
+	})
+
 	describe('.get', function() {
 		var obj = {
 			key1: 'val1',

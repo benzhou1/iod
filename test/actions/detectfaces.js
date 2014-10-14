@@ -31,22 +31,8 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.actSchemaTests.noinput(IOD, 'DETFACE', action),
-
-		{
-			name: 'invalid boolean for additional',
-			IODOpts: {
-				action: T.attempt(U.paths.FINDFACE, alias)(IOD),
-				params: {
-					url: 'url',
-					additional: 'not a boolean'
-				}
-			},
-			it: [
-				U.shouldError,
-				_.partial(U.shouldBeInSchemaError, 'type', 'additional')
-			]
-		}
+		U.noInputs(IOD, 'DETFACE', action),
+		U.invalidBooleanType(IOD, 'additional', 'FINDFACE', alias)
 	]
 }
 

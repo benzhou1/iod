@@ -31,34 +31,9 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.actSchemaTests.noinput(IOD, 'SENTIMENT', action),
-
-		{
-			name: 'invalid number for depth',
-			IODOpts: {
-				action: T.attempt(U.paths.EXPLODECONT, alias)(IOD),
-				params: {
-					depth: 'blah'
-				}
-			},
-			it: [
-				U.shouldError,
-				_.partial(U.shouldBeInSchemaError, 'type', 'depth')
-			]
-		},
-		{
-			name: 'invalid array for password',
-			IODOpts: {
-				action: T.attempt(U.paths.EXPANDCONT, action)(IOD),
-				params: {
-					password: { key: 'not array' }
-				}
-			},
-			it: [
-				U.shouldError,
-				_.partial(U.shouldBeInSchemaError, 'type', 'password')
-			]
-		}
+		U.noInputs(IOD, 'EXPANDCONT', action),
+		U.invalidNumberType(IOD, 'depth', 'EXPLODECONT', alias),
+		U.invalidArrayString(IOD, 'password', 'EXPANDCONT', action)
 	]
 }
 

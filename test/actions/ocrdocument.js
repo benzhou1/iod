@@ -31,21 +31,8 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.actSchemaTests.noinput(IOD, 'OCRDOC', action),
-
-		{
-			name: 'invalid enum for mode',
-			IODOpts: {
-				action: T.attempt(U.paths.OCR, alias)(IOD),
-				params: {
-					mode: 'blah'
-				}
-			},
-			it: [
-				U.shouldError,
-				_.partial(U.shouldBeInSchemaError, 'enum', 'mode')
-			]
-		}
+		U.noInputs(IOD, 'OCRDOC', action),
+		U.invalidEnumValue(IOD, 'mode', 'OCR', alias)
 	]
 }
 

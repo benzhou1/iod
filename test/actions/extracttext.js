@@ -30,7 +30,12 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.actSchemaTests.noinput(IOD, 'EXTRACTTEXT', action),
+		U.noInputs(IOD, 'EXTRACTTEXT', action),
+		U.invalidBooleanType(IOD, 'extract_text', 'EXTRACTTEXT', action),
+		U.invalidBooleanType(IOD, 'extract_metadata', 'EXTRACTTEXT', action),
+		U.invalidArrayObj(IOD, 'additional_metadata', 'EXTRACTTEXT', action),
+		U.invalidArrayString(IOD, 'reference_prefix', 'EXTRACTTEXT', action),
+		U.invalidArrayString(IOD, 'password', 'EXTRACTTEXT', action),
 
 		{
 			name: 'unequal pair length file-additional_metadata',
@@ -61,71 +66,6 @@ exports.schemaTests = function(IOD) {
 			it: [
 				U.shouldError,
 				_.partial(U.shouldBeInError, 'pairs')
-			]
-		},
-		{
-			name: 'invalid boolean for extract_text',
-			IODOpts: {
-				action: T.attempt(U.paths.EXTRACTTEXT, action)(IOD),
-				params: {
-					extract_text: 'not boolean'
-				}
-			},
-			it: [
-				U.shouldError,
-				_.partial(U.shouldBeInSchemaError, 'type', 'extract_text')
-			]
-		},
-		{
-			name: 'invalid boolean for extract_metadata',
-			IODOpts: {
-				action: T.attempt(U.paths.EXTRACTTEXT, action)(IOD),
-				params: {
-					extract_metadata: 'not boolean'
-				}
-			},
-			it: [
-				U.shouldError,
-				_.partial(U.shouldBeInSchemaError, 'type', 'extract_metadata')
-			]
-		},
-		{
-			name: 'invalid array for additional_metadata',
-			IODOpts: {
-				action: T.attempt(U.paths.EXTRACTTEXT, action)(IOD),
-				params: {
-					additional_metadata: 'not array'
-				}
-			},
-			it: [
-				U.shouldError,
-				_.partial(U.shouldBeInSchemaError, 'type', 'additional_metadata')
-			]
-		},
-		{
-			name: 'invalid array for reference_prefix',
-			IODOpts: {
-				action: T.attempt(U.paths.EXTRACTTEXT, action)(IOD),
-				params: {
-					reference_prefix: { key: 'not array' }
-				}
-			},
-			it: [
-				U.shouldError,
-				_.partial(U.shouldBeInSchemaError, 'type', 'reference_prefix')
-			]
-		},
-		{
-			name: 'invalid array for password',
-			IODOpts: {
-				action: T.attempt(U.paths.EXTRACTTEXT, action)(IOD),
-				params: {
-					password: { key: 'not array' }
-				}
-			},
-			it: [
-				U.shouldError,
-				_.partial(U.shouldBeInSchemaError, 'type', 'password')
 			]
 		}
 	]

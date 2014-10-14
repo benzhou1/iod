@@ -59,6 +59,15 @@ var commonPaths = {
 	VIEWDOC: T.walk(['ACTIONS', 'API', 'VIEWDOCUMENT']),
 	VIEW: T.walk(['ACTIONS', 'API', 'VIEW']),
 	EXTRACTTEXT: T.walk(['ACTIONS', 'API', 'EXTRACTTEXT']),
+	RECBAR: T.walk(['ACTIONS', 'API', 'RECOGNIZEBARCODES']),
+	READBAR: T.walk(['ACTIONS', 'API', 'READBARCODE']),
+	DETFACE: T.walk(['ACTIONS', 'API', 'DETECTFACES']),
+	FINDFACE: T.walk(['ACTIONS', 'API', 'FINDFACES']),
+	RECIMAGE: T.walk(['ACTIONS', 'API', 'RECOGNIZEIMAGES']),
+	DETIMAGE: T.walk(['ACTIONS', 'API', 'DETECTIMAGE']),
+	FINDSIM: T.walk(['ACTIONS', 'API', 'FINDSIMILAR']),
+	FRC: T.walk(['ACTIONS', 'API', 'FINDRELATEDCONCEPTS']),
+	DT: T.walk(['ACTIONS', 'API', 'DYNAMICTHESAURUS']),
 	API: T.walk(['ACTIONS', 'DISCOVERY', 'API']),
 	STOREOBJ: T.walk(['ACTIONS', 'API', 'STOREOBJECT']),
 	REF: T.walk(['actions', 0, 'result', 'reference'])
@@ -194,27 +203,190 @@ var commonReqSchemaTests = {
 	}
 }
 
+exports.paths = commonPaths
+exports.reqSchemaTests = commonReqSchemaTests
+
 /**
- * Common ActionSchemaTests
+ * Returns a ActionSchemaTest which should check for a no required inputs error.
+ *
+ * @param {IOD} IOD - IOD object
+ * @param {string} path - commonPaths name
+ * @param {string} action - IOD action name
+ * @returns {object} - ActionSchemaTest
  */
-var commonActionSchemaTests = {
-	noinput: function(IOD, path, action) {
-		return {
-			name: 'no inputs',
-			IODOpts: {
-				action: T.attempt(commonPaths[path], action)(IOD)
-			},
-			it: [
-				exports.shouldError,
-				_.partial(exports.shouldBeInError, 'inputs')
-			]
-		}
+exports.noInputs = function(IOD, path, action) {
+	return {
+		name: 'no inputs',
+		IODOpts: {
+			action: T.attempt(commonPaths[path], action)(IOD)
+		},
+		it: [
+			exports.shouldError,
+			_.partial(exports.shouldBeInError, 'inputs')
+		]
 	}
 }
 
-exports.paths = commonPaths
-exports.reqSchemaTests = commonReqSchemaTests
-exports.actSchemaTests = commonActionSchemaTests
+/**
+ * Returns a ActionSchemaTest which should check for a invalid string type error.
+ *
+ * @param {IOD} IOD - IOD object
+ * @param {string} paramName - Action parameter name
+ * @param {string} path - commonPaths name
+ * @param {string} action - IOD action name
+ * @returns {object} - ActionSchemaTest
+ */
+exports.invalidStringType = function(IOD, paramName, path, action) {
+	return {
+		name: 'invalid string for ' + paramName,
+		IODOpts: {
+			action: T.attempt(commonPaths[path], action)(IOD),
+			params: T.maplet(paramName)([1, 2, 3])
+		},
+		it: [
+			exports.shouldError,
+			_.partial(exports.shouldBeInSchemaError, 'type', paramName)
+		]
+	}
+}
+
+/**
+ * Returns a ActionSchemaTest which should check for a invalid enum value error.
+ *
+ * @param {IOD} IOD - IOD object
+ * @param {string} paramName - Action parameter name
+ * @param {string} path - commonPaths name
+ * @param {string} action - IOD action name
+ * @returns {object} - ActionSchemaTest
+ */
+exports.invalidEnumValue = function(IOD, paramName, path, action) {
+	return {
+		name: 'invalid enum for ' + paramName,
+		IODOpts: {
+			action: T.attempt(commonPaths[path], action)(IOD),
+			params: T.maplet(paramName)('invalid enum')
+		},
+		it: [
+			exports.shouldError,
+			_.partial(exports.shouldBeInSchemaError, 'enum', paramName)
+		]
+	}
+}
+
+/**
+ * Returns a ActionSchemaTest which should check for a invalid bollean type error.
+ *
+ * @param {IOD} IOD - IOD object
+ * @param {string} paramName - Action parameter name
+ * @param {string} path - commonPaths name
+ * @param {string} action - IOD action name
+ * @returns {object} - ActionSchemaTest
+ */
+exports.invalidBooleanType = function(IOD, paramName, path, action) {
+	return {
+		name: 'invalid boolean for ' + paramName,
+		IODOpts: {
+			action: T.attempt(commonPaths[path], action)(IOD),
+			params: T.maplet(paramName)('invalid boolean')
+		},
+		it: [
+			exports.shouldError,
+			_.partial(exports.shouldBeInSchemaError, 'type', paramName)
+		]
+	}
+}
+
+/**
+ * Returns a ActionSchemaTest which should check for a invalid number type error.
+ *
+ * @param {IOD} IOD - IOD object
+ * @param {string} paramName - Action parameter name
+ * @param {string} path - commonPaths name
+ * @param {string} action - IOD action name
+ * @returns {object} - ActionSchemaTest
+ */
+exports.invalidNumberType = function(IOD, paramName, path, action) {
+	return {
+		name: 'invalid number for ' + paramName,
+		IODOpts: {
+			action: T.attempt(commonPaths[path], action)(IOD),
+			params: T.maplet(paramName)('invalid number')
+		},
+		it: [
+			exports.shouldError,
+			_.partial(exports.shouldBeInSchemaError, 'type', paramName)
+		]
+	}
+}
+
+/**
+ * Returns a ActionSchemaTest which should check for a below minimum error.
+ *
+ * @param {IOD} IOD - IOD object
+ * @param {string} paramName - Action parameter name
+ * @param {string} path - commonPaths name
+ * @param {string} action - IOD action name
+ * @returns {object} - ActionSchemaTest
+ */
+exports.invalidMinimum = function(IOD, paramName, min, path, action) {
+	return {
+		name: min + ' for ' + paramName,
+		IODOpts: {
+			action: T.attempt(commonPaths[path], action)(IOD),
+			params: T.maplet(paramName)(min)
+		},
+		it: [
+			exports.shouldError,
+			_.partial(exports.shouldBeInSchemaError, 'minimum', paramName)
+		]
+	}
+}
+
+/**
+ * Returns a ActionSchemaTest which should check for a invalid array string type error.
+ *
+ * @param {IOD} IOD - IOD object
+ * @param {string} paramName - Action parameter name
+ * @param {string} path - commonPaths name
+ * @param {string} action - IOD action name
+ * @returns {object} - ActionSchemaTest
+ */
+exports.invalidArrayString = function(IOD, paramName, path, action) {
+	return {
+		name: 'invalid array for ' + paramName,
+		IODOpts: {
+			action: T.attempt(commonPaths[path], action)(IOD),
+			params: T.maplet(paramName)({ key: 'not array of strings' })
+		},
+		it: [
+			exports.shouldError,
+			_.partial(exports.shouldBeInSchemaError, 'type', paramName)
+		]
+	}
+}
+
+/**
+ * Returns a ActionSchemaTest which should check for a invalid array object type error.
+ *
+ * @param {IOD} IOD - IOD object
+ * @param {string} paramName - Action parameter name
+ * @param {string} path - commonPaths name
+ * @param {string} action - IOD action name
+ * @returns {object} - ActionSchemaTest
+ */
+exports.invalidArrayObj = function(IOD, paramName, path, action) {
+	return {
+		name: 'invalid array for ' + paramName,
+		IODOpts: {
+			action: T.attempt(commonPaths[path], action)(IOD),
+			params: T.maplet(paramName)('not array of objects')
+		},
+		it: [
+			exports.shouldError,
+			_.partial(exports.shouldBeInSchemaError, 'type', paramName)
+		]
+	}
+}
 
 /**
  * Returns stringified value `v` with 2 space separation.
@@ -386,6 +558,7 @@ exports.shouldHaveResults = function(action, env) {
 			console.log('Results did not match ' + action +
 				'\'s response schema: ', exports.prettyPrint(errors))
 			console.log('Results: ', exports.prettyPrint(result))
+			console.log('Response: ', exports.prettyPrint(env.response))
 		}
 
 		should.not.exist(errors)

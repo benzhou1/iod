@@ -31,21 +31,8 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.actSchemaTests.noinput(IOD, 'SENTIMENT', action),
-
-		{
-			name: 'invalid enum for language',
-			IODOpts: {
-				action: T.attempt(U.paths.DETECTSENT, alias)(IOD),
-				params: {
-					language: 'blah'
-				}
-			},
-			it: [
-				U.shouldError,
-				_.partial(U.shouldBeInSchemaError, 'enum', 'language')
-			]
-		}
+		U.noInputs(IOD, 'SENTIMENT', action),
+		U.invalidEnumValue(IOD, 'language', 'DETECTSENT', alias)
 	]
 }
 
