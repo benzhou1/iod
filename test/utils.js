@@ -56,6 +56,8 @@ var commonPaths = {
 	EXPLODECONT: T.walk(['ACTIONS', 'API', 'EXPLODECONTAINER']),
 	OCRDOC: T.walk(['ACTIONS', 'API', 'OCRDOCUMENT']),
 	OCR: T.walk(['ACTIONS', 'API', 'OCR']),
+	VIEWDOC: T.walk(['ACTIONS', 'API', 'VIEWDOCUMENT']),
+	VIEW: T.walk(['ACTIONS', 'API', 'VIEW']),
 	EXTRACTTEXT: T.walk(['ACTIONS', 'API', 'EXTRACTTEXT']),
 	API: T.walk(['ACTIONS', 'DISCOVERY', 'API']),
 	STOREOBJ: T.walk(['ACTIONS', 'API', 'STOREOBJECT']),
