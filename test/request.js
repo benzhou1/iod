@@ -38,8 +38,8 @@ var excludeReq = []
 var includeAct = []
 // Exclude action tests
 // Quota for expandcontainer is 500, don't run unless we really have to
-// Quota for detectfaces is 1000, don't run unless we really have to
-var excludeAct = ['expandcontainer', 'detectfaces']
+// Quota for recognizeimages is 1000, don't run unless we really have to
+var excludeAct = ['expandcontainer', 'recognizeimages']
 // Set to true to run only ActionSchemaTests
 var actionSchemaOnly = false
 
