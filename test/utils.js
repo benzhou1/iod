@@ -69,6 +69,7 @@ var commonPaths = {
 	GETCONT: T.walk(['ACTIONS', 'API', 'GETCONTENT']),
 	FRC: T.walk(['ACTIONS', 'API', 'FINDRELATEDCONCEPTS']),
 	DT: T.walk(['ACTIONS', 'API', 'DYNAMICTHESAURUS']),
+	GPV: T.walk(['ACTIONS', 'API', 'GETPARAMETRICVALUES']),
 	API: T.walk(['ACTIONS', 'DISCOVERY', 'API']),
 	STOREOBJ: T.walk(['ACTIONS', 'API', 'STOREOBJECT']),
 	REF: T.walk(['actions', 0, 'result', 'reference'])
