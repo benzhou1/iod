@@ -66,6 +66,7 @@ var commonPaths = {
 	RECIMAGE: T.walk(['ACTIONS', 'API', 'RECOGNIZEIMAGES']),
 	DETIMAGE: T.walk(['ACTIONS', 'API', 'DETECTIMAGE']),
 	FINDSIM: T.walk(['ACTIONS', 'API', 'FINDSIMILAR']),
+	GETCONT: T.walk(['ACTIONS', 'API', 'GETCONTENT']),
 	FRC: T.walk(['ACTIONS', 'API', 'FINDRELATEDCONCEPTS']),
 	DT: T.walk(['ACTIONS', 'API', 'DYNAMICTHESAURUS']),
 	API: T.walk(['ACTIONS', 'DISCOVERY', 'API']),
@@ -205,6 +206,33 @@ var commonReqSchemaTests = {
 
 exports.paths = commonPaths
 exports.reqSchemaTests = commonReqSchemaTests
+
+/**
+ * Returns a ActionSchemaTest which should check for a required parameter error.
+ *
+ * @param {IOD} IOD - IOD object
+ * @param {string} path - commonPaths name
+ * @param {string} action - IOD action name
+ * @returns {object} - ActionSchemaTest
+ */
+exports.missingRequired = function(IOD, paramName, path, action) {
+	return {
+		name: 'missing required parameter ' + paramName,
+		IODOpts: {
+			action: T.attempt(commonPaths[path], action)(IOD),
+			params: {
+				text: 'some text',
+				url: 'some url',
+				json: 'some json'
+			},
+			files: ['some file']
+		},
+		it: [
+			exports.shouldError,
+			_.partial(exports.shouldBeInSchemaError, 'required', paramName)
+		]
+	}
+}
 
 /**
  * Returns a ActionSchemaTest which should check for a no required inputs error.
@@ -474,14 +502,17 @@ exports.beforeDoneFn = function(env, path, callback) {
  */
 exports.shouldBeInSchemaError = function(msg, key, env) {
 	var error = _.find(T.maybeToArray(env.error), function(error) {
-		var message = T.attempt(T.walk(['error', 0, 'message']), error.message)(error)
-		var path = T.attempt(T.walk(['error', 0, 'path']), error.path)(error)
-
-		return _.contains(message, msg) && _.contains(path, key)
+		if (error.action) {
+			return _.find(error.error, function(jobErr) {
+				return _.contains(jobErr.message, msg) && _.contains(jobErr.path, key)
+			})
+		}
+		else return _.contains(error.message, msg) && _.contains(error.path, key)
 	})
 
 	if (!error) console.log('shouldBeInSchemaError - env.error: ',
 		exports.prettyPrint(env.error))
+
 	should.exists(error)
 	return env
 }
