@@ -79,6 +79,8 @@ var commonPaths = {
 	EXPANDTERM: T.walk(['ACTIONS', 'API', 'EXPANDTERM']),
 	HLTEXT: T.walk(['ACTIONS', 'API', 'HIGHLIGHTTEXT']),
 	HL: T.walk(['ACTIONS', 'API', 'HIGHLIGHT']),
+	IDLANG: T.walk(['ACTIONS', 'API', 'IDENTIFYLANGUAGE']),
+	DETLANG: T.walk(['ACTIONS', 'API', 'DETECTLANGUAGE']),
 	API: T.walk(['ACTIONS', 'DISCOVERY', 'API']),
 	STOREOBJ: T.walk(['ACTIONS', 'API', 'STOREOBJECT']),
 	REF: T.walk(['actions', 0, 'result', 'reference'])
