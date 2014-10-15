@@ -73,6 +73,8 @@ var commonPaths = {
 	QTI: T.walk(['ACTIONS', 'API', 'QUERYTEXTINDEX']),
 	QUERY: T.walk(['ACTIONS', 'API', 'QUERY']),
 	CATDOC: T.walk(['ACTIONS', 'API', 'CATEGORIZEDOCUMENT']),
+	EENTITIES: T.walk(['ACTIONS', 'API', 'EXTRACTENTITIES']),
+	EENTITY: T.walk(['ACTIONS', 'API', 'EXTRACTENTITY']),
 	API: T.walk(['ACTIONS', 'DISCOVERY', 'API']),
 	STOREOBJ: T.walk(['ACTIONS', 'API', 'STOREOBJECT']),
 	REF: T.walk(['actions', 0, 'result', 'reference'])
@@ -215,6 +217,7 @@ exports.reqSchemaTests = commonReqSchemaTests
  * Returns a ActionSchemaTest which should check for a required parameter error.
  *
  * @param {IOD} IOD - IOD object
+ * @param {string} paramName - Action parameter name
  * @param {string} path - commonPaths name
  * @param {string} action - IOD action name
  * @returns {object} - ActionSchemaTest
@@ -244,13 +247,15 @@ exports.missingRequired = function(IOD, paramName, path, action) {
  * @param {IOD} IOD - IOD object
  * @param {string} path - commonPaths name
  * @param {string} action - IOD action name
+ * @param {object} required - Required action parameters
  * @returns {object} - ActionSchemaTest
  */
-exports.noInputs = function(IOD, path, action) {
+exports.noInputs = function(IOD, path, action, required) {
 	return {
 		name: 'no inputs',
 		IODOpts: {
-			action: T.attempt(commonPaths[path], action)(IOD)
+			action: T.attempt(commonPaths[path], action)(IOD),
+			params: required || {}
 		},
 		it: [
 			exports.shouldError,
