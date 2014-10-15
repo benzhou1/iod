@@ -1,5 +1,5 @@
 /**
- * Test data for findsimilar action.
+ * Test data for querytextindex action.
  */
 
 'use strict';
@@ -9,7 +9,8 @@ var U = require('../utils')
 var should = require('should')
 var T = require('../../lib/transform')
 
-var action = 'findsimilar'
+var action = 'querytextindex'
+var alias = 'query'
 var filePath = __dirname + '/../files/' + action
 
 /**
@@ -30,27 +31,27 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.noInputs(IOD, 'FINDSIM', action),
-		U.invalidStringType(IOD, 'field_text', 'FINDSIM', action),
-		U.invalidNumberType(IOD, 'start', 'FINDSIM', action),
-		U.invalidMinimum(IOD, 'start', 0, 'FINDSIM', action),
-		U.invalidNumberType(IOD, 'max_page_results', 'FINDSIM', action),
-		U.invalidMinimum(IOD, 'max_page_results', 0, 'FINDSIM', action),
-		U.invalidNumberType(IOD, 'absolute_max_results', 'FINDSIM', action),
-		U.invalidMinimum(IOD, 'absolute_max_results', 0, 'FINDSIM', action),
-		U.invalidStringType(IOD, 'indexes', 'FINDSIM', action),
-		U.invalidStringType(IOD, 'database_match', 'FINDSIM', action),
-		U.invalidEnumValue(IOD, 'print', 'FINDSIM', action),
-		U.invalidStringType(IOD, 'print_fields', 'FINDSIM', action),
-		U.invalidEnumValue(IOD, 'highlight', 'FINDSIM', action),
-		U.invalidStringType(IOD, 'min_date', 'FINDSIM', action),
-		U.invalidStringType(IOD, 'max_date', 'FINDSIM', action),
-		U.invalidNumberType(IOD, 'min_score', 'FINDSIM', action),
-		U.invalidEnumValue(IOD, 'sort', 'FINDSIM', action),
-		U.invalidBooleanType(IOD, 'total_results', 'FINDSIM', action),
-		U.invalidStringType(IOD, 'start_tag', 'FINDSIM', action),
-		U.invalidStringType(IOD, 'end_tag', 'FINDSIM', action),
-		U.invalidEnumValue(IOD, 'summary', 'FINDSIM', action)
+		U.noInputs(IOD, 'QTI', action),
+		U.invalidStringType(IOD, 'field_text', 'QTI', action),
+		U.invalidNumberType(IOD, 'start', 'QUERY', alias),
+		U.invalidMinimum(IOD, 'start', 0, 'QTI', action),
+		U.invalidNumberType(IOD, 'max_page_results', 'QUERY', alias),
+		U.invalidMinimum(IOD, 'max_page_results', 0, 'QTI', action),
+		U.invalidNumberType(IOD, 'absolute_max_results', 'QUERY', alias),
+		U.invalidMinimum(IOD, 'absolute_max_results', 0, 'QTI', action),
+		U.invalidStringType(IOD, 'indexes', 'QUERY', alias),
+		U.invalidStringType(IOD, 'database_match', 'QTI', action),
+		U.invalidEnumValue(IOD, 'print', 'QUERY', alias),
+		U.invalidStringType(IOD, 'print_fields', 'QTI', action),
+		U.invalidEnumValue(IOD, 'highlight', 'QUERY', alias),
+		U.invalidStringType(IOD, 'min_date', 'QTI', action),
+		U.invalidStringType(IOD, 'max_date', 'QUERY', alias),
+		U.invalidNumberType(IOD, 'min_score', 'QTI', action),
+		U.invalidEnumValue(IOD, 'sort', 'QUERY', alias),
+		U.invalidBooleanType(IOD, 'total_results', 'QTI', action),
+		U.invalidStringType(IOD, 'start_tag', 'QUERY', alias),
+		U.invalidStringType(IOD, 'end_tag', 'QTI', action),
+		U.invalidEnumValue(IOD, 'summary', 'QUERY', alias)
 	]
 }
 
@@ -91,7 +92,7 @@ exports.tests = function(IOD, data) {
 		{
 			name: 'text=cats and dogs,ft,srt,mpr,i,p,pf,hl,md,mxd,ms,s,tr,st,et,sum',
 			IODOpts: {
-				action: T.attempt(U.paths.FINDSIM, action)(IOD),
+				action: T.attempt(U.paths.QTI, action)(IOD),
 				params: _.defaults({ text: 'cats and dogs' }, defParams)
 			},
 			it: [
@@ -102,20 +103,20 @@ exports.tests = function(IOD, data) {
 		{
 			name: 'url=idolondemand.com,ft,srt,mpr,i,p,pf,hl,md,mxd,ms,s,tr,st,et,sum',
 			IODOpts: {
-				action: T.attempt(U.paths.FINDSIM, action)(IOD),
+				action: T.attempt(U.paths.QUERY, alias)(IOD),
 				params: _.defaults({
 					url: 'http://www.idolondemand.com'
 				}, defParams)
 			},
 			it: [
 				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
+				_.partial(U.shouldHaveResults, alias)
 			]
 		},
 		{
-			name: 'reference=findsimilar,ft,srt,mpr,i,p,pf,hl,md,mxd,ms,s,tr,st,et,sum',
+			name: 'reference=qutextindex,ft,srt,mpr,i,p,pf,hl,md,mxd,ms,s,tr,st,et,sum',
 			IODOpts: {
-				action: T.attempt(U.paths.FINDSIM, action)(IOD),
+				action: T.attempt(U.paths.QTI, action)(IOD),
 				params: _.defaults({
 					reference: T.attempt(T.get('ref'))(data)
 				}, defParams)
@@ -128,19 +129,19 @@ exports.tests = function(IOD, data) {
 		{
 			name: 'file=cats and dogs,ft,srt,mpr,i,p,pf,hl,md,mxd,ms,s,tr,st,et,sum',
 			IODOpts: {
-				action: T.attempt(U.paths.FINDSIM, action)(IOD),
+				action: T.attempt(U.paths.QUERY, alias)(IOD),
 				params: defParams,
 				files: [filePath]
 			},
 			it: [
 				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
+				_.partial(U.shouldHaveResults, alias)
 			]
 		},
 		{
 			name: 'file=invalid,ft,srt,mpr,i,p,pf,hl,md,mxd,ms,s,tr,st,et,sum',
 			IODOpts: {
-				action: T.attempt(U.paths.FINDSIM, action)(IOD),
+				action: T.attempt(U.paths.QTI, action)(IOD),
 				params: defParams,
 				files: ['invalid file path']
 			},
