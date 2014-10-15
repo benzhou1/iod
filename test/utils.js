@@ -75,6 +75,8 @@ var commonPaths = {
 	CATDOC: T.walk(['ACTIONS', 'API', 'CATEGORIZEDOCUMENT']),
 	EENTITIES: T.walk(['ACTIONS', 'API', 'EXTRACTENTITIES']),
 	EENTITY: T.walk(['ACTIONS', 'API', 'EXTRACTENTITY']),
+	EXPANDTERMS: T.walk(['ACTIONS', 'API', 'EXPANDTERMS']),
+	EXPANDTERM: T.walk(['ACTIONS', 'API', 'EXPANDTERM']),
 	API: T.walk(['ACTIONS', 'DISCOVERY', 'API']),
 	STOREOBJ: T.walk(['ACTIONS', 'API', 'STOREOBJECT']),
 	REF: T.walk(['actions', 0, 'result', 'reference'])
