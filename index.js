@@ -22,13 +22,13 @@ var CONSTANTS = require('./lib/constants')
  * @property {string} apiKey - Api key
  * @property {string} host - IOD host
  * @property {integer} port - IOD port
+ * @property {object} reqOpts - Request options
  * @constructor
  * @throws {Error}
  * 	If api key does not exists.
  * 	If host does not contain protocol
  */
-var IOD = function(apiKey, host, port) {
-	// TODO: add ability to specify/override request options
+var IOD = function(apiKey, host, port, reqOpts) {
 	// TODO: need to document specify/override request options
 	var iod = this
 
@@ -51,6 +51,7 @@ var IOD = function(apiKey, host, port) {
 	iod.apiKey = apiKey
 	iod.host = host || httpsHost
 	iod.port = port || httpsPort
+	iod.reqOpts = _.defaults(reqOpts || {}, { timeout: 20000 })
 
 	SchemaU.initSchemas(iod)
 
@@ -67,9 +68,10 @@ module.exports = IOD
  * @param {string} apiKey - Api key
  * @param {string} host - Optional IOD host
  * @param {integer} port - Optional IOD port
+ * @param {object} reqOpts - Optional Request options
  * @param {function} callback - Callback(err, IOD)
  */
-IOD.create = function(apiKey, host, port, callback) {
+IOD.create = function(apiKey, host, port, reqOpts, callback) {
 	if (_.isFunction(host)) {
 		callback = host
 		host = undefined
@@ -78,8 +80,12 @@ IOD.create = function(apiKey, host, port, callback) {
 		callback = port
 		port = undefined
 	}
+	else if (_.isFunction(reqOpts)) {
+		callback = reqOpts
+		reqOpts = undefined
+	}
 
-	var iod = new IOD(apiKey, host, port)
+	var iod = new IOD(apiKey, host, port, reqOpts)
 
 	IodU.getAvailableApis(iod, async.doneFn(callback, function(apis) {
 		var apiEnums = _.mapValues(apis, function(value, actionName) {
