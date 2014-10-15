@@ -72,6 +72,7 @@ var commonPaths = {
 	GPV: T.walk(['ACTIONS', 'API', 'GETPARAMETRICVALUES']),
 	QTI: T.walk(['ACTIONS', 'API', 'QUERYTEXTINDEX']),
 	QUERY: T.walk(['ACTIONS', 'API', 'QUERY']),
+	CATDOC: T.walk(['ACTIONS', 'API', 'CATEGORIZEDOCUMENT']),
 	API: T.walk(['ACTIONS', 'DISCOVERY', 'API']),
 	STOREOBJ: T.walk(['ACTIONS', 'API', 'STOREOBJECT']),
 	REF: T.walk(['actions', 0, 'result', 'reference'])
