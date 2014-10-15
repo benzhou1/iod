@@ -33,6 +33,7 @@ exports.schemaTests = function(IOD) {
 		U.noInputs(IOD, 'FINDSIM', action),
 		U.invalidStringType(IOD, 'field_text', 'FINDSIM', action),
 		U.invalidStringType(IOD, 'indexes', 'FINDSIM', action),
+		U.invalidStringType(IOD, 'database_match', 'FINDSIM', action),
 		U.invalidStringType(IOD, 'min_date', 'FINDSIM', action),
 		U.invalidStringType(IOD, 'max_date', 'FINDSIM', action),
 		U.invalidNumberType(IOD, 'min_score', 'FINDSIM', action),

@@ -34,11 +34,12 @@ exports.schemaTests = function(IOD) {
 		U.noInputs(IOD, 'FRC', action),
 		U.invalidStringType(IOD, 'field_text', 'DT', alias),
 		U.invalidStringType(IOD, 'indexes', 'FRC', action),
-		U.invalidStringType(IOD, 'min_date', 'DT', alias),
-		U.invalidStringType(IOD, 'max_date', 'FRC', action),
-		U.invalidNumberType(IOD, 'min_score', 'DT', alias),
-		U.invalidNumberType(IOD, 'sample_size', 'FRC', action),
-		U.invalidNumberType(IOD, 'max_results', 'DT', alias)
+		U.invalidStringType(IOD, 'database_match', 'DT', alias),
+		U.invalidStringType(IOD, 'min_date', 'FRC', action),
+		U.invalidStringType(IOD, 'max_date', 'DT', alias),
+		U.invalidNumberType(IOD, 'min_score', 'FRC', action),
+		U.invalidNumberType(IOD, 'sample_size', 'DT', alias),
+		U.invalidNumberType(IOD, 'max_results', 'FRC', action)
 	]
 }
 

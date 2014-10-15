@@ -32,6 +32,8 @@ exports.schemaTests = function(IOD) {
 	return [
 		U.missingRequired(IOD, 'index_reference', 'GETCONT', action),
 		U.invalidArrayString(IOD, 'index_reference', 'GETCONT', action),
+		U.invalidStringType(IOD, 'indexes', 'GETCONT', action),
+		U.invalidStringType(IOD, 'database_match', 'GETCONT', action),
 		U.invalidStringType(IOD, 'highlight_expression', 'GETCONT', action),
 		U.invalidStringType(IOD, 'start_tag', 'GETCONT', action),
 		U.invalidStringType(IOD, 'end_tag', 'GETCONT', action),

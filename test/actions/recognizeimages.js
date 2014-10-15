@@ -33,8 +33,9 @@ exports.schemaTests = function(IOD) {
 	return [
 		U.noInputs(IOD, 'RECIMAGE', action),
 		U.invalidEnumValue(IOD, 'indexes', 'DETIMAGE', alias),
-		U.invalidEnumValue(IOD, 'image_type', 'RECIMAGE', action),
-		U.invalidArrayString(IOD, 'image_type', 'DETIMAGE', alias)
+		U.invalidEnumValue(IOD, 'database_match', 'RECIMAGE', action),
+		U.invalidEnumValue(IOD, 'image_type', 'DETIMAGE', alias),
+		U.invalidArrayString(IOD, 'image_type', 'RECIMAGE', action)
 	]
 }
 
