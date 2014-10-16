@@ -6,9 +6,11 @@ IOD is an IDOL onDemand framework which makes it easy to send api requests to ID
 
 If you are new to what IDOL onDemand has to offer, check out their website at: [IDOL onDemand](http://www.idolondemand.com)
 
-IOD provides client side schema validation of all allowed actions before sending your request off to IDOL onDemand. It uses the request package to handle all http request and file uploads for you. The only thing you need to know is how to create an `IODOpt` object. Each IOD request type has their own JSON schema for creating the `IODOpt` object described by [Json-Schema](http://json-schema.org).
+IOD provides client side schema validation of all allowed actions before sending your request off to IDOL onDemand. It also handles validation for action aliases and parameter aliases. Required input sources and array parameters that are required to have the same length are validated as well. It uses the request package to handle all http request and file uploads for you. The only thing you need to know is how to create an `IODOpt` object. Each IOD request type has their own JSON schema for creating the `IODOpt` object described by [Json-Schema](http://json-schema.org).
 
 # Quick Start Guide
+
+### 1.) IOD object via `create` method
 
 To make an IDOL onDemand request, simply create an IOD object with the `create` method. Pass in your IDOL onDemand api key, and a callback that accepts an error as the first argument and the IOD object that has been created as the second argument.
 
@@ -59,12 +61,69 @@ IOD.create('my api key', function(err, IOD) {
 })
 ```
 
+### 2.) Creating new instance of IOD
+
+To make an IDOL onDemand request, simply create a new instance of IOD class and pass in your IDOL onDemand api key.
+
+This method is synchronous and will return you a new IOD object right away, but the tradeoff with this approach is that no client side validation will be done for you. The avialible actions for your api key will not be loaded.
+
+With the IOD object, you can make a request by simply creating an `IODOpts` object following the schema of your request type. In this example we will be making a `sync` request with `analyzesentiment` action.
+
+```javascript
+var iod = require('IOD')
+var IOD = new iod('my api key')
+
+// IODOpts object for sync request with analyzesentiment action
+var IODOpts = {
+	majorVersion: IOD.VERSIONS.MAJOR.V1,
+	// ACTIONS aren't loaded with you availible actions
+	action: 'analyzesentiment',
+	apiVersion: IOD.VERSIONS.API.V1,
+	method: 'get',
+	params: {
+		text: '=)'
+	}
+}
+	
+IOD.sync(IODOpts, function(err, res) {
+	console.log('SYNC ERROR: ', err)
+	console.log('RESPONSE: ', res)
+	
+	/* RESPONSE: {
+	  "positive": [
+	    {
+	      "sentiment": "=)",
+	      "topic": null,
+	      "score": 0.6280145725181376,
+	      "original_text": "=)",
+	      "original_length": 2,
+	      "normalized_text": "=)",
+	      "normalized_length": 2
+	    }
+	  ],
+	  "negative": [],
+	  "aggregate": {
+	    "sentiment": "positive",
+	    "score": 0.6280145725181376
+	  }
+	}
+	*/
+})
+```
+
+# Advance Usage
+
+When creating a IOD object either through `create` method or creating new instance of IOD class, you are allowed to override the Idolon Demand host and Idolon Demand port. By default the host and port will point to `'https://api.idolondemand.com'` and `443` respectively. As mentioned above, IOD uses request package, therefore you can also override any [request options](https://www.npmjs.org/package/request) availible.
+
+
+
 # Documentation
 
 ### Constants
 * [`ACTIONS`](#actions)
 * [`TYPES`](#types)
 * [`VERSIONS`](#versions)
+* [`schemas`](#schemas)
 
 ### Schemas
 * [`ASYNC`](#asyncSchema)
@@ -94,6 +153,7 @@ There are two types of actions:
   * [`ACTIONS.DISCOVERY.API`](https://www.idolondemand.com/developer/docs/APIDiscovery.html)
 2. `ACTIONS.API`
   * List of allowed actions and their aliases from [`API`](https://www.idolondemand.com/developer/docs/APIDiscovery.html).
+  * This only exists if IOD object is created via `create` method.
   * (e.g. `ACTIONS.API.EXTRACTEXT`)
   
 <a name="types" />
@@ -115,6 +175,24 @@ There are two types of versions:
   * `VERSIONS.MAJOR.V1` - initial version
 2. `VERSIONS.API`(e.g. /1/api/sync/listindex/`<apiVersion>`)
   * `VERSIONS.API.V1` - initial version
+
+<a name="schemas" />
+#### `schemas` - Contains all action schema related data 
+This only exists if IOD object is created via `create` method
+
+1. `schemas.schema` (object containing parameter and response schema for every allowed action)
+  * Property names are `<Idolon Demand action name>`.`<parameters or response>` (e.g. schemas.schema['analyzesentiment.parameters'])
+  * Property values are the parameter schema or response schema for that action.
+2. `schemas.parameters` (object containing all parameters for every allowed action)
+  * Property names are `<Idolon Demand action name>` (e.g. `schemas.parameters.analyzesentiment`)
+  * Property values are list of all parameters for that action.
+3. `schemas.inputs` (object containing all input sources for every allowed action)
+  * Property names are `<Idolon Demand action name>` (e.g. `schemas.inputs.analyzesentiment`)
+  * Property values are list of all input sources for that action.
+4. `schemas.pairs` (object containing all parameter pairs for every allowed action)
+  * Property names are `<Idolon Demand action name>` (e.g. `schemas.pairs.analyzesentiment`)
+  * Property values are objects where the property name refers to the main parameter in the pair and the value refers to a list of all parameters that the main parameters is paired with. (e.g. `schemas.pairs.viewdocument.highlight_expression` -> `['start_tag', 'end_tag']`)
+
 
 # Methods
 
