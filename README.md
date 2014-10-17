@@ -178,6 +178,17 @@ console.log('Request options: ', IOD.reqOpts)
 * [`result`](#result)
 * [`discovery`](#discovery)
 
+# IOD
+
+### new IOD(IODOpts, [Optional host], [Optional port], [Optional reqOpts], callback)
+
+Creats a new instance of IOD class. Available actions for your api key will not be loaded. There will be no client-side validation for IDOL onDemand actions. Use with care.
+
+#### Parameters
+* `IODOpts` - IOD options (see Schema below)
+* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from IDOL onDemand as its second `res`.
+
+
 # Constants
 
 <a name="actions" />
