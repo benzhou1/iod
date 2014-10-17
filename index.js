@@ -18,7 +18,8 @@ var CONSTANTS = require('./lib/constants')
  *
  * @param {string} apiKey - Api key
  * @param {string}host - IOD host
- * @param {integer}port - IOD port
+ * @param {integer} port - IOD port
+ * @param {integer} reqOpts - Request options
  * @property {string} apiKey - Api key
  * @property {string} host - IOD host
  * @property {integer} port - IOD port
@@ -29,8 +30,16 @@ var CONSTANTS = require('./lib/constants')
  * 	If host does not contain protocol
  */
 var IOD = function(apiKey, host, port, reqOpts) {
-	// TODO: need to document specify/override request options
 	var iod = this
+
+	if (_.isObject(host)) {
+		reqOpts = host
+		host = undefined
+	}
+	else if (_.isObject(port)) {
+		reqOpts = port
+		port = undefined
+	}
 
 	if (!apiKey) throw Error('IOD apiKey is missing!')
 	else if (host && !url.parse(host, false, true).protocol) {
@@ -58,7 +67,6 @@ var IOD = function(apiKey, host, port, reqOpts) {
 	_.bindAll.apply(_, [iod].concat(_.functions(IOD.prototype)))
 }
 
-// TODO: document creating new IOD instance
 module.exports = IOD
 
 /**
