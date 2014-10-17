@@ -117,9 +117,9 @@ IOD.sync(IODOpts, function(err, res) {
 
 # Advance Usage
 
-When creating a IOD object either through `create` method or creating new instance of IOD class, you are allowed to override the Idolon Demand host and Idolon Demand port. By default the host and port will point to `'https://api.idolondemand.com'` and `443` respectively. As mentioned above, IOD uses request package, therefore you can also override any [request options](https://www.npmjs.org/package/request) availible.
+When creating a IOD object either through `create` method or creating new instance of IOD class, you are allowed to override the IDOL onDemand host and IDOL onDemand port. By default the host and port will point to `'https://api.idolondemand.com'` and `443` respectively. As mentioned above, IOD uses request package, therefore you can also override any [request options](https://www.npmjs.org/package/request) availible.
 
-### 1.) Overriding Idolon Demand host and port
+### 1.) Overriding IDOL onDemand host and port
 
 ```javascript
 var iod = require('IOD')
@@ -127,14 +127,14 @@ var iod = require('IOD')
 // via create method
 iod.create('my api key', 'override host', 8080, function(err, IOD) {
 	console.log('ERROR: ', err)
-	console.log('Idolon Demand host: ', IOD.host)
-	console.log('Idolon Demand port: ', IOD.port)
+	console.log('IDOL onDemand host: ', IOD.host)
+	console.log('IDOL onDemand port: ', IOD.port)
 })
 
 // new instance of IOD class
 var IOD = new iod('my api key', 'override host', 8080)
-console.log('Idolon Demand host: ', IOD.host)
-console.log('Idolon Demand port: ', IOD.port)
+console.log('IDOL onDemand host: ', IOD.host)
+console.log('IDOL onDemand port: ', IOD.port)
 ```
 
 ### 2.) Overriding request options
@@ -182,12 +182,23 @@ console.log('Request options: ', IOD.reqOpts)
 
 ### new IOD(IODOpts, [Optional host], [Optional port], [Optional reqOpts], callback)
 
-Creats a new instance of IOD class. Available actions for your api key will not be loaded. There will be no client-side validation for IDOL onDemand actions. Use with care.
+Creates a new instance of IOD class with specified `apiKey`. You can override the host and port otherwise it will point to the IDOL onDemand server. You can also override the request options as needed. Available actions for your api key will not be loaded. There will be no client-side validation for IDOL onDemand actions. Use with care.
 
 #### Parameters
-* `IODOpts` - IOD options (see Schema below)
-* `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from IDOL onDemand as its second `res`.
+* `apiKey` - Your IDOL onDemand api key
+* `IODhost` - Can override IDOL onDemand host (for developers)
+* `IODport` - Can override IDOL onDemand port (for developers)
+* `reqOpts` - Can override the request options when making request.
 
+#### Properties
+* `apiKey` - Your IDOL onDemand api key
+* `host` - Your set IDOL onDemand host
+* `port` - Your set IDOL onDemand port
+* `reqOpts` - Your set request options
+* `ACTIONS` - Object containing constant values for IDOL onDemand actions. See [ACTIONS](#actions)
+* `TYPES` - Object containing constant values for IDOL onDemand request types. See [TYPES](#types)
+* `VERSIONS` - Object containing constant vlaues for IDOL onDemand versions. See [VERSIONS](#versions)
+* `schemas` - Object containing schemas and data related to IDOL onDemand actions. See [schemas](#constSchemas)
 
 # Constants
 
@@ -228,16 +239,16 @@ There are two types of versions:
 This only exists if IOD object is created via `create` method
 
 1. `schemas.schema` (object containing parameter and response schema for every allowed action)
-  * Property names are `<Idolon Demand action name>`.`<parameters or response>` (e.g. schemas.schema['analyzesentiment.parameters'])
+  * Property names are `<IDOL onDemand action name>`.`<parameters or response>` (e.g. schemas.schema['analyzesentiment.parameters'])
   * Property values are the parameter schema or response schema for that action.
 2. `schemas.parameters` (object containing all parameters for every allowed action)
-  * Property names are `<Idolon Demand action name>` (e.g. `schemas.parameters.analyzesentiment`)
+  * Property names are `<IDOL onDemand action name>` (e.g. `schemas.parameters.analyzesentiment`)
   * Property values are list of all parameters for that action.
 3. `schemas.inputs` (object containing all input sources for every allowed action)
-  * Property names are `<Idolon Demand action name>` (e.g. `schemas.inputs.analyzesentiment`)
+  * Property names are `<IDOL onDemand action name>` (e.g. `schemas.inputs.analyzesentiment`)
   * Property values are list of all input sources for that action.
 4. `schemas.pairs` (object containing all parameter pairs for every allowed action)
-  * Property names are `<Idolon Demand action name>` (e.g. `schemas.pairs.analyzesentiment`)
+  * Property names are `<IDOL onDemand action name>` (e.g. `schemas.pairs.analyzesentiment`)
   * Property values are objects where the property name refers to the main parameter in the pair and the value refers to a list of all parameters that the main parameters is paired with. (e.g. `schemas.pairs.viewdocument.highlight_expression` -> `['start_tag', 'end_tag']`)
 
 
@@ -246,7 +257,7 @@ This only exists if IOD object is created via `create` method
 <a name="create" />
 ### create(apiKey, [Optional IODhost], [Optional IODport], callback)
 
-Creates an IOD object with specified `apiKey` and returns it as the second argument to `callback`. You can override the host and portm otherwise it will point to the IDOL onDemand server. The returned IOD object contain schemas loaded with all the actions that are available to the specified `apiKey`.
+Creates an IOD object with specified `apiKey` and returns it as the second argument to `callback`. You can override the host and port otherwise it will point to the IDOL onDemand server. The returned IOD object contain schemas loaded with all the actions that are available to the specified `apiKey`.
 
 #### Parameters
 * `apiKey` - Your IDOL onDemand api key
