@@ -180,14 +180,14 @@ console.log('Request options: ', IOD.reqOpts)
 
 # IOD
 
-### new IOD(IODOpts, [Optional host], [Optional port], [Optional reqOpts], callback)
+### new IOD(apiKey, [Optional host], [Optional port], [Optional reqOpts])
 
 Creates a new instance of IOD class with specified `apiKey`. You can override the host and port otherwise it will point to the IDOL onDemand server. You can also override the request options as needed. Available actions for your api key will not be loaded. There will be no client-side validation for IDOL onDemand actions. Use with care.
 
 #### Parameters
 * `apiKey` - Your IDOL onDemand api key
-* `IODhost` - Can override IDOL onDemand host (for developers)
-* `IODport` - Can override IDOL onDemand port (for developers)
+* `host` - Can override IDOL onDemand host (for developers)
+* `port` - Can override IDOL onDemand port (for developers)
 * `reqOpts` - Can override the request options when making request.
 
 #### Properties
@@ -255,14 +255,15 @@ This only exists if IOD object is created via `create` method
 # Methods
 
 <a name="create" />
-### create(apiKey, [Optional IODhost], [Optional IODport], callback)
+### create(apiKey, [Optional host], [Optional port], [Optional reqOpts], callback)
 
-Creates an IOD object with specified `apiKey` and returns it as the second argument to `callback`. You can override the host and port otherwise it will point to the IDOL onDemand server. The returned IOD object contain schemas loaded with all the actions that are available to the specified `apiKey`.
+Creates an IOD object with specified `apiKey` and returns it as the second argument to `callback`. You can override the host and port otherwise it will point to the IDOL onDemand server. You can also override the request options as needed. The returned IOD object contain schemas loaded with all the actions that are available to the specified `apiKey`.
 
 #### Parameters
 * `apiKey` - Your IDOL onDemand api key
-* `IODhost` - Can override IDOL onDemand host (for developers)
-* `IODport` - Can override IDOL onDemand port (for developers)
+* `host` - Can override IDOL onDemand host (for developers)
+* `port` - Can override IDOL onDemand port (for developers)
+* `reqOpts` - Can override the request options when making request.
 * `callback` - `Callback(err, IOD)` that accepts an error as its first argument `err` and an IOD object as the second arugument `IOD`
 
 #### Example
