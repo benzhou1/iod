@@ -239,7 +239,7 @@ There are two types of versions:
 This only exists if IOD object is created via `create` method
 
 1. `schemas.schema` (object containing parameter and response schema for every allowed action)
-  * Property names are `<IDOL onDemand action name>`.`<parameters or response>` (e.g. schemas.schema['analyzesentiment.parameters'])
+  * Property names are `<IDOL onDemand action name>`.`<parameters or response>` (e.g. `schemas.schema['analyzesentiment.parameters']`)
   * Property values are the parameter schema or response schema for that action.
 2. `schemas.parameters` (object containing all parameters for every allowed action)
   * Property names are `<IDOL onDemand action name>` (e.g. `schemas.parameters.analyzesentiment`)
