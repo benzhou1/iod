@@ -80,7 +80,7 @@ var IOD = new iod('my api key')
 // IODOpts object for sync request with analyzesentiment action
 var IODOpts = {
 	majorVersion: IOD.VERSIONS.MAJOR.V1,
-	// ACTIONS aren't loaded with you availible actions
+	// ACTIONS aren't loaded with your availible actions
 	action: 'analyzesentiment',
 	apiVersion: IOD.VERSIONS.API.V1,
 	method: 'get',
