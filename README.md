@@ -196,7 +196,7 @@ Creates a new instance of IOD class with specified `apiKey`. You can override th
 * `port` - Your set IDOL onDemand port
 * `reqOpts` - Your set request options
 * `ACTIONS` - Object containing constant values for IDOL onDemand actions. See [ACTIONS](#actions)
-* `TYPES` - Object containing constant values for IDOL onDemand request types. See [TYPES](#types)
+* `TYPES` - Object containing constant values for IOD request types. See [TYPES](#types)
 * `VERSIONS` - Object containing constant vlaues for IDOL onDemand versions. See [VERSIONS](#versions)
 * `schemas` - Object containing schemas and data related to IDOL onDemand actions. See [schemas](#constSchemas)
 
