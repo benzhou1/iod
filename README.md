@@ -8,6 +8,8 @@ If you are new to what IDOL onDemand has to offer, check out their website at: [
 
 IOD provides client side schema validation of all allowed actions before sending your request off to IDOL onDemand. It also handles validation for action aliases and parameter aliases. Required input sources and array parameters that are required to have the same length are validated as well. It uses the request package to handle all http request and file uploads for you. The only thing you need to know is how to create an `IODOpt` object. Each IOD request type has their own JSON schema for creating the `IODOpt` object described by [Json-Schema](http://json-schema.org).
 
+If you are behind a proxy, all you need to do is modify the `HTTP_PROXY` and `HTTPS_PROXY` environment variables (i.e. `http://10.5.16.105:8080`). If you don't want proxy to be applied to certain host, just modify the `NO_PROXY` environment variable with comma serparated list of host to not apply proxy to. Wildcards are allowed (i.e. `localhost,10.*`).
+
 # Quick Start Guide
 
 ### 1.) IOD object via `create` method
@@ -19,7 +21,9 @@ The reason the create function accepts a callback is because it is asynchronous.
 With the IOD object, you can make a request by simply creating an `IODOpts` object following the schema of your request type. In this example we will be making a `sync` request with `analyzesentiment` action.
 
 ```javascript
-IOD.create('my api key', function(err, IOD) {
+var iod = require('IOD')
+
+iod.create('my api key', function(err, IOD) {
 	console.log('ERROR: ', err)
 	console.log('IOD: ', IOD)
 	
@@ -115,7 +119,39 @@ IOD.sync(IODOpts, function(err, res) {
 
 When creating a IOD object either through `create` method or creating new instance of IOD class, you are allowed to override the Idolon Demand host and Idolon Demand port. By default the host and port will point to `'https://api.idolondemand.com'` and `443` respectively. As mentioned above, IOD uses request package, therefore you can also override any [request options](https://www.npmjs.org/package/request) availible.
 
+### 1.) Overriding Idolon Demand host and port
 
+```javascript
+var iod = require('IOD')
+
+// via create method
+iod.create('my api key', 'override host', 8080, function(err, IOD) {
+	console.log('ERROR: ', err)
+	console.log('Idolon Demand host: ', IOD.host)
+	console.log('Idolon Demand port: ', IOD.port)
+})
+
+// new instance of IOD class
+var IOD = new iod('my api key', 'override host', 8080)
+console.log('Idolon Demand host: ', IOD.host)
+console.log('Idolon Demand port: ', IOD.port)
+```
+
+### 2.) Overriding request options
+
+```javascript
+var iod = require('IOD')
+
+// via create method
+iod.create('my api key', { timeout: 50000, jar: true }, function(err, IOD) {
+	console.log('ERROR: ', err)
+	console.log('Request options: ', IOD.reqOpts)
+})
+
+// new instance of IOD class
+var IOD = new iod('my api key', { timeout: 50000, jar: true })
+console.log('Request options: ', IOD.reqOpts)
+```
 
 # Documentation
 
@@ -123,7 +159,7 @@ When creating a IOD object either through `create` method or creating new instan
 * [`ACTIONS`](#actions)
 * [`TYPES`](#types)
 * [`VERSIONS`](#versions)
-* [`schemas`](#schemas)
+* [`schemas`](#constSchemas)
 
 ### Schemas
 * [`ASYNC`](#asyncSchema)
@@ -176,7 +212,7 @@ There are two types of versions:
 2. `VERSIONS.API`(e.g. /1/api/sync/listindex/`<apiVersion>`)
   * `VERSIONS.API.V1` - initial version
 
-<a name="schemas" />
+<a name="constSchemas" />
 #### `schemas` - Contains all action schema related data 
 This only exists if IOD object is created via `create` method
 
