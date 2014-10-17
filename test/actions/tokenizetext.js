@@ -51,13 +51,6 @@ exports.schemaTests = function(IOD) {
  * @returns {Array} - List of ActionTests
  */
 exports.tests = function(IOD, data) {
-	var defParams = {
-		expansion: 'fuzzy',
-		max_terms: 1,
-		stemming: true,
-		sort: 'none'
-	}
-
 	return [
 		{
 			name: 'text=cats and dogs,stemming=true,max_terms=1',

@@ -61,6 +61,7 @@ var IOD = function(apiKey, host, port, reqOpts) {
 	iod.host = host || httpsHost
 	iod.port = port || httpsPort
 	iod.reqOpts = _.defaults(reqOpts || {}, { timeout: 20000 })
+	this.ACTIONS = _.cloneDeep(CONSTANTS.ACTIONS)
 
 	SchemaU.initSchemas(iod)
 
@@ -107,19 +108,6 @@ IOD.create = function(apiKey, host, port, reqOpts, callback) {
 		return iod
 	}))
 }
-
-/**
- * IOD action constants.
- *
- * @type object
- * @constant
- * @property {object} API - Api actions object. For list of available actions look at:
- * https://www.idolondemand.com/developer/docs/APIDiscovery.html api action
- * @property {object} DISCOVERY - Discovery actions object
- * @property {string} DISCOVERY.API - Discovery api action
- * @see actions.js
- */
-IOD.prototype.ACTIONS = CONSTANTS.ACTIONS
 
 /**
  * IOD request type constants.

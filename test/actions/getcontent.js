@@ -10,7 +10,6 @@ var should = require('should')
 var T = require('../../lib/transform')
 
 var action = 'getcontent'
-var filePath = __dirname + '/../files/' + action
 
 /**
  * Specific type of action.
