@@ -31,27 +31,27 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.noInputs(IOD, 'QTI', action),
-		U.invalidStringType(IOD, 'field_text', 'QTI', action),
-		U.invalidNumberType(IOD, 'start', 'QUERY', alias),
-		U.invalidMinimum(IOD, 'start', 0, 'QTI', action),
-		U.invalidNumberType(IOD, 'max_page_results', 'QUERY', alias),
-		U.invalidMinimum(IOD, 'max_page_results', 0, 'QTI', action),
-		U.invalidNumberType(IOD, 'absolute_max_results', 'QUERY', alias),
-		U.invalidMinimum(IOD, 'absolute_max_results', 0, 'QTI', action),
-		U.invalidStringType(IOD, 'indexes', 'QUERY', alias),
-		U.invalidStringType(IOD, 'database_match', 'QTI', action),
-		U.invalidEnumValue(IOD, 'print', 'QUERY', alias),
-		U.invalidStringType(IOD, 'print_fields', 'QTI', action),
-		U.invalidEnumValue(IOD, 'highlight', 'QUERY', alias),
-		U.invalidStringType(IOD, 'min_date', 'QTI', action),
-		U.invalidStringType(IOD, 'max_date', 'QUERY', alias),
-		U.invalidNumberType(IOD, 'min_score', 'QTI', action),
-		U.invalidEnumValue(IOD, 'sort', 'QUERY', alias),
-		U.invalidBooleanType(IOD, 'total_results', 'QTI', action),
-		U.invalidStringType(IOD, 'start_tag', 'QUERY', alias),
-		U.invalidStringType(IOD, 'end_tag', 'QTI', action),
-		U.invalidEnumValue(IOD, 'summary', 'QUERY', alias)
+		U.actSchemaTests.noInputs(IOD, 'QTI', action),
+		U.actSchemaTests.invalidStringType(IOD, 'field_text', 'QTI', action),
+		U.actSchemaTests.invalidNumberType(IOD, 'start', 'QUERY', alias),
+		U.actSchemaTests.invalidMinimum(IOD, 'start', 0, 'QTI', action),
+		U.actSchemaTests.invalidNumberType(IOD, 'max_page_results', 'QUERY', alias),
+		U.actSchemaTests.invalidMinimum(IOD, 'max_page_results', 0, 'QTI', action),
+		U.actSchemaTests.invalidNumberType(IOD, 'absolute_max_results', 'QUERY', alias),
+		U.actSchemaTests.invalidMinimum(IOD, 'absolute_max_results', 0, 'QTI', action),
+		U.actSchemaTests.invalidStringType(IOD, 'indexes', 'QUERY', alias),
+		U.actSchemaTests.invalidStringType(IOD, 'database_match', 'QTI', action),
+		U.actSchemaTests.invalidEnumValue(IOD, 'print', 'QUERY', alias),
+		U.actSchemaTests.invalidStringType(IOD, 'print_fields', 'QTI', action),
+		U.actSchemaTests.invalidEnumValue(IOD, 'highlight', 'QUERY', alias),
+		U.actSchemaTests.invalidStringType(IOD, 'min_date', 'QTI', action),
+		U.actSchemaTests.invalidStringType(IOD, 'max_date', 'QUERY', alias),
+		U.actSchemaTests.invalidNumberType(IOD, 'min_score', 'QTI', action),
+		U.actSchemaTests.invalidEnumValue(IOD, 'sort', 'QUERY', alias),
+		U.actSchemaTests.invalidBooleanType(IOD, 'total_results', 'QTI', action),
+		U.actSchemaTests.invalidStringType(IOD, 'start_tag', 'QUERY', alias),
+		U.actSchemaTests.invalidStringType(IOD, 'end_tag', 'QTI', action),
+		U.actSchemaTests.invalidEnumValue(IOD, 'summary', 'QUERY', alias)
 	]
 }
 

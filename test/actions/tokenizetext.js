@@ -31,9 +31,9 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.noInputs(IOD, 'TOKENTEXT', action),
-		U.invalidNumberType(IOD, 'max_terms', 'TOKEN', alias),
-		U.invalidBooleanType(IOD, 'stemming', 'TOKENTEXT', action)
+		U.actSchemaTests.noInputs(IOD, 'TOKENTEXT', action),
+		U.actSchemaTests.invalidNumberType(IOD, 'max_terms', 'TOKEN', alias),
+		U.actSchemaTests.invalidBooleanType(IOD, 'stemming', 'TOKENTEXT', action)
 	]
 }
 

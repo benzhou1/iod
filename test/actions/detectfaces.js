@@ -31,8 +31,8 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.noInputs(IOD, 'DETFACE', action),
-		U.invalidBooleanType(IOD, 'additional', 'FINDFACE', alias)
+		U.actSchemaTests.noInputs(IOD, 'DETFACE', action),
+		U.actSchemaTests.invalidBooleanType(IOD, 'additional', 'FINDFACE', alias)
 	]
 }
 

@@ -31,8 +31,8 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.noInputs(IOD, 'OCRDOC', action),
-		U.invalidEnumValue(IOD, 'mode', 'OCR', alias)
+		U.actSchemaTests.noInputs(IOD, 'OCRDOC', action),
+		U.actSchemaTests.invalidEnumValue(IOD, 'mode', 'OCR', alias)
 	]
 }
 

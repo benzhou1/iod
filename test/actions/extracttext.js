@@ -30,12 +30,12 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.noInputs(IOD, 'EXTRACTTEXT', action),
-		U.invalidBooleanType(IOD, 'extract_text', 'EXTRACTTEXT', action),
-		U.invalidBooleanType(IOD, 'extract_metadata', 'EXTRACTTEXT', action),
-		U.invalidArrayObj(IOD, 'additional_metadata', 'EXTRACTTEXT', action),
-		U.invalidArrayString(IOD, 'reference_prefix', 'EXTRACTTEXT', action),
-		U.invalidArrayString(IOD, 'password', 'EXTRACTTEXT', action),
+		U.actSchemaTests.noInputs(IOD, 'EXTRACTTEXT', action),
+		U.actSchemaTests.invalidBooleanType(IOD, 'extract_text', 'EXTRACTTEXT', action),
+		U.actSchemaTests.invalidBooleanType(IOD, 'extract_metadata', 'EXTRACTTEXT', action),
+		U.actSchemaTests.invalidArrayObj(IOD, 'additional_metadata', 'EXTRACTTEXT', action),
+		U.actSchemaTests.invalidArrayString(IOD, 'reference_prefix', 'EXTRACTTEXT', action),
+		U.actSchemaTests.invalidArrayString(IOD, 'password', 'EXTRACTTEXT', action),
 
 		{
 			name: 'unequal pair length file-additional_metadata',

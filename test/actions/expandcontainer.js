@@ -31,9 +31,9 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.noInputs(IOD, 'EXPANDCONT', action),
-		U.invalidNumberType(IOD, 'depth', 'EXPLODECONT', alias),
-		U.invalidArrayString(IOD, 'password', 'EXPANDCONT', action)
+		U.actSchemaTests.noInputs(IOD, 'EXPANDCONT', action),
+		U.actSchemaTests.invalidNumberType(IOD, 'depth', 'EXPLODECONT', alias),
+		U.actSchemaTests.invalidArrayString(IOD, 'password', 'EXPANDCONT', action)
 	]
 }
 

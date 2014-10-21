@@ -31,8 +31,8 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.noInputs(IOD, 'SENTIMENT', action),
-		U.invalidEnumValue(IOD, 'language', 'DETECTSENT', alias)
+		U.actSchemaTests.noInputs(IOD, 'SENTIMENT', action),
+		U.actSchemaTests.invalidEnumValue(IOD, 'language', 'DETECTSENT', alias)
 	]
 }
 

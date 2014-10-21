@@ -31,11 +31,11 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.noInputs(IOD, 'VIEWDOC', action),
-		U.invalidBooleanType(IOD, 'raw_html', 'VIEW', alias),
-		U.invalidArrayString(IOD, 'highlight_expression', 'VIEWDOC', action),
-		U.invalidArrayString(IOD, 'start_tag', 'VIEW', alias),
-		U.invalidArrayString(IOD, 'end_tag', 'VIEWDOC', action),
+		U.actSchemaTests.noInputs(IOD, 'VIEWDOC', action),
+		U.actSchemaTests.invalidBooleanType(IOD, 'raw_html', 'VIEW', alias),
+		U.actSchemaTests.invalidArrayString(IOD, 'highlight_expression', 'VIEWDOC', action),
+		U.actSchemaTests.invalidArrayString(IOD, 'start_tag', 'VIEW', alias),
+		U.actSchemaTests.invalidArrayString(IOD, 'end_tag', 'VIEWDOC', action),
 
 		{
 			name: 'unequal pair length highlight_expression-start_tag',

@@ -31,11 +31,11 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.noInputs(IOD, 'RECIMAGE', action),
-		U.invalidEnumValue(IOD, 'indexes', 'DETIMAGE', alias),
-		U.invalidEnumValue(IOD, 'database_match', 'RECIMAGE', action),
-		U.invalidEnumValue(IOD, 'image_type', 'DETIMAGE', alias),
-		U.invalidArrayString(IOD, 'image_type', 'RECIMAGE', action)
+		U.actSchemaTests.noInputs(IOD, 'RECIMAGE', action),
+		U.actSchemaTests.invalidEnumValue(IOD, 'indexes', 'DETIMAGE', alias),
+		U.actSchemaTests.invalidEnumValue(IOD, 'database_match', 'RECIMAGE', action),
+		U.actSchemaTests.invalidEnumValue(IOD, 'image_type', 'DETIMAGE', alias),
+		U.actSchemaTests.invalidArrayString(IOD, 'image_type', 'RECIMAGE', action)
 	]
 }
 

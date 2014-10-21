@@ -31,12 +31,12 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.noInputs(IOD, 'EXPANDTERMS', action, { expansion: 'fuzzy' }),
-		U.missingRequired(IOD, 'expansion', 'EXPANDTERM', alias),
-		U.invalidEnumValue(IOD, 'expansion', 'EXPANDTERMS', action),
-		U.invalidNumberType(IOD, 'max_terms', 'EXPANDTERM', alias),
-		U.invalidBooleanType(IOD, 'stemming', 'EXPANDTERMS', action),
-		U.invalidEnumValue(IOD, 'sort', 'EXPANDTERM', alias)
+		U.actSchemaTests.noInputs(IOD, 'EXPANDTERMS', action, { expansion: 'fuzzy' }),
+		U.actSchemaTests.missingRequired(IOD, 'expansion', 'EXPANDTERM', alias),
+		U.actSchemaTests.invalidEnumValue(IOD, 'expansion', 'EXPANDTERMS', action),
+		U.actSchemaTests.invalidNumberType(IOD, 'max_terms', 'EXPANDTERM', alias),
+		U.actSchemaTests.invalidBooleanType(IOD, 'stemming', 'EXPANDTERMS', action),
+		U.actSchemaTests.invalidEnumValue(IOD, 'sort', 'EXPANDTERM', alias)
 	]
 }
 

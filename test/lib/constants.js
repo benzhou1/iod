@@ -76,10 +76,19 @@ describe('#IOD constants via new instance', function() {
 
 	it('should override values', function() {
 		var IOD = new iod('apikey', 'http://host', 1111, { key: 'val' })
+		var IOD1 = new iod('apikey', { key: 'val' })
+		var IOD2 = new iod('apikey', 'http://host', { key: 'val' })
 
 		IOD.apiKey.should.be.eql('apikey')
 		IOD.host.should.be.eql('http://host')
 		IOD.port.should.be.eql(1111)
 		IOD.reqOpts.should.be.eql({ key: 'val', timeout: 20000 })
+
+		IOD1.apiKey.should.be.eql('apikey')
+		IOD1.reqOpts.should.be.eql({ key: 'val', timeout: 20000 })
+
+		IOD2.apiKey.should.be.eql('apikey')
+		IOD2.host.should.be.eql('http://host')
+		IOD2.reqOpts.should.be.eql({ key: 'val', timeout: 20000 })
 	})
 })

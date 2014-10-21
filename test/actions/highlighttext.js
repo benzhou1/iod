@@ -31,11 +31,11 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.noInputs(IOD, 'HLTEXT', action, { highlight_expression: 'string' }),
-		U.missingRequired(IOD, 'highlight_expression', 'HL', alias),
-		U.invalidStringType(IOD, 'highlight_expression', 'HLTEXT', action),
-		U.invalidStringType(IOD, 'start_tag', 'HL', alias),
-		U.invalidStringType(IOD, 'end_tag', 'HLTEXT', action)
+		U.actSchemaTests.noInputs(IOD, 'HLTEXT', action, { highlight_expression: 'string' }),
+		U.actSchemaTests.missingRequired(IOD, 'highlight_expression', 'HL', alias),
+		U.actSchemaTests.invalidStringType(IOD, 'highlight_expression', 'HLTEXT', action),
+		U.actSchemaTests.invalidStringType(IOD, 'start_tag', 'HL', alias),
+		U.actSchemaTests.invalidStringType(IOD, 'end_tag', 'HLTEXT', action)
 	]
 }
 

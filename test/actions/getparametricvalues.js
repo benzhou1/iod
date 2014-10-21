@@ -29,15 +29,15 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.invalidStringType(IOD, 'indexes', 'GPV', action),
-		U.invalidStringType(IOD, 'database_match', 'GPV', action),
-		U.missingRequired(IOD, 'field_name', 'GPV', action),
-		U.invalidStringType(IOD, 'field_name', 'GPV', action),
-		U.invalidStringType(IOD, 'text', 'GPV', action),
-		U.invalidNumberType(IOD, 'max_values', 'GPV', action),
-		U.invalidNumberType(IOD, 'min_score', 'GPV', action),
-		U.invalidBooleanType(IOD, 'document_count', 'GPV', action),
-		U.invalidEnumValue(IOD, 'sort', 'GPV', action)
+		U.actSchemaTests.invalidStringType(IOD, 'indexes', 'GPV', action),
+		U.actSchemaTests.invalidStringType(IOD, 'database_match', 'GPV', action),
+		U.actSchemaTests.missingRequired(IOD, 'field_name', 'GPV', action),
+		U.actSchemaTests.invalidStringType(IOD, 'field_name', 'GPV', action),
+		U.actSchemaTests.invalidStringType(IOD, 'text', 'GPV', action),
+		U.actSchemaTests.invalidNumberType(IOD, 'max_values', 'GPV', action),
+		U.actSchemaTests.invalidNumberType(IOD, 'min_score', 'GPV', action),
+		U.actSchemaTests.invalidBooleanType(IOD, 'document_count', 'GPV', action),
+		U.actSchemaTests.invalidEnumValue(IOD, 'sort', 'GPV', action)
 	]
 }
 

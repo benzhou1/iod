@@ -10,7 +10,7 @@ var should = require('should')
 var T = require('../lib/transform')
 var SchemaU = require('../lib/schema')
 
-var apiKey = '<your api key>'
+var apiKey = '6ee6cbee-f94b-4688-a697-259fd8545d94'
 var host = null // override host
 var port = null // override port
 
@@ -85,6 +85,12 @@ var commonPaths = {
 	TOKEN: T.walk(['ACTIONS', 'API', 'TOKENIZE']),
 	API: T.walk(['ACTIONS', 'DISCOVERY', 'API']),
 	STOREOBJ: T.walk(['ACTIONS', 'API', 'STOREOBJECT']),
+	CREATETI: T.walk(['ACTIONS', 'API', 'CREATETEXTINDEX']),
+	LISTI: T.walk(['ACTIONS', 'API', 'LISTINDEXES']),
+	DELETETI: T.walk(['ACTIONS', 'API', 'DELETETEXTINDEX']),
+	ADDTOTI: T.walk(['ACTIONS', 'API', 'ADDTOTEXTINDEX']),
+	DELFROMTI: T.walk(['ACTIONS', 'API', 'DELETEFROMTEXTINDEX']),
+	INDEXSTATUS: T.walk(['ACTIONS', 'API', 'INDEXSTATUS']),
 	REF: T.walk(['actions', 0, 'result', 'reference'])
 }
 
@@ -218,220 +224,169 @@ var commonReqSchemaTests = {
 	}
 }
 
+var commonActionSchemTests = {
+	/**
+	 * Returns a ActionSchemaTest which should check for a required parameter error.
+	 */
+	missingRequired: function(IOD, paramName, path, action) {
+		return {
+			name: 'missing required parameter ' + paramName,
+			IODOpts: {
+				action: T.attempt(commonPaths[path], action)(IOD),
+				params: {
+					text: 'some text',
+					url: 'some url',
+					json: 'some json'
+				},
+				files: ['some file']
+			},
+			it: [
+				exports.shouldError,
+				_.partial(exports.shouldBeInSchemaError, 'required', paramName)
+			]
+		}
+	},
+
+	/**
+	 * Returns a ActionSchemaTest which should check for a no required inputs error.
+	 */
+	noInputs: function(IOD, path, action, required) {
+		return {
+			name: 'no inputs',
+			IODOpts: {
+				action: T.attempt(commonPaths[path], action)(IOD),
+				params: required || {}
+			},
+			it: [
+				exports.shouldError,
+				_.partial(exports.shouldBeInError, 'inputs')
+			]
+		}
+	},
+
+	/**
+	 * Returns a ActionSchemaTest which should check for a invalid string type error.
+	 */
+	invalidStringType: function(IOD, paramName, path, action) {
+		return {
+			name: 'invalid string for ' + paramName,
+			IODOpts: {
+				action: T.attempt(commonPaths[path], action)(IOD),
+				params: T.maplet(paramName)([1, 2, 3])
+			},
+			it: [
+				exports.shouldError,
+				_.partial(exports.shouldBeInSchemaError, 'type', paramName)
+			]
+		}
+	},
+
+	/**
+	 * Returns a ActionSchemaTest which should check for a invalid enum value error.
+	 */
+	invalidEnumValue: function(IOD, paramName, path, action) {
+		return {
+			name: 'invalid enum for ' + paramName,
+			IODOpts: {
+				action: T.attempt(commonPaths[path], action)(IOD),
+				params: T.maplet(paramName)('invalid enum')
+			},
+			it: [
+				exports.shouldError,
+				_.partial(exports.shouldBeInSchemaError, 'enum', paramName)
+			]
+		}
+	},
+
+	/**
+	 * Returns a ActionSchemaTest which should check for a invalid bollean type error.
+	 */
+	invalidBooleanType: function(IOD, paramName, path, action) {
+		return {
+			name: 'invalid boolean for ' + paramName,
+			IODOpts: {
+				action: T.attempt(commonPaths[path], action)(IOD),
+				params: T.maplet(paramName)('invalid boolean')
+			},
+			it: [
+				exports.shouldError,
+				_.partial(exports.shouldBeInSchemaError, 'type', paramName)
+			]
+		}
+	},
+
+	/**
+	 * Returns a ActionSchemaTest which should check for a invalid number type error.
+	 */
+	invalidNumberType: function(IOD, paramName, path, action) {
+		return {
+			name: 'invalid number for ' + paramName,
+			IODOpts: {
+				action: T.attempt(commonPaths[path], action)(IOD),
+				params: T.maplet(paramName)('invalid number')
+			},
+			it: [
+				exports.shouldError,
+				_.partial(exports.shouldBeInSchemaError, 'type', paramName)
+			]
+		}
+	},
+
+	/**
+	 * Returns a ActionSchemaTest which should check for a below minimum error.
+	 */
+	invalidMinimum: function(IOD, paramName, min, path, action) {
+		return {
+			name: min + ' for ' + paramName,
+			IODOpts: {
+				action: T.attempt(commonPaths[path], action)(IOD),
+				params: T.maplet(paramName)(min)
+			},
+			it: [
+				exports.shouldError,
+				_.partial(exports.shouldBeInSchemaError, 'minimum', paramName)
+			]
+		}
+	},
+
+	/**
+	 * Returns a ActionSchemaTest which should check for a invalid array string type error.
+	 */
+	invalidArrayString: function(IOD, paramName, path, action) {
+		return {
+			name: 'invalid array for ' + paramName,
+			IODOpts: {
+				action: T.attempt(commonPaths[path], action)(IOD),
+				params: T.maplet(paramName)({ key: 'not array of strings' })
+			},
+			it: [
+				exports.shouldError,
+				_.partial(exports.shouldBeInSchemaError, 'type', paramName)
+			]
+		}
+	},
+
+	/**
+	 * Returns a ActionSchemaTest which should check for a invalid array object type error.
+	 */
+	invalidArrayObj: function(IOD, paramName, path, action) {
+		return {
+			name: 'invalid array for ' + paramName,
+			IODOpts: {
+				action: T.attempt(commonPaths[path], action)(IOD),
+				params: T.maplet(paramName)('not array of objects')
+			},
+			it: [
+				exports.shouldError,
+				_.partial(exports.shouldBeInSchemaError, 'type', paramName)
+			]
+		}
+	}
+}
+
 exports.paths = commonPaths
 exports.reqSchemaTests = commonReqSchemaTests
-
-/**
- * Returns a ActionSchemaTest which should check for a required parameter error.
- *
- * @param {IOD} IOD - IOD object
- * @param {string} paramName - Action parameter name
- * @param {string} path - commonPaths name
- * @param {string} action - IOD action name
- * @returns {object} - ActionSchemaTest
- */
-exports.missingRequired = function(IOD, paramName, path, action) {
-	return {
-		name: 'missing required parameter ' + paramName,
-		IODOpts: {
-			action: T.attempt(commonPaths[path], action)(IOD),
-			params: {
-				text: 'some text',
-				url: 'some url',
-				json: 'some json'
-			},
-			files: ['some file']
-		},
-		it: [
-			exports.shouldError,
-			_.partial(exports.shouldBeInSchemaError, 'required', paramName)
-		]
-	}
-}
-
-/**
- * Returns a ActionSchemaTest which should check for a no required inputs error.
- *
- * @param {IOD} IOD - IOD object
- * @param {string} path - commonPaths name
- * @param {string} action - IOD action name
- * @param {object} required - Required action parameters
- * @returns {object} - ActionSchemaTest
- */
-exports.noInputs = function(IOD, path, action, required) {
-	return {
-		name: 'no inputs',
-		IODOpts: {
-			action: T.attempt(commonPaths[path], action)(IOD),
-			params: required || {}
-		},
-		it: [
-			exports.shouldError,
-			_.partial(exports.shouldBeInError, 'inputs')
-		]
-	}
-}
-
-/**
- * Returns a ActionSchemaTest which should check for a invalid string type error.
- *
- * @param {IOD} IOD - IOD object
- * @param {string} paramName - Action parameter name
- * @param {string} path - commonPaths name
- * @param {string} action - IOD action name
- * @returns {object} - ActionSchemaTest
- */
-exports.invalidStringType = function(IOD, paramName, path, action) {
-	return {
-		name: 'invalid string for ' + paramName,
-		IODOpts: {
-			action: T.attempt(commonPaths[path], action)(IOD),
-			params: T.maplet(paramName)([1, 2, 3])
-		},
-		it: [
-			exports.shouldError,
-			_.partial(exports.shouldBeInSchemaError, 'type', paramName)
-		]
-	}
-}
-
-/**
- * Returns a ActionSchemaTest which should check for a invalid enum value error.
- *
- * @param {IOD} IOD - IOD object
- * @param {string} paramName - Action parameter name
- * @param {string} path - commonPaths name
- * @param {string} action - IOD action name
- * @returns {object} - ActionSchemaTest
- */
-exports.invalidEnumValue = function(IOD, paramName, path, action) {
-	return {
-		name: 'invalid enum for ' + paramName,
-		IODOpts: {
-			action: T.attempt(commonPaths[path], action)(IOD),
-			params: T.maplet(paramName)('invalid enum')
-		},
-		it: [
-			exports.shouldError,
-			_.partial(exports.shouldBeInSchemaError, 'enum', paramName)
-		]
-	}
-}
-
-/**
- * Returns a ActionSchemaTest which should check for a invalid bollean type error.
- *
- * @param {IOD} IOD - IOD object
- * @param {string} paramName - Action parameter name
- * @param {string} path - commonPaths name
- * @param {string} action - IOD action name
- * @returns {object} - ActionSchemaTest
- */
-exports.invalidBooleanType = function(IOD, paramName, path, action) {
-	return {
-		name: 'invalid boolean for ' + paramName,
-		IODOpts: {
-			action: T.attempt(commonPaths[path], action)(IOD),
-			params: T.maplet(paramName)('invalid boolean')
-		},
-		it: [
-			exports.shouldError,
-			_.partial(exports.shouldBeInSchemaError, 'type', paramName)
-		]
-	}
-}
-
-/**
- * Returns a ActionSchemaTest which should check for a invalid number type error.
- *
- * @param {IOD} IOD - IOD object
- * @param {string} paramName - Action parameter name
- * @param {string} path - commonPaths name
- * @param {string} action - IOD action name
- * @returns {object} - ActionSchemaTest
- */
-exports.invalidNumberType = function(IOD, paramName, path, action) {
-	return {
-		name: 'invalid number for ' + paramName,
-		IODOpts: {
-			action: T.attempt(commonPaths[path], action)(IOD),
-			params: T.maplet(paramName)('invalid number')
-		},
-		it: [
-			exports.shouldError,
-			_.partial(exports.shouldBeInSchemaError, 'type', paramName)
-		]
-	}
-}
-
-/**
- * Returns a ActionSchemaTest which should check for a below minimum error.
- *
- * @param {IOD} IOD - IOD object
- * @param {string} paramName - Action parameter name
- * @param {string} path - commonPaths name
- * @param {string} action - IOD action name
- * @returns {object} - ActionSchemaTest
- */
-exports.invalidMinimum = function(IOD, paramName, min, path, action) {
-	return {
-		name: min + ' for ' + paramName,
-		IODOpts: {
-			action: T.attempt(commonPaths[path], action)(IOD),
-			params: T.maplet(paramName)(min)
-		},
-		it: [
-			exports.shouldError,
-			_.partial(exports.shouldBeInSchemaError, 'minimum', paramName)
-		]
-	}
-}
-
-/**
- * Returns a ActionSchemaTest which should check for a invalid array string type error.
- *
- * @param {IOD} IOD - IOD object
- * @param {string} paramName - Action parameter name
- * @param {string} path - commonPaths name
- * @param {string} action - IOD action name
- * @returns {object} - ActionSchemaTest
- */
-exports.invalidArrayString = function(IOD, paramName, path, action) {
-	return {
-		name: 'invalid array for ' + paramName,
-		IODOpts: {
-			action: T.attempt(commonPaths[path], action)(IOD),
-			params: T.maplet(paramName)({ key: 'not array of strings' })
-		},
-		it: [
-			exports.shouldError,
-			_.partial(exports.shouldBeInSchemaError, 'type', paramName)
-		]
-	}
-}
-
-/**
- * Returns a ActionSchemaTest which should check for a invalid array object type error.
- *
- * @param {IOD} IOD - IOD object
- * @param {string} paramName - Action parameter name
- * @param {string} path - commonPaths name
- * @param {string} action - IOD action name
- * @returns {object} - ActionSchemaTest
- */
-exports.invalidArrayObj = function(IOD, paramName, path, action) {
-	return {
-		name: 'invalid array for ' + paramName,
-		IODOpts: {
-			action: T.attempt(commonPaths[path], action)(IOD),
-			params: T.maplet(paramName)('not array of objects')
-		},
-		it: [
-			exports.shouldError,
-			_.partial(exports.shouldBeInSchemaError, 'type', paramName)
-		]
-	}
-}
+exports.actSchemaTests = commonActionSchemTests
 
 /**
  * Returns stringified value `v` with 2 space separation.
@@ -637,6 +592,22 @@ exports.shouldBeStatus = function(env) {
 	return env
 }
 
+exports.shouldBeDeleted = function(env) {
+	var deleted = env.response.deleted
+	if (deleted !== true) console.log('Did not delete index successfully: ',
+		exports.prettyPrint(env.response))
+	deleted.should.be.true
+	return env
+}
+
+exports.shouldBeConfirm = function(env) {
+	var confirm = env.response.confirm
+	if (!confirm) console.log('Confirm not found in response: ',
+		exports.prettyPrint(env.response))
+	should.exists(confirm)
+	return env
+}
+
 /**
  * Given a file path `filePath` store file in IDOL onDemand via storeobject action.
  * Cached reference from results.
@@ -651,21 +622,81 @@ exports.shouldBeStatus = function(env) {
  */
 exports.prepareReference = function(IOD, action, filePath, done) {
 	if (cachedRef[action]) return done(cachedRef[action])
+	else exports.storeObject(IOD, filePath, function(err, ref) {
+		cachedRef[action] = ref
+		done(null, ref)
+	})
+}
 
+exports.storeObject = function(IOD, filePath, callback) {
 	var IODOpts = {
 		action: T.attempt(commonPaths.STOREOBJ, 'storeobject')(IOD),
 		files: [filePath],
 		getResults: true
 	}
-	IOD.async(IODOpts, function(err, res) {
-		if (err) throw new Error('Failed to prepare for tests: ' +
+	IOD.sync(IODOpts, function(err, res) {
+		if (err) throw new Error('Failed to store object: ' +
 			exports.prettyPrint(err))
 		else {
 			var ref = T.attempt(commonPaths.REF)(res)
 			if (!ref) throw new Error('Could not find reference from storeobject: ' +
 				exports.prettyPrint(res))
 
-			done(ref)
+			callback(null, ref)
 		}
+	})
+}
+
+exports.listIndexes = function(IOD, callback) {
+	var IODOpts = {
+		action: T.attempt(commonPaths.LISTI, 'listindexes')(IOD),
+		params: {
+			type: 'content',
+			flavor: 'explorer'
+		}
+	}
+	IOD.sync(IODOpts, function(err, res) {
+		if (err) throw new Error('Failed to get list of indexes: ' +
+			exports.prettyPrint(err))
+		else if (!res || !res.index) throw new Error('List of user indexes not found: ' +
+			exports.prettyPrint(res))
+		else callback(null, res)
+	})
+}
+
+exports.deleteTextIndex = function(IOD, index, confirm, callback) {
+	var IODOpts = {
+		action: T.attempt(commonPaths.DELETETI, 'deletetextindex')(IOD),
+		params: {
+			index: index,
+			confirm: confirm
+		}
+	}
+	IOD.sync(IODOpts, function(err, res) {
+		if (err) throw new Error('Failed to delete text index: ' +
+			exports.prettyPrint(err))
+		else if (confirm && (!res || !res.deleted || res.deleted !== true)) {
+			throw new Error('Failed to deleted text index: ' + exports.prettyPrint(res))
+		}
+		else if (!confirm && (!res || !res.confirm)) {
+			throw new Error('Failed to get confirmation: ' + exports.prettyPrint(res))
+		}
+		else callback(null, confirm ? null : res.confirm)
+	})
+}
+
+exports.forceDeleteTextIndex = function(IOD, index, callback) {
+	exports.deleteTextIndex(IOD, index, null, function(err, confirm) {
+		exports.deleteTextIndex(IOD, index, confirm, callback)
+	})
+}
+
+exports.prepareToCreateTextIndex = function(IOD, callback) {
+	exports.listIndexes(IOD, function(err, indexes) {
+		var testIndex = _.find(indexes.index, function(index) {
+			return index.index === 'test'
+		})
+		if (testIndex) exports.forceDeleteTextIndex(IOD, 'test', callback)
+		else callback()
 	})
 }

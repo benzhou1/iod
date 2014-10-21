@@ -31,8 +31,8 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.noInputs(IOD, 'IDLANG', action),
-		U.invalidBooleanType(IOD, 'additional_metadata', 'DETLANG', alias)
+		U.actSchemaTests.noInputs(IOD, 'IDLANG', action),
+		U.actSchemaTests.invalidBooleanType(IOD, 'additional_metadata', 'DETLANG', alias)
 	]
 }
 

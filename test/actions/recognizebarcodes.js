@@ -31,10 +31,10 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.noInputs(IOD, 'RECBAR', action),
-		U.invalidArrayString(IOD, 'barcode_type', 'READBAR', alias),
-		U.invalidEnumValue(IOD, 'barcode_orientation', 'RECBAR', action),
-		U.invalidEnumValue(IOD, 'barcode_type', 'READBAR', alias)
+		U.actSchemaTests.noInputs(IOD, 'RECBAR', action),
+		U.actSchemaTests.invalidArrayString(IOD, 'barcode_type', 'READBAR', alias),
+		U.actSchemaTests.invalidEnumValue(IOD, 'barcode_orientation', 'RECBAR', action),
+		U.actSchemaTests.invalidEnumValue(IOD, 'barcode_type', 'READBAR', alias)
 	]
 }
 

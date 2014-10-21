@@ -31,11 +31,11 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.noInputs(IOD, 'EENTITIES', action, { entity_type: 'people_eng' }),
-		U.missingRequired(IOD, 'entity_type', 'EENTITY', alias),
-		U.invalidEnumValue(IOD, 'entity_type', 'EENTITIES', action),
-		U.invalidArrayString(IOD, 'entity_type', 'EENTITY', alias),
-		U.invalidBooleanType(IOD, 'show_alternatives', 'EENTITIES', action)
+		U.actSchemaTests.noInputs(IOD, 'EENTITIES', action, { entity_type: 'people_eng' }),
+		U.actSchemaTests.missingRequired(IOD, 'entity_type', 'EENTITY', alias),
+		U.actSchemaTests.invalidEnumValue(IOD, 'entity_type', 'EENTITIES', action),
+		U.actSchemaTests.invalidArrayString(IOD, 'entity_type', 'EENTITY', alias),
+		U.actSchemaTests.invalidBooleanType(IOD, 'show_alternatives', 'EENTITIES', action)
 	]
 }
 

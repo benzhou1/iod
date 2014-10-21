@@ -30,27 +30,27 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.noInputs(IOD, 'FINDSIM', action),
-		U.invalidStringType(IOD, 'field_text', 'FINDSIM', action),
-		U.invalidNumberType(IOD, 'start', 'FINDSIM', action),
-		U.invalidMinimum(IOD, 'start', 0, 'FINDSIM', action),
-		U.invalidNumberType(IOD, 'max_page_results', 'FINDSIM', action),
-		U.invalidMinimum(IOD, 'max_page_results', 0, 'FINDSIM', action),
-		U.invalidNumberType(IOD, 'absolute_max_results', 'FINDSIM', action),
-		U.invalidMinimum(IOD, 'absolute_max_results', 0, 'FINDSIM', action),
-		U.invalidStringType(IOD, 'indexes', 'FINDSIM', action),
-		U.invalidStringType(IOD, 'database_match', 'FINDSIM', action),
-		U.invalidEnumValue(IOD, 'print', 'FINDSIM', action),
-		U.invalidStringType(IOD, 'print_fields', 'FINDSIM', action),
-		U.invalidEnumValue(IOD, 'highlight', 'FINDSIM', action),
-		U.invalidStringType(IOD, 'min_date', 'FINDSIM', action),
-		U.invalidStringType(IOD, 'max_date', 'FINDSIM', action),
-		U.invalidNumberType(IOD, 'min_score', 'FINDSIM', action),
-		U.invalidEnumValue(IOD, 'sort', 'FINDSIM', action),
-		U.invalidBooleanType(IOD, 'total_results', 'FINDSIM', action),
-		U.invalidStringType(IOD, 'start_tag', 'FINDSIM', action),
-		U.invalidStringType(IOD, 'end_tag', 'FINDSIM', action),
-		U.invalidEnumValue(IOD, 'summary', 'FINDSIM', action)
+		U.actSchemaTests.noInputs(IOD, 'FINDSIM', action),
+		U.actSchemaTests.invalidStringType(IOD, 'field_text', 'FINDSIM', action),
+		U.actSchemaTests.invalidNumberType(IOD, 'start', 'FINDSIM', action),
+		U.actSchemaTests.invalidMinimum(IOD, 'start', 0, 'FINDSIM', action),
+		U.actSchemaTests.invalidNumberType(IOD, 'max_page_results', 'FINDSIM', action),
+		U.actSchemaTests.invalidMinimum(IOD, 'max_page_results', 0, 'FINDSIM', action),
+		U.actSchemaTests.invalidNumberType(IOD, 'absolute_max_results', 'FINDSIM', action),
+		U.actSchemaTests.invalidMinimum(IOD, 'absolute_max_results', 0, 'FINDSIM', action),
+		U.actSchemaTests.invalidStringType(IOD, 'indexes', 'FINDSIM', action),
+		U.actSchemaTests.invalidStringType(IOD, 'database_match', 'FINDSIM', action),
+		U.actSchemaTests.invalidEnumValue(IOD, 'print', 'FINDSIM', action),
+		U.actSchemaTests.invalidStringType(IOD, 'print_fields', 'FINDSIM', action),
+		U.actSchemaTests.invalidEnumValue(IOD, 'highlight', 'FINDSIM', action),
+		U.actSchemaTests.invalidStringType(IOD, 'min_date', 'FINDSIM', action),
+		U.actSchemaTests.invalidStringType(IOD, 'max_date', 'FINDSIM', action),
+		U.actSchemaTests.invalidNumberType(IOD, 'min_score', 'FINDSIM', action),
+		U.actSchemaTests.invalidEnumValue(IOD, 'sort', 'FINDSIM', action),
+		U.actSchemaTests.invalidBooleanType(IOD, 'total_results', 'FINDSIM', action),
+		U.actSchemaTests.invalidStringType(IOD, 'start_tag', 'FINDSIM', action),
+		U.actSchemaTests.invalidStringType(IOD, 'end_tag', 'FINDSIM', action),
+		U.actSchemaTests.invalidEnumValue(IOD, 'summary', 'FINDSIM', action)
 	]
 }
 

@@ -31,15 +31,15 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.noInputs(IOD, 'FRC', action),
-		U.invalidStringType(IOD, 'field_text', 'DT', alias),
-		U.invalidStringType(IOD, 'indexes', 'FRC', action),
-		U.invalidStringType(IOD, 'database_match', 'DT', alias),
-		U.invalidStringType(IOD, 'min_date', 'FRC', action),
-		U.invalidStringType(IOD, 'max_date', 'DT', alias),
-		U.invalidNumberType(IOD, 'min_score', 'FRC', action),
-		U.invalidNumberType(IOD, 'sample_size', 'DT', alias),
-		U.invalidNumberType(IOD, 'max_results', 'FRC', action)
+		U.actSchemaTests.noInputs(IOD, 'FRC', action),
+		U.actSchemaTests.invalidStringType(IOD, 'field_text', 'DT', alias),
+		U.actSchemaTests.invalidStringType(IOD, 'indexes', 'FRC', action),
+		U.actSchemaTests.invalidStringType(IOD, 'database_match', 'DT', alias),
+		U.actSchemaTests.invalidStringType(IOD, 'min_date', 'FRC', action),
+		U.actSchemaTests.invalidStringType(IOD, 'max_date', 'DT', alias),
+		U.actSchemaTests.invalidNumberType(IOD, 'min_score', 'FRC', action),
+		U.actSchemaTests.invalidNumberType(IOD, 'sample_size', 'DT', alias),
+		U.actSchemaTests.invalidNumberType(IOD, 'max_results', 'FRC', action)
 	]
 }
 

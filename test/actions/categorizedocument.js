@@ -30,13 +30,13 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.noInputs(IOD, 'CATDOC', action),
-		U.invalidStringType(IOD, 'field_text', 'CATDOC', action),
-		U.invalidNumberType(IOD, 'max_results', 'CATDOC', action),
-		U.invalidStringType(IOD, 'indexes', 'CATDOC', action),
-		U.invalidStringType(IOD, 'database_match', 'CATDOC', action),
-		U.invalidEnumValue(IOD, 'print', 'CATDOC', action),
-		U.invalidStringType(IOD, 'print_fields', 'CATDOC', action)
+		U.actSchemaTests.noInputs(IOD, 'CATDOC', action),
+		U.actSchemaTests.invalidStringType(IOD, 'field_text', 'CATDOC', action),
+		U.actSchemaTests.invalidNumberType(IOD, 'max_results', 'CATDOC', action),
+		U.actSchemaTests.invalidStringType(IOD, 'indexes', 'CATDOC', action),
+		U.actSchemaTests.invalidStringType(IOD, 'database_match', 'CATDOC', action),
+		U.actSchemaTests.invalidEnumValue(IOD, 'print', 'CATDOC', action),
+		U.actSchemaTests.invalidStringType(IOD, 'print_fields', 'CATDOC', action)
 	]
 }
 

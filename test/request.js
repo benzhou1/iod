@@ -31,11 +31,11 @@ var Actions = requireDir(__dirname + '/actions')
 var ReqTests = requireDir(__dirname + '/request-types')
 
 // Include request-type tests
-var includeReq = []
+var includeReq = ['async']
 // Exclude request-type tests
 var excludeReq = []
 // Include action tests
-var includeAct = []
+var includeAct = ['createdeletetextindex']
 // Exclude action tests
 // Quota for expandcontainer is 500, don't run unless we really have to
 // Quota for recognizeimages is 1000, don't run unless we really have to
