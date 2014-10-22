@@ -461,7 +461,7 @@ var commonPrepare = {
 	 * @throws {Error} - If couldn't find reference in results
 	 */
 	reference: function(IOD, action, filePath, done) {
-		if (cachedRef[action]) return done(null, cachedRef[action])
+		if (action !== 'nocache' && cachedRef[action]) return done(null, cachedRef[action])
 		else commonIODReq.storeObject(IOD, filePath, function(err, ref) {
 			cachedRef[action] = ref
 			done(null, ref)
@@ -495,7 +495,7 @@ var commonIODReq = {
 						exports.prettyPrint(res))
 				}
 
-				callback(null, { ref: res.reference })
+				callback(null, res.reference)
 			}
 		})
 	},
@@ -528,7 +528,7 @@ var commonIODReq = {
 		IOD.sync(IODOpts, function(err, res) {
 			if (err) throw new Error('Failed to create test index: ' +
 				exports.prettyPrint(err))
-			else if (!res || !res.message !== 'index created') {
+			else if (!res || res.message !== 'index created') {
 				throw new Error('Test index was not created successfully: ' +
 					exports.prettyPrint(res))
 			}

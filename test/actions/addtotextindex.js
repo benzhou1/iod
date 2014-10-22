@@ -82,8 +82,7 @@ exports.tests = function(IOD, data) {
 			},
 			it: [
 				U.shouldBeSuccessful,
-				// TODO: wait for response schema fix
-//				_.partial(U.shouldHaveResults, action)
+				_.partial(U.shouldHaveResults, action)
 			]
 		},
 		{
@@ -96,7 +95,7 @@ exports.tests = function(IOD, data) {
 			},
 			it: [
 				U.shouldBeSuccessful,
-//				_.partial(U.shouldHaveResults, action)
+				_.partial(U.shouldHaveResults, action)
 			]
 		},
 		{
@@ -109,7 +108,7 @@ exports.tests = function(IOD, data) {
 			},
 			it: [
 				U.shouldBeSuccessful,
-//				_.partial(U.shouldHaveResults, action)
+				_.partial(U.shouldHaveResults, action)
 			]
 		},
 		{
@@ -121,7 +120,7 @@ exports.tests = function(IOD, data) {
 			},
 			it: [
 				U.shouldBeSuccessful,
-//				_.partial(U.shouldHaveResults, action)
+				_.partial(U.shouldHaveResults, action)
 			]
 		},
 		{
@@ -140,7 +139,7 @@ exports.tests = function(IOD, data) {
 			},
 			it: [
 				U.shouldBeSuccessful,
-//				_.partial(U.shouldHaveResults, action)
+				_.partial(U.shouldHaveResults, action)
 			],
 			multFiles: true
 		},
@@ -172,9 +171,9 @@ exports.tests = function(IOD, data) {
 exports.prepare = function(IOD, done) {
 	async.waterfall([
 		apply(U.prepare.textIndex, IOD),
-		// Can use same reference as analyzesentiment
-		apply(U.prepare.reference, IOD, "analyzesentiment", filePath)
+		// Always get a new store object reference
+		apply(U.prepare.reference, IOD, 'nocache', filePath)
 	], function(err, res) {
-		done(res)
+		done({ ref: res })
 	})
 }

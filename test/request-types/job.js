@@ -187,7 +187,9 @@ exports.tests = [
 			]
 		},
 		skip: function(ActionTest) {
-			return !!ActionTest.shouldError || !!ActionTest.multFiles
+			return !!ActionTest.shouldError ||
+				!!ActionTest.multFiles ||
+				ActionTest.IODOpts.action === 'addtotextindex'
 		}
 	},
 	{
