@@ -153,7 +153,7 @@ exports.tests = function(IOD, data) {
  */
 exports.prepare = function(IOD, done) {
 	// Can use same reference as findrelatedconcepts
-	U.prepareReference(IOD, 'findrelatedconcepts', filePath, function(ref) {
+	U.prepare.reference(IOD, 'findrelatedconcepts', filePath, function(err, ref) {
 		done({ ref: ref })
 	})
 }

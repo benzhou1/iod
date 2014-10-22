@@ -154,7 +154,7 @@ exports.tests = function(IOD, data) {
  */
 exports.prepare = function(IOD, done) {
 	// Can use same reference as analyzesentiment
-	U.prepareReference(IOD, 'analyzesentiment', filePath, function(ref) {
+	U.prepare.reference(IOD, 'analyzesentiment', filePath, function(err, ref) {
 		done({ ref: ref })
 	})
 }

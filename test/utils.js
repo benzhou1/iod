@@ -10,7 +10,8 @@ var should = require('should')
 var T = require('../lib/transform')
 var SchemaU = require('../lib/schema')
 
-var apiKey = '6ee6cbee-f94b-4688-a697-259fd8545d94'
+// TODO: pass in these as command line args
+var apiKey = '<your api key>'
 var host = null // override host
 var port = null // override port
 
@@ -98,6 +99,9 @@ var commonPaths = {
  * Common RequestSchemaTests.
  */
 var commonReqSchemaTests = {
+	/**
+	 * Returns a ReqSchemaTest which should check for error when IODOpts is empty.
+	 */
 	empty: function() {
 		return {
 			name: 'empty IODOpts',
@@ -105,6 +109,9 @@ var commonReqSchemaTests = {
 			it: [ exports.shouldError ]
 		}
 	},
+	/**
+	 * Returns a ReqSchemaTest which should check for invalid majorVersion error.
+	 */
 	invalidMajorVer: function() {
 		return {
 			name: 'invalid majorVersion',
@@ -115,6 +122,9 @@ var commonReqSchemaTests = {
 			]
 		}
 	},
+	/**
+	 * Returns a ReqSchemaTest which should check for invalid action error.
+	 */
 	invalidAction: function(IOD) {
 		return {
 			name: 'invalid action',
@@ -128,6 +138,9 @@ var commonReqSchemaTests = {
 			]
 		}
 	},
+	/**
+	 * Returns a ReqSchemaTest which should check for invalid apiVersion error.
+	 */
 	invalidApiVer: function(IOD) {
 		return {
 			name: 'invalid apiVersion',
@@ -142,6 +155,9 @@ var commonReqSchemaTests = {
 			]
 		}
 	},
+	/**
+	 * Returns a ReqSchemaTest which should check for invalid method error.
+	 */
 	invalidMethod: function(IOD) {
 		return {
 			name: 'invalid method',
@@ -157,6 +173,9 @@ var commonReqSchemaTests = {
 			]
 		}
 	},
+	/**
+	 * Returns a ReqSchemaTest which should check for invalid params error.
+	 */
 	invalidParams: function(IOD) {
 		return {
 			name: 'params not an object',
@@ -173,6 +192,9 @@ var commonReqSchemaTests = {
 			]
 		}
 	},
+	/**
+	 * Returns a ReqSchemaTest which should check for invalid files error.
+	 */
 	invalidFiles: function(IOD) {
 		return {
 			name: 'files not an array',
@@ -190,6 +212,9 @@ var commonReqSchemaTests = {
 			]
 		}
 	},
+	/**
+	 * Returns a ReqSchemaTest which should check for invalid jobId error.
+	 */
 	invalidJobId: function(IOD) {
 		return {
 			name: 'jodId not a string',
@@ -204,6 +229,9 @@ var commonReqSchemaTests = {
 			]
 		}
 	},
+	/**
+	 * Returns a ReqSchemaTest which should check for invalid getResults error.
+	 */
 	invalidGetResults: function(IOD) {
 		return {
 			name: 'getResults not a boolean',
@@ -246,7 +274,6 @@ var commonActionSchemTests = {
 			]
 		}
 	},
-
 	/**
 	 * Returns a ActionSchemaTest which should check for a no required inputs error.
 	 */
@@ -263,7 +290,6 @@ var commonActionSchemTests = {
 			]
 		}
 	},
-
 	/**
 	 * Returns a ActionSchemaTest which should check for a invalid string type error.
 	 */
@@ -280,7 +306,6 @@ var commonActionSchemTests = {
 			]
 		}
 	},
-
 	/**
 	 * Returns a ActionSchemaTest which should check for a invalid enum value error.
 	 */
@@ -297,7 +322,6 @@ var commonActionSchemTests = {
 			]
 		}
 	},
-
 	/**
 	 * Returns a ActionSchemaTest which should check for a invalid bollean type error.
 	 */
@@ -314,7 +338,6 @@ var commonActionSchemTests = {
 			]
 		}
 	},
-
 	/**
 	 * Returns a ActionSchemaTest which should check for a invalid number type error.
 	 */
@@ -331,7 +354,6 @@ var commonActionSchemTests = {
 			]
 		}
 	},
-
 	/**
 	 * Returns a ActionSchemaTest which should check for a below minimum error.
 	 */
@@ -348,7 +370,6 @@ var commonActionSchemTests = {
 			]
 		}
 	},
-
 	/**
 	 * Returns a ActionSchemaTest which should check for a invalid array string type error.
 	 */
@@ -365,7 +386,6 @@ var commonActionSchemTests = {
 			]
 		}
 	},
-
 	/**
 	 * Returns a ActionSchemaTest which should check for a invalid array object type error.
 	 */
@@ -381,12 +401,147 @@ var commonActionSchemTests = {
 				_.partial(exports.shouldBeInSchemaError, 'type', paramName)
 			]
 		}
+	},
+	/**
+	 * Returns a ActionSchemaTest which should check for a invalid pairs between file
+	 * and additional_metadata.
+	 */
+	uneqlFileAddMeta: function(IOD, filePath, path, action, required) {
+		return {
+			name: 'unequal pair length file-additional_metadata',
+			IODOpts: {
+				action: T.attempt(commonPaths[path], action)(IOD),
+				params: _.defaults(required || {}, {
+					additional_metadata: [
+						{ addMeta: 'addMeta' },
+						{ addMeta: 'addMeta' }
+					]
+				}),
+				files: [filePath, filePath, filePath]
+			},
+			it: [
+				exports.shouldError,
+				_.partial(exports.shouldBeInError, 'pairs')
+			]
+		}
+	},
+	/**
+	 * Returns a ActionSchemaTest which should check for a invalid pairs between file
+	 * and reference_prefix.
+	 */
+	uneqlFileRefPref: function(IOD, filePath, path, action, required) {
+		return {
+			name: 'unequal pair length file-reference_prefix',
+			IODOpts: {
+				action: T.attempt(commonPaths[path], action)(IOD),
+				params: _.defaults(required || {}, {
+					reference_prefix: ['prefix', 'prefix']
+				}),
+				files: [filePath, filePath, filePath]
+			},
+			it: [
+				exports.shouldError,
+				_.partial(exports.shouldBeInError, 'pairs')
+			]
+		}
+	}
+}
+
+var commonPrepare = {
+	/**
+	 * Given a file path `filePath` store file in IDOL onDemand via storeobject action.
+	 * Cached reference from results.
+	 * Return cached if available.
+	 *
+	 * @param {IOD} IOD - IOD object
+	 * @param {string} action - Action name
+	 * @param {string} filePath - Path to file to store
+	 * @param {function} done - Done(reference)
+	 * @throws {Error} - If error on storeobject action
+	 * @throws {Error} - If couldn't find reference in results
+	 */
+	reference: function(IOD, action, filePath, done) {
+		if (cachedRef[action]) return done(null, cachedRef[action])
+		else commonIODReq.storeObject(IOD, filePath, function(err, ref) {
+			cachedRef[action] = ref
+			done(null, ref)
+		})
+	},
+
+	textIndex: function(IOD, done) {
+		commonIODReq.listIndexes(IOD, function(err, indexes) {
+			var testIndex = _.find(indexes.index, function(index) {
+				return index.index === 'test'
+			})
+			if (testIndex) done()
+			else commonIODReq.createIndex(IOD, done)
+		})
+	}
+}
+
+var commonIODReq = {
+	storeObject: function(IOD, filePath, callback) {
+		var IODOpts = {
+			action: T.attempt(commonPaths.STOREOBJ, 'storeobject')(IOD),
+			files: [filePath],
+			getResults: true
+		}
+		IOD.sync(IODOpts, function(err, res) {
+			if (err) throw new Error('Failed to store object: ' +
+				exports.prettyPrint(err))
+			else {
+				if (!res || !res.reference) {
+					throw new Error('Could not find reference from storeobject: ' +
+						exports.prettyPrint(res))
+				}
+
+				callback(null, { ref: res.reference })
+			}
+		})
+	},
+
+	// TODO: switch to listresources
+	listIndexes: function(IOD, callback) {
+		var IODOpts = {
+			action: T.attempt(commonPaths.LISTI, 'listindexes')(IOD),
+			params: {
+				type: 'content',
+				flavor: 'explorer'
+			}
+		}
+		IOD.sync(IODOpts, function(err, res) {
+			if (err) throw new Error('Failed to get list of indexes: ' +
+				exports.prettyPrint(err))
+			else if (!res || !res.index) throw new Error('List of user indexes not found: ' +
+				exports.prettyPrint(res))
+			else callback(null, res)
+		})
+	},
+
+	createIndex: function(IOD, callback) {
+		var IODOpts = {
+			action: T.attempt(commonPaths.CREATETI, 'createtextindex')(IOD),
+			params: {
+				index: 'test'
+			}
+		}
+		IOD.sync(IODOpts, function(err, res) {
+			if (err) throw new Error('Failed to create test index: ' +
+				exports.prettyPrint(err))
+			else if (!res || !res.message !== 'index created') {
+				throw new Error('Test index was not created successfully: ' +
+					exports.prettyPrint(res))
+			}
+			else callback(null, res)
+		})
 	}
 }
 
 exports.paths = commonPaths
 exports.reqSchemaTests = commonReqSchemaTests
 exports.actSchemaTests = commonActionSchemTests
+exports.prepare = commonPrepare
+exports.IODReq = commonIODReq
 
 /**
  * Returns stringified value `v` with 2 space separation.
@@ -608,62 +763,6 @@ exports.shouldBeConfirm = function(env) {
 	return env
 }
 
-/**
- * Given a file path `filePath` store file in IDOL onDemand via storeobject action.
- * Cached reference from results.
- * Return cached if available.
- *
- * @param {IOD} IOD - IOD object
- * @param {string} action - Action name
- * @param {string} filePath - Path to file to store
- * @param {function} done - Done(reference)
- * @throws {Error} - If error on storeobject action
- * @throws {Error} - If couldn't find reference in results
- */
-exports.prepareReference = function(IOD, action, filePath, done) {
-	if (cachedRef[action]) return done(cachedRef[action])
-	else exports.storeObject(IOD, filePath, function(err, ref) {
-		cachedRef[action] = ref
-		done(null, ref)
-	})
-}
-
-exports.storeObject = function(IOD, filePath, callback) {
-	var IODOpts = {
-		action: T.attempt(commonPaths.STOREOBJ, 'storeobject')(IOD),
-		files: [filePath],
-		getResults: true
-	}
-	IOD.sync(IODOpts, function(err, res) {
-		if (err) throw new Error('Failed to store object: ' +
-			exports.prettyPrint(err))
-		else {
-			var ref = T.attempt(commonPaths.REF)(res)
-			if (!ref) throw new Error('Could not find reference from storeobject: ' +
-				exports.prettyPrint(res))
-
-			callback(null, ref)
-		}
-	})
-}
-
-exports.listIndexes = function(IOD, callback) {
-	var IODOpts = {
-		action: T.attempt(commonPaths.LISTI, 'listindexes')(IOD),
-		params: {
-			type: 'content',
-			flavor: 'explorer'
-		}
-	}
-	IOD.sync(IODOpts, function(err, res) {
-		if (err) throw new Error('Failed to get list of indexes: ' +
-			exports.prettyPrint(err))
-		else if (!res || !res.index) throw new Error('List of user indexes not found: ' +
-			exports.prettyPrint(res))
-		else callback(null, res)
-	})
-}
-
 exports.deleteTextIndex = function(IOD, index, confirm, callback) {
 	var IODOpts = {
 		action: T.attempt(commonPaths.DELETETI, 'deletetextindex')(IOD),
@@ -688,15 +787,5 @@ exports.deleteTextIndex = function(IOD, index, confirm, callback) {
 exports.forceDeleteTextIndex = function(IOD, index, callback) {
 	exports.deleteTextIndex(IOD, index, null, function(err, confirm) {
 		exports.deleteTextIndex(IOD, index, confirm, callback)
-	})
-}
-
-exports.prepareToCreateTextIndex = function(IOD, callback) {
-	exports.listIndexes(IOD, function(err, indexes) {
-		var testIndex = _.find(indexes.index, function(index) {
-			return index.index === 'test'
-		})
-		if (testIndex) exports.forceDeleteTextIndex(IOD, 'test', callback)
-		else callback()
 	})
 }
