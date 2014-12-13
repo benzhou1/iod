@@ -179,10 +179,10 @@ _.each(ReqTests, function(ReqTest, reqType) {
  * Runs every ActionTests for current action.
  *
  * @param {IOD} IOD - IOD object
- * @param {object} reqTest - RequestTest
- * @param {object} ActionTest - ActionTest
- * @param {object} env - Environment object
- * @param {function} callback - Callback()
+ * @param {Object} reqTest - RequestTest
+ * @param {Object} ActionTest - ActionTest
+ * @param {Object} env - Environment object
+ * @param {Function} callback - Callback()
  */
 function beforeActionTest(IOD, reqTest, ActionTest, env, callback) {
 	// Makes preparations before running all ActionTest
@@ -211,9 +211,9 @@ function beforeActionTest(IOD, reqTest, ActionTest, env, callback) {
 /**
  * Runs every ActionTests validation it checks.
  *
- * @param {object} ActionTest - ActionTest
- * @param {object} reqTest - RequestTest
- * @param {string} action - Current action
+ * @param {Object} ActionTest - ActionTest
+ * @param {Object} reqTest - RequestTest
+ * @param {String} action - Current action
  */
 function itActionTest(ActionTest, reqTest, action) {
 	_.each(ActionTest.tests(U.IOD), function(actionTest) {
@@ -227,8 +227,8 @@ function itActionTest(ActionTest, reqTest, action) {
 /**
  * Transform IODOpts into IODOpts of job request.
  *
- * @param {object} IODOpts - IOD options
- * @returns {object} Transformed IODOpts
+ * @param {Object} IODOpts - IOD options
+ * @returns {Object} Transformed IODOpts
  */
 function transformIODOptsForJob(IODOpts) {
 	IODOpts.job = {

@@ -23,7 +23,7 @@ exports.IOD = new IOD(apiKey, host, port)
  * Caches create IOD object.
  * Returns IOD as second argument to `fn`
  *
- * @param {function} fn - Function(err, IOD)
+ * @param {Function} fn - Function(err, IOD)
  */
 exports.createIOD = function(fn) {
 	if (cachedIOD) fn(null, cachedIOD)
@@ -454,9 +454,9 @@ var commonPrepare = {
 	 * Return cached if available.
 	 *
 	 * @param {IOD} IOD - IOD object
-	 * @param {string} action - Action name
-	 * @param {string} filePath - Path to file to store
-	 * @param {function} done - Done(reference)
+	 * @param {String} action - Action name
+	 * @param {String} filePath - Path to file to store
+	 * @param {Function} done - Done(reference)
 	 * @throws {Error} - If error on storeobject action
 	 * @throws {Error} - If couldn't find reference in results
 	 */
@@ -547,7 +547,7 @@ exports.IODReq = commonIODReq
  * Returns stringified value `v` with 2 space separation.
  *
  * @param {*} v - Some value
- * @returns {string}
+ * @returns {String}
  */
 exports.prettyPrint = function(v) {
 	return JSON.stringify(v, null, 2)
@@ -556,9 +556,9 @@ exports.prettyPrint = function(v) {
 /**
  * Converts a specified IOD options `IODOpts` into a new IODOpts suited for job request.
  *
- * @param {object} IODOpts - IOD options
- * @param {number} i - File name count
- * @returns {object} - Transformed IODOpts
+ * @param {Object} IODOpts - IOD options
+ * @param {Number} i - File name count
+ * @returns {Object} - Transformed IODOpts
  */
 exports.createJobAction = function(IODOpts, i) {
 	var action = { name: IODOpts.action }
@@ -574,7 +574,7 @@ exports.createJobAction = function(IODOpts, i) {
 /**
  * Sets 60 seconds as timeout for test.
  *
- * @param {object} that - this
+ * @param {Object} that - this
  */
 exports.timeout = function(that) {
 	that.timeout(60000)
@@ -583,7 +583,7 @@ exports.timeout = function(that) {
 /**
  * Wraps a function `fn` to test that it throws.
  *
- * @param {function} fn - Function(*)
+ * @param {Function} fn - Function(*)
  * @returns {Function} - Function to check
  */
 exports.throwFunction = function(fn) {
@@ -598,9 +598,9 @@ exports.throwFunction = function(fn) {
  * Done fn callback that assigned error and response to specified object under
  * specified path.
  *
- * @param {object} env - Object
+ * @param {Object} env - Object
  * @param {string | array} path - Object path
- * @param {function} callback - Callback()
+ * @param {Function} callback - Callback()
  * @returns {Function} - Function(err, res)
  */
 exports.beforeDoneFn = function(env, path, callback) {
@@ -622,10 +622,10 @@ exports.beforeDoneFn = function(env, path, callback) {
  * contains the string `key`
  * Verify that specified schema error is found.
  *
- * @param {string} msg - Message to contain in schema error message
- * @param {string} key - Property to contain in schema error path
- * @param {object} env - Environment object
- * @returns {object} - env
+ * @param {String} msg - Message to contain in schema error message
+ * @param {String} key - Property to contain in schema error path
+ * @param {Object} env - Environment object
+ * @returns {Object} - env
  */
 exports.shouldBeInSchemaError = function(msg, key, env) {
 	var error = _.find(T.maybeToArray(env.error), function(error) {
@@ -647,8 +647,8 @@ exports.shouldBeInSchemaError = function(msg, key, env) {
 /**
  * Validates that environment object `env` contains an error.
  *
- * @param {object} env - Environment object
- * @returns {object} - env
+ * @param {Object} env - Environment object
+ * @returns {Object} - env
  */
 exports.shouldError = function(env) {
 	if (!env.error) console.log('shouldError - env: ', exports.prettyPrint(env))
@@ -659,8 +659,8 @@ exports.shouldError = function(env) {
 /**
  * Validates that environment object `env` does not contain an error.
  *
- * @param {object} env - Environment object
- * @returns {object} - env
+ * @param {Object} env - Environment object
+ * @returns {Object} - env
  */
 exports.shouldBeSuccessful = function(env) {
 	if (env.error) console.log('shouldBeSuccessful - env.error: ',
@@ -674,9 +674,9 @@ exports.shouldBeSuccessful = function(env) {
  * Validates that environment object `env` has an error and that it contains
  * specified string `contains`
  *
- * @param {string} contains - String to contain in error
- * @param {object} env - Environment object
- * @returns {object} - env
+ * @param {String} contains - String to contain in error
+ * @param {Object} env - Environment object
+ * @returns {Object} - env
  */
 exports.shouldBeInError = function(contains, env) {
 	var error = T.attempt(T.walk(['error', 0, 'error']), env.error)(env)
@@ -690,8 +690,8 @@ exports.shouldBeInError = function(contains, env) {
 /**
  * Response should contain only jobId.
  *
- * @param {object} env - Environment object
- * @returns {object} - env
+ * @param {Object} env - Environment object
+ * @returns {Object} - env
  */
 exports.shouldBeJobId = function(env) {
 	env.response.should.have.property('jobID')
@@ -703,8 +703,8 @@ exports.shouldBeJobId = function(env) {
  * Response should match response schema for specified `action`.
  * If response is from job, apply schema validation for every action result.
  *
- * @param {string} action - Action name
- * @param {object} env - Environment object
+ * @param {String} action - Action name
+ * @param {Object} env - Environment object
  */
 exports.shouldHaveResults = function(action, env) {
 	var jobActionResults = env.response.actions
@@ -736,8 +736,8 @@ exports.shouldHaveResults = function(action, env) {
  * Validates that environment object `env` contains all the properties that a status
  * response should have.
  *
- * @param {object} env - Environment object
- * @returns {object} - env
+ * @param {Object} env - Environment object
+ * @returns {Object} - env
  */
 exports.shouldBeStatus = function(env) {
 	env.response.should.have.properties('status', 'jobID', 'actions')

@@ -16,14 +16,14 @@ var CONSTANTS = require('./lib/constants')
 /**
  * Creates a IOD object with specified apiKey, host and port.
  *
- * @param {string} apiKey - Api key
- * @param {string}host - IOD host
- * @param {integer} port - IOD port
- * @param {integer} reqOpts - Request options
- * @property {string} apiKey - Api key
- * @property {string} host - IOD host
- * @property {integer} port - IOD port
- * @property {object} reqOpts - Request options
+ * @param {String} apiKey - Api key
+ * @param {String} [host] - IOD host
+ * @param {Integer | null} [port] - IOD port
+ * @param {Integer} [reqOpts] - Request options
+ * @property {String} apiKey - Api key
+ * @property {String} host - IOD host
+ * @property {Integer} port - IOD port
+ * @property {Object} reqOpts - Request options
  * @constructor
  * @throws {Error}
  * 	If api key does not exists.
@@ -34,11 +34,11 @@ var IOD = function(apiKey, host, port, reqOpts) {
 
 	if (_.isObject(host)) {
 		reqOpts = host
-		host = undefined
+		host = null
 	}
 	else if (_.isObject(port)) {
 		reqOpts = port
-		port = undefined
+		port = null
 	}
 
 	if (!apiKey) throw Error('IOD apiKey is missing!')
@@ -74,11 +74,11 @@ module.exports = IOD
  * Returns new initialized IOD object.
  * Automatically gets all the available actions for specified api key.
  *
- * @param {string} apiKey - Api key
- * @param {string} host - Optional IOD host
- * @param {integer} port - Optional IOD port
- * @param {object} reqOpts - Optional Request options
- * @param {function} callback - Callback(err, IOD)
+ * @param {String} apiKey - Api key
+ * @param {String} [host] - Optional IOD host
+ * @param {Integer} [port] - Optional IOD port
+ * @param {Object} [reqOpts] - Optional Request options
+ * @param {Function} callback - Callback(err, IOD)
  */
 IOD.create = function(apiKey, host, port, reqOpts, callback) {
 	if (_.isFunction(host)) {
@@ -114,12 +114,12 @@ IOD.create = function(apiKey, host, port, reqOpts, callback) {
  *
  * @type object
  * @constant
- * @property {string} SYNC - Sync type request.
- * @property {string} ASYNC - ASync type request.
- * @property {string} RESULT - Result type request.
- * @property {string} STATUS - Status type request.
- * @property {string} JOB - Job type request.
- * @property {string} DISCOVERY - Discovery type request.
+ * @property {String} SYNC - Sync type request.
+ * @property {String} ASYNC - ASync type request.
+ * @property {String} RESULT - Result type request.
+ * @property {String} STATUS - Status type request.
+ * @property {String} JOB - Job type request.
+ * @property {String} DISCOVERY - Discovery type request.
  * @see types.js
  */
 IOD.prototype.TYPES = CONSTANTS.TYPES
@@ -129,10 +129,10 @@ IOD.prototype.TYPES = CONSTANTS.TYPES
  *
  * @type object
  * @constant
- * @property {object} MAJOR - Major version.
- * @property {string} MAJOR.V1 - 1.0 Major version.
- * @property {object} API - Action version.
- * @property {string} API.V1 - V1 Api version.
+ * @property {Object} MAJOR - Major version.
+ * @property {String} MAJOR.V1 - 1.0 Major version.
+ * @property {Object} API - Action version.
+ * @property {String} API.V1 - V1 Api version.
  * @see versions.js
  */
 IOD.prototype.VERSIONS = CONSTANTS.VERSIONS
@@ -149,8 +149,8 @@ IOD.prototype.VERSIONS = CONSTANTS.VERSIONS
  * 		}
  * )
  *
- * @param {object} IODOpts - IOD options
- * @param {function} callback - Callback(err, IOD response)
+ * @param {Object} IODOpts - IOD options
+ * @param {Function} callback - Callback(err, IOD response)
  * @see sync.js for IODOpts schema
  */
 IOD.prototype.sync = function(IODOpts, callback) {
@@ -170,8 +170,8 @@ IOD.prototype.sync = function(IODOpts, callback) {
  * 		}
  * )
  *
- * @param {object} IODOpts - IOD options
- * @param {function} callback - Callback(err, IOD response)
+ * @param {Object} IODOpts - IOD options
+ * @param {Function} callback - Callback(err, IOD response)
  * @see async.js for IODOpts schema
  */
 IOD.prototype.async = function(IODOpts, callback) {
@@ -189,8 +189,8 @@ IOD.prototype.async = function(IODOpts, callback) {
  * 		console.log('RES: ', res)
  * })
  *
- * @param {object} IODOpts - IOD options
- * @param {function} callback - Callback(err, IOD response)
+ * @param {Object} IODOpts - IOD options
+ * @param {Function} callback - Callback(err, IOD response)
  * @see result.js for IODOpts schema
  */
 IOD.prototype.result = function(IODOpts, callback) {
@@ -208,8 +208,8 @@ IOD.prototype.result = function(IODOpts, callback) {
  * 		console.log('RES: ', res)
  * })
  *
- * @param {object} IODOpts - IOD options
- * @param {function} callback - Callback(err, IOD response)
+ * @param {Object} IODOpts - IOD options
+ * @param {Function} callback - Callback(err, IOD response)
  * @see status.js for IODOpts schema
  */
 IOD.prototype.status = function(IODOpts, callback) {
@@ -232,8 +232,8 @@ IOD.prototype.status = function(IODOpts, callback) {
  * 		console.log('RES: ', res)
  * })
  *
- * @param {object} IODOpts - IOD options
- * @param {function} callback - Callback(err, IOD response)
+ * @param {Object} IODOpts - IOD options
+ * @param {Function} callback - Callback(err, IOD response)
  * @see job.js for IODOpts schema
  */
 IOD.prototype.job = function(IODOpts, callback) {
@@ -251,8 +251,8 @@ IOD.prototype.job = function(IODOpts, callback) {
  * 		console.log('RES: ', res)
  * })
  *
- * @param {object} IODOpts - IOD options
- * @param {function} callback - Callback(err, IOD response)
+ * @param {Object} IODOpts - IOD options
+ * @param {Function} callback - Callback(err, IOD response)
  * @see job.js for IODOpts schema
  */
 IOD.prototype.discovery = function(IODOpts, callback) {
