@@ -19,9 +19,9 @@ exports.type = 'discovery'
 /**
  * Returns list of schema tests for action.
  * Schema Tests consist of: {
- * 	{string} name - Name of test,
- * 	{object} IODOpts - IOD options,
- *	{function} it - Array of functions to execute that validates test,
+ * 	{String} name - Name of test,
+ * 	{Object} IODOpts - IOD options,
+ *	{Function} it - Array of functions to execute that validates test,
  * }
  *
  * @param {IOD} IOD - IOD object
@@ -34,21 +34,21 @@ exports.schemaTests = function(IOD) {
 /**
  * Returns list of action tests.
  * Action tests consist of: {
- * 	{string} name - Name of test,
- * 	{object} IODOpts - IOD options,
- *	{function} it - Array of functions to execute that validates test,
- *	{boolean} shouldError - True if test is expected to error
+ * 	{String} name - Name of test,
+ * 	{Object} IODOpts - IOD options,
+ *	{Function} it - Array of functions to execute that validates test,
+ *	{Boolean} shouldError - True if test is expected to error
  * }
  *
  * @param {IOD} IOD - IOD object
- * @param {object} data - Prepared data for tests
+ * @param {Object} data - Prepared data for tests
  * @returns {Array} - List of ActionTests
  */
 exports.tests = function(IOD, data) {
 	/**
 	 * Validates that results is an array with 5 elements.
 	 *
-	 * @param {object} env - Environment object
+	 * @param {Object} env - Environment object
 	 */
 	var shouldHaveResults = function(env) {
 		env.response.should.be.an.Array

@@ -20,9 +20,9 @@ exports.noActionSchema = true
 /**
  * Returns list of Schema Tests for result request type.
  * Schema Tests consist of: {
- * 	{string} name - Name of test,
- * 	{object} IODOpts - IOD options,
- *	{function} it - Array of functions to execute that validates test,
+ * 	{String} name - Name of test,
+ * 	{Object} IODOpts - IOD options,
+ *	{Function} it - Array of functions to execute that validates test,
  * }
  *
  * @param {IOD} IOD - IOD object
@@ -40,10 +40,10 @@ exports.schemaTests = function(IOD) {
 /**
  * List of result tests.
  * Status Tests consist of: {
- * 	{string} name - Name of test,
- * 	{function} beforeFn - function that executes test,
- *	{function} itFn - Returns array of functions to execute that validates test,
- *  {function} skip - Returns true to skip action test.
+ * 	{String} name - Name of test,
+ * 	{Function} beforeFn - function that executes test,
+ *	{Function} itFn - Returns array of functions to execute that validates test,
+ *  {Function} skip - Returns true to skip action test.
  * }
  *
  * @type {Array}
