@@ -7,6 +7,7 @@
 var _ = require('lodash')
 var U = require('../utils')
 var T = require('../../lib/transform')
+var RSTests = require('../request-schema-tests-utils')
 
 /**
  * Only supports specific type of actions.
@@ -26,9 +27,9 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.reqSchemaTests.empty(IOD),
-		U.reqSchemaTests.invalidMajorVer(IOD),
-		U.reqSchemaTests.invalidGetResults(IOD),
+		RSTests.empty(),
+		RSTests.invalidMajorVer(IOD),
+		RSTests.invalidGetResults(IOD),
 
 		{
 			name: 'missing required actions in job',

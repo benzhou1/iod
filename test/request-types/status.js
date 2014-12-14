@@ -5,6 +5,7 @@
 'use strict';
 
 var U = require('../utils')
+var RSTests = require('../request-schema-tests-utils')
 
 /**
  * Only supports specific type of actions.
@@ -29,10 +30,10 @@ exports.noActionSchema = true
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.reqSchemaTests.empty(IOD),
-		U.reqSchemaTests.invalidMajorVer(IOD),
-		U.reqSchemaTests.invalidMethod(IOD),
-		U.reqSchemaTests.invalidJobId(IOD)
+		RSTests.empty(),
+		RSTests.invalidMajorVer(IOD),
+		RSTests.invalidMethod(IOD),
+		RSTests.invalidJobId(IOD)
 	]
 }
 

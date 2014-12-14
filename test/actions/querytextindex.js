@@ -4,8 +4,10 @@
 
 'use strict';
 
-var _ = require('lodash')
 var U = require('../utils')
+var ASTests = require('../action-schema-tests-utils')
+
+var _ = require('lodash')
 var should = require('should')
 var T = require('../../lib/transform')
 
@@ -31,27 +33,28 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.actSchemaTests.noInputs(IOD, 'QTI', action),
-		U.actSchemaTests.invalidStringType(IOD, 'field_text', 'QTI', action),
-		U.actSchemaTests.invalidNumberType(IOD, 'start', 'QUERY', alias),
-		U.actSchemaTests.invalidMinimum(IOD, 'start', 0, 'QTI', action),
-		U.actSchemaTests.invalidNumberType(IOD, 'max_page_results', 'QUERY', alias),
-		U.actSchemaTests.invalidMinimum(IOD, 'max_page_results', 0, 'QTI', action),
-		U.actSchemaTests.invalidNumberType(IOD, 'absolute_max_results', 'QUERY', alias),
-		U.actSchemaTests.invalidMinimum(IOD, 'absolute_max_results', 0, 'QTI', action),
-		U.actSchemaTests.invalidStringType(IOD, 'indexes', 'QUERY', alias),
-		U.actSchemaTests.invalidStringType(IOD, 'database_match', 'QTI', action),
-		U.actSchemaTests.invalidEnumValue(IOD, 'print', 'QUERY', alias),
-		U.actSchemaTests.invalidStringType(IOD, 'print_fields', 'QTI', action),
-		U.actSchemaTests.invalidEnumValue(IOD, 'highlight', 'QUERY', alias),
-		U.actSchemaTests.invalidStringType(IOD, 'min_date', 'QTI', action),
-		U.actSchemaTests.invalidStringType(IOD, 'max_date', 'QUERY', alias),
-		U.actSchemaTests.invalidNumberType(IOD, 'min_score', 'QTI', action),
-		U.actSchemaTests.invalidEnumValue(IOD, 'sort', 'QUERY', alias),
-		U.actSchemaTests.invalidBooleanType(IOD, 'total_results', 'QTI', action),
-		U.actSchemaTests.invalidStringType(IOD, 'start_tag', 'QUERY', alias),
-		U.actSchemaTests.invalidStringType(IOD, 'end_tag', 'QTI', action),
-		U.actSchemaTests.invalidEnumValue(IOD, 'summary', 'QUERY', alias)
+		ASTests.noInputs(IOD, 'QTI', action),
+		ASTests.invalidStringType(IOD, 'field_text', 'QTI', action),
+		ASTests.invalidNumberType(IOD, 'start', 'QUERY', alias),
+		ASTests.invalidMinimum(IOD, 'start', 0, 'QTI', action),
+		ASTests.invalidNumberType(IOD, 'max_page_results', 'QUERY', alias),
+		ASTests.invalidMinimum(IOD, 'max_page_results', 0, 'QTI', action),
+		ASTests.invalidNumberType(IOD, 'absolute_max_results', 'QUERY', alias),
+		ASTests.invalidMinimum(IOD, 'absolute_max_results', 0, 'QTI', action),
+		// TODO: wait for fix in production indexex
+//		ASTests.withRequired({ text: 'blah'}).invalidArrayString(IOD, 'indexes', 'QUERY', alias),
+//		ASTests.withRequired({ text: 'blah'}).invalidArrayString(IOD, 'database_match', 'QTI', action),
+		ASTests.invalidEnumValue(IOD, 'print', 'QUERY', alias),
+		ASTests.invalidStringType(IOD, 'print_fields', 'QTI', action),
+		ASTests.invalidEnumValue(IOD, 'highlight', 'QUERY', alias),
+		ASTests.invalidStringType(IOD, 'min_date', 'QTI', action),
+		ASTests.invalidStringType(IOD, 'max_date', 'QUERY', alias),
+		ASTests.invalidNumberType(IOD, 'min_score', 'QTI', action),
+		ASTests.invalidEnumValue(IOD, 'sort', 'QUERY', alias),
+		ASTests.invalidBooleanType(IOD, 'total_results', 'QTI', action),
+		ASTests.invalidStringType(IOD, 'start_tag', 'QUERY', alias),
+		ASTests.invalidStringType(IOD, 'end_tag', 'QTI', action),
+		ASTests.invalidEnumValue(IOD, 'summary', 'QUERY', alias)
 	]
 }
 

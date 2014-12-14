@@ -4,8 +4,10 @@
 
 'use strict';
 
-var _ = require('lodash')
 var U = require('../utils')
+var ASTests = require('../action-schema-tests-utils')
+
+var _ = require('lodash')
 var should = require('should')
 var T = require('../../lib/transform')
 
@@ -31,11 +33,11 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.actSchemaTests.noInputs(IOD, 'RECIMAGE', action),
-		U.actSchemaTests.invalidEnumValue(IOD, 'indexes', 'DETIMAGE', alias),
-		U.actSchemaTests.invalidEnumValue(IOD, 'database_match', 'RECIMAGE', action),
-		U.actSchemaTests.invalidEnumValue(IOD, 'image_type', 'DETIMAGE', alias),
-		U.actSchemaTests.invalidArrayString(IOD, 'image_type', 'RECIMAGE', action)
+		ASTests.noInputs(IOD, 'RECIMAGE', action),
+		ASTests.invalidEnumValue(IOD, 'indexes', 'DETIMAGE', alias),
+		ASTests.invalidEnumValue(IOD, 'database_match', 'RECIMAGE', action),
+		ASTests.invalidEnumValue(IOD, 'image_type', 'DETIMAGE', alias),
+		ASTests.invalidArrayString(IOD, 'image_type', 'RECIMAGE', action)
 	]
 }
 

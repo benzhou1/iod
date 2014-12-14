@@ -4,13 +4,22 @@
 
 'use strict';
 
-var _ = require('lodash')
 var U = require('../utils')
+var ASTests = require('../action-schema-tests-utils')
+
+var _ = require('lodash')
 var should = require('should')
 var T = require('../../lib/transform')
 
 var async = require('../../lib/async-ext')
 var apply = async.apply
+
+var createAction = 'createtextindex'
+var statusAction = 'indexstatus'
+var listAction = 'listindexes'
+var listRAction = 'listresources'
+var deleteAction = 'deletetextindex'
+var deleteFromAction = 'deletefromtextindex'
 
 var action = 'addtotextindex'
 var filePath = __dirname + '/../files/' + action
@@ -33,13 +42,46 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.actSchemaTests.noInputs(IOD, 'ADDTOTI', action, { index: 'test' }),
-		U.actSchemaTests.missingRequired(IOD, 'index', 'ADDTOTI', action),
-		U.actSchemaTests.invalidEnumValue(IOD, 'duplicate_mode', 'ADDTOTI', action),
-		U.actSchemaTests.invalidArrayObj(IOD, 'additional_metadata', 'ADDTOTI', action),
-		U.actSchemaTests.invalidArrayString(IOD, 'reference_prefix', 'ADDTOTI', action),
-		U.actSchemaTests.uneqlFileAddMeta(IOD, filePath, 'ADDTOTI', action, { index: 'test' }),
-		U.actSchemaTests.uneqlFileRefPref(IOD, filePath, 'ADDTOTI', action, { index: 'test' })
+		// Addtotextindex
+		ASTests.withRequired({ index: 'test' }).noInputs(IOD, 'ADDTOTI', action),
+		ASTests.missingRequired(IOD, 'index', 'ADDTOTI', action),
+		ASTests.invalidEnumValue(IOD, 'duplicate_mode', 'ADDTOTI', action),
+		ASTests.invalidArrayObj(IOD, 'additional_metadata', 'ADDTOTI', action),
+		ASTests.invalidArrayString(IOD, 'reference_prefix', 'ADDTOTI', action),
+		ASTests.withRequired({ index: 'test' }).uneqlFileAddMeta(IOD, filePath, 'ADDTOTI', action),
+		ASTests.uneqlFileRefPref(IOD, filePath, 'ADDTOTI', action, { index: 'test' }),
+
+		// Createtextindex
+		ASTests.missingRequired(IOD, 'index', 'CREATETI', createAction),
+		ASTests.missingRequired(IOD, 'flavor', 'CREATETI', createAction),
+		ASTests.invalidStringType(IOD, 'description', 'CREATETI', createAction),
+
+		// Deletetextindex
+		ASTests.missingRequired(IOD, 'index', 'DELETETI', deleteAction),
+		ASTests.invalidStringType(IOD, 'confirm', 'DELETETI', deleteAction),
+
+		// Deletefromtextindex
+		// TODO: wait for fix in production for index_reference
+		ASTests.missingRequired(IOD, 'index', 'DELFROMTI', deleteFromAction),
+//		ASTests.withRequired({ index: 'test1' }).invalidArrayString(IOD, 'index_reference',
+//			'DELFROMTI', deleteFromAction),
+		ASTests.withRequired({ index: 'test1' }).invalidBooleanType(IOD, 'delete_all_documents',
+			'DELFROMTI', deleteFromAction),
+
+		// Indexstatus
+		ASTests.missingRequired(IOD, 'index', 'INDEXSTATUS', statusAction),
+
+		// Listindexes
+		ASTests.invalidEnumValue(IOD, 'type', 'LISTI', listAction),
+		ASTests.invalidEnumValue(IOD, 'flavor', 'LISTI', listAction),
+		ASTests.invalidArrayString(IOD, 'type', 'LISTI', listAction),
+		ASTests.invalidArrayString(IOD, 'flavor', 'LISTI', listAction),
+
+		// Listresources
+		ASTests.invalidEnumValue(IOD, 'type', 'LISTR', listRAction),
+		ASTests.invalidEnumValue(IOD, 'flavor', 'LISTR', listRAction),
+		ASTests.invalidArrayString(IOD, 'type', 'LISTR', listRAction),
+		ASTests.invalidArrayString(IOD, 'flavor', 'LISTR', listRAction)
 	]
 }
 

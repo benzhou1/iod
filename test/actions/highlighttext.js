@@ -4,8 +4,10 @@
 
 'use strict';
 
-var _ = require('lodash')
 var U = require('../utils')
+var ASTests = require('../action-schema-tests-utils')
+
+var _ = require('lodash')
 var should = require('should')
 var T = require('../../lib/transform')
 
@@ -31,11 +33,11 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.actSchemaTests.noInputs(IOD, 'HLTEXT', action, { highlight_expression: 'string' }),
-		U.actSchemaTests.missingRequired(IOD, 'highlight_expression', 'HL', alias),
-		U.actSchemaTests.invalidStringType(IOD, 'highlight_expression', 'HLTEXT', action),
-		U.actSchemaTests.invalidStringType(IOD, 'start_tag', 'HL', alias),
-		U.actSchemaTests.invalidStringType(IOD, 'end_tag', 'HLTEXT', action)
+		ASTests.withRequired({ highlight_expression: 'string' }).noInputs(IOD, 'HLTEXT', action),
+		ASTests.missingRequired(IOD, 'highlight_expression', 'HL', alias),
+		ASTests.invalidStringType(IOD, 'highlight_expression', 'HLTEXT', action),
+		ASTests.invalidStringType(IOD, 'start_tag', 'HL', alias),
+		ASTests.invalidStringType(IOD, 'end_tag', 'HLTEXT', action)
 	]
 }
 

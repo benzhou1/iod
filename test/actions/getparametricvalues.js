@@ -4,8 +4,10 @@
 
 'use strict';
 
-var _ = require('lodash')
 var U = require('../utils')
+var ASTests = require('../action-schema-tests-utils')
+
+var _ = require('lodash')
 var should = require('should')
 var T = require('../../lib/transform')
 
@@ -29,15 +31,15 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.actSchemaTests.invalidStringType(IOD, 'indexes', 'GPV', action),
-		U.actSchemaTests.invalidStringType(IOD, 'database_match', 'GPV', action),
-		U.actSchemaTests.missingRequired(IOD, 'field_name', 'GPV', action),
-		U.actSchemaTests.invalidStringType(IOD, 'field_name', 'GPV', action),
-		U.actSchemaTests.invalidStringType(IOD, 'text', 'GPV', action),
-		U.actSchemaTests.invalidNumberType(IOD, 'max_values', 'GPV', action),
-		U.actSchemaTests.invalidNumberType(IOD, 'min_score', 'GPV', action),
-		U.actSchemaTests.invalidBooleanType(IOD, 'document_count', 'GPV', action),
-		U.actSchemaTests.invalidEnumValue(IOD, 'sort', 'GPV', action)
+		ASTests.invalidStringType(IOD, 'indexes', 'GPV', action),
+		ASTests.invalidStringType(IOD, 'database_match', 'GPV', action),
+		ASTests.missingRequired(IOD, 'field_name', 'GPV', action),
+		ASTests.invalidStringType(IOD, 'field_name', 'GPV', action),
+		ASTests.invalidStringType(IOD, 'text', 'GPV', action),
+		ASTests.invalidNumberType(IOD, 'max_values', 'GPV', action),
+		ASTests.invalidNumberType(IOD, 'min_score', 'GPV', action),
+		ASTests.invalidBooleanType(IOD, 'document_count', 'GPV', action),
+		ASTests.invalidEnumValue(IOD, 'sort', 'GPV', action)
 	]
 }
 

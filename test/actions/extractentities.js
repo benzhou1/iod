@@ -4,8 +4,10 @@
 
 'use strict';
 
-var _ = require('lodash')
 var U = require('../utils')
+var ASTests = require('../action-schema-tests-utils')
+
+var _ = require('lodash')
 var should = require('should')
 var T = require('../../lib/transform')
 
@@ -31,11 +33,11 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.actSchemaTests.noInputs(IOD, 'EENTITIES', action, { entity_type: 'people_eng' }),
-		U.actSchemaTests.missingRequired(IOD, 'entity_type', 'EENTITY', alias),
-		U.actSchemaTests.invalidEnumValue(IOD, 'entity_type', 'EENTITIES', action),
-		U.actSchemaTests.invalidArrayString(IOD, 'entity_type', 'EENTITY', alias),
-		U.actSchemaTests.invalidBooleanType(IOD, 'show_alternatives', 'EENTITIES', action)
+		ASTests.withRequired({ entity_type: 'people_eng' }).noInputs(IOD, 'EENTITIES', action),
+		ASTests.missingRequired(IOD, 'entity_type', 'EENTITY', alias),
+		ASTests.invalidEnumValue(IOD, 'entity_type', 'EENTITIES', action),
+		ASTests.invalidArrayString(IOD, 'entity_type', 'EENTITY', alias),
+		ASTests.invalidBooleanType(IOD, 'show_alternatives', 'EENTITIES', action)
 	]
 }
 

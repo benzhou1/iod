@@ -4,8 +4,10 @@
 
 'use strict';
 
-var _ = require('lodash')
 var U = require('../utils')
+var ASTests = require('../action-schema-tests-utils')
+
+var _ = require('lodash')
 var should = require('should')
 var T = require('../../lib/transform')
 
@@ -30,14 +32,14 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.actSchemaTests.noInputs(IOD, 'EXTRACTTEXT', action),
-		U.actSchemaTests.invalidBooleanType(IOD, 'extract_text', 'EXTRACTTEXT', action),
-		U.actSchemaTests.invalidBooleanType(IOD, 'extract_metadata', 'EXTRACTTEXT', action),
-		U.actSchemaTests.invalidArrayObj(IOD, 'additional_metadata', 'EXTRACTTEXT', action),
-		U.actSchemaTests.invalidArrayString(IOD, 'reference_prefix', 'EXTRACTTEXT', action),
-		U.actSchemaTests.invalidArrayString(IOD, 'password', 'EXTRACTTEXT', action),
-		U.actSchemaTests.uneqlFileAddMeta(IOD, filePath, 'EXTRACTTEXT', action),
-		U.actSchemaTests.uneqlFileRefPref(IOD, filePath, 'EXTRACTTEXT', action)
+		ASTests.noInputs(IOD, 'EXTRACTTEXT', action),
+		ASTests.invalidBooleanType(IOD, 'extract_text', 'EXTRACTTEXT', action),
+		ASTests.invalidBooleanType(IOD, 'extract_metadata', 'EXTRACTTEXT', action),
+		ASTests.invalidArrayObj(IOD, 'additional_metadata', 'EXTRACTTEXT', action),
+		ASTests.invalidArrayString(IOD, 'reference_prefix', 'EXTRACTTEXT', action),
+		ASTests.invalidArrayString(IOD, 'password', 'EXTRACTTEXT', action),
+		ASTests.uneqlFileAddMeta(IOD, filePath, 'EXTRACTTEXT', action),
+		ASTests.uneqlFileRefPref(IOD, filePath, 'EXTRACTTEXT', action)
 	]
 }
 

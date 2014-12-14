@@ -4,8 +4,10 @@
 
 'use strict';
 
-var _ = require('lodash')
 var U = require('../utils')
+var ASTests = require('../action-schema-tests-utils')
+
+var _ = require('lodash')
 var should = require('should')
 var T = require('../../lib/transform')
 
@@ -29,15 +31,15 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.actSchemaTests.missingRequired(IOD, 'index_reference', 'GETCONT', action),
-		U.actSchemaTests.invalidArrayString(IOD, 'index_reference', 'GETCONT', action),
-		U.actSchemaTests.invalidStringType(IOD, 'indexes', 'GETCONT', action),
-		U.actSchemaTests.invalidStringType(IOD, 'database_match', 'GETCONT', action),
-		U.actSchemaTests.invalidStringType(IOD, 'highlight_expression', 'GETCONT', action),
-		U.actSchemaTests.invalidStringType(IOD, 'start_tag', 'GETCONT', action),
-		U.actSchemaTests.invalidStringType(IOD, 'end_tag', 'GETCONT', action),
-		U.actSchemaTests.invalidEnumValue(IOD, 'print', 'GETCONT', action),
-		U.actSchemaTests.invalidStringType(IOD, 'print_fields', 'GETCONT', action)
+		ASTests.missingRequired(IOD, 'index_reference', 'GETCONT', action),
+		ASTests.invalidArrayString(IOD, 'index_reference', 'GETCONT', action),
+		ASTests.invalidStringType(IOD, 'indexes', 'GETCONT', action),
+		ASTests.invalidStringType(IOD, 'database_match', 'GETCONT', action),
+		ASTests.invalidStringType(IOD, 'highlight_expression', 'GETCONT', action),
+		ASTests.invalidStringType(IOD, 'start_tag', 'GETCONT', action),
+		ASTests.invalidStringType(IOD, 'end_tag', 'GETCONT', action),
+		ASTests.invalidEnumValue(IOD, 'print', 'GETCONT', action),
+		ASTests.invalidStringType(IOD, 'print_fields', 'GETCONT', action)
 	]
 }
 

@@ -4,8 +4,10 @@
 
 'use strict';
 
-var _ = require('lodash')
 var U = require('../utils')
+var ASTests = require('../action-schema-tests-utils')
+
+var _ = require('lodash')
 var should = require('should')
 var T = require('../../lib/transform')
 
@@ -31,8 +33,8 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.actSchemaTests.noInputs(IOD, 'IDLANG', action),
-		U.actSchemaTests.invalidBooleanType(IOD, 'additional_metadata', 'DETLANG', alias)
+		ASTests.noInputs(IOD, 'IDLANG', action),
+		ASTests.invalidBooleanType(IOD, 'additional_metadata', 'DETLANG', alias)
 	]
 }
 

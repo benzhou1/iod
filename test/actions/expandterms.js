@@ -4,8 +4,10 @@
 
 'use strict';
 
-var _ = require('lodash')
 var U = require('../utils')
+var ASTests = require('../action-schema-tests-utils')
+
+var _ = require('lodash')
 var should = require('should')
 var T = require('../../lib/transform')
 
@@ -31,12 +33,12 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.actSchemaTests.noInputs(IOD, 'EXPANDTERMS', action, { expansion: 'fuzzy' }),
-		U.actSchemaTests.missingRequired(IOD, 'expansion', 'EXPANDTERM', alias),
-		U.actSchemaTests.invalidEnumValue(IOD, 'expansion', 'EXPANDTERMS', action),
-		U.actSchemaTests.invalidNumberType(IOD, 'max_terms', 'EXPANDTERM', alias),
-		U.actSchemaTests.invalidBooleanType(IOD, 'stemming', 'EXPANDTERMS', action),
-		U.actSchemaTests.invalidEnumValue(IOD, 'sort', 'EXPANDTERM', alias)
+		ASTests.withRequired({ expansion: 'fuzzy' }).noInputs(IOD, 'EXPANDTERMS', action),
+		ASTests.missingRequired(IOD, 'expansion', 'EXPANDTERM', alias),
+		ASTests.invalidEnumValue(IOD, 'expansion', 'EXPANDTERMS', action),
+		ASTests.invalidNumberType(IOD, 'max_terms', 'EXPANDTERM', alias),
+		ASTests.invalidBooleanType(IOD, 'stemming', 'EXPANDTERMS', action),
+		ASTests.invalidEnumValue(IOD, 'sort', 'EXPANDTERM', alias)
 	]
 }
 

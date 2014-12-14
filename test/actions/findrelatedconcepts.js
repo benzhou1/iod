@@ -4,8 +4,10 @@
 
 'use strict';
 
-var _ = require('lodash')
 var U = require('../utils')
+var ASTests = require('../action-schema-tests-utils')
+
+var _ = require('lodash')
 var should = require('should')
 var T = require('../../lib/transform')
 
@@ -31,15 +33,15 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.actSchemaTests.noInputs(IOD, 'FRC', action),
-		U.actSchemaTests.invalidStringType(IOD, 'field_text', 'DT', alias),
-		U.actSchemaTests.invalidStringType(IOD, 'indexes', 'FRC', action),
-		U.actSchemaTests.invalidStringType(IOD, 'database_match', 'DT', alias),
-		U.actSchemaTests.invalidStringType(IOD, 'min_date', 'FRC', action),
-		U.actSchemaTests.invalidStringType(IOD, 'max_date', 'DT', alias),
-		U.actSchemaTests.invalidNumberType(IOD, 'min_score', 'FRC', action),
-		U.actSchemaTests.invalidNumberType(IOD, 'sample_size', 'DT', alias),
-		U.actSchemaTests.invalidNumberType(IOD, 'max_results', 'FRC', action)
+		ASTests.noInputs(IOD, 'FRC', action),
+		ASTests.invalidStringType(IOD, 'field_text', 'DT', alias),
+		ASTests.invalidStringType(IOD, 'indexes', 'FRC', action),
+		ASTests.invalidStringType(IOD, 'database_match', 'DT', alias),
+		ASTests.invalidStringType(IOD, 'min_date', 'FRC', action),
+		ASTests.invalidStringType(IOD, 'max_date', 'DT', alias),
+		ASTests.invalidNumberType(IOD, 'min_score', 'FRC', action),
+		ASTests.invalidNumberType(IOD, 'sample_size', 'DT', alias),
+		ASTests.invalidNumberType(IOD, 'max_results', 'FRC', action)
 	]
 }
 

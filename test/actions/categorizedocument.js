@@ -4,8 +4,10 @@
 
 'use strict';
 
-var _ = require('lodash')
 var U = require('../utils')
+var ASTests = require('../action-schema-tests-utils')
+
+var _ = require('lodash')
 var should = require('should')
 var T = require('../../lib/transform')
 
@@ -30,13 +32,13 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.actSchemaTests.noInputs(IOD, 'CATDOC', action),
-		U.actSchemaTests.invalidStringType(IOD, 'field_text', 'CATDOC', action),
-		U.actSchemaTests.invalidNumberType(IOD, 'max_results', 'CATDOC', action),
-		U.actSchemaTests.invalidStringType(IOD, 'indexes', 'CATDOC', action),
-		U.actSchemaTests.invalidStringType(IOD, 'database_match', 'CATDOC', action),
-		U.actSchemaTests.invalidEnumValue(IOD, 'print', 'CATDOC', action),
-		U.actSchemaTests.invalidStringType(IOD, 'print_fields', 'CATDOC', action)
+		ASTests.noInputs(IOD, 'CATDOC', action),
+		ASTests.invalidStringType(IOD, 'field_text', 'CATDOC', action),
+		ASTests.invalidNumberType(IOD, 'max_results', 'CATDOC', action),
+		ASTests.invalidStringType(IOD, 'indexes', 'CATDOC', action),
+		ASTests.invalidStringType(IOD, 'database_match', 'CATDOC', action),
+		ASTests.invalidEnumValue(IOD, 'print', 'CATDOC', action),
+		ASTests.invalidStringType(IOD, 'print_fields', 'CATDOC', action)
 	]
 }
 

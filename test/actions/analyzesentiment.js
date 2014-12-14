@@ -4,8 +4,10 @@
 
 'use strict';
 
-var _ = require('lodash')
 var U = require('../utils')
+var ASTests = require('../action-schema-tests-utils')
+
+var _ = require('lodash')
 var should = require('should')
 var T = require('../../lib/transform')
 
@@ -31,8 +33,8 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.actSchemaTests.noInputs(IOD, 'SENTIMENT', action),
-		U.actSchemaTests.invalidEnumValue(IOD, 'language', 'DETECTSENT', alias)
+		ASTests.noInputs(IOD, 'SENTIMENT', action),
+		ASTests.invalidEnumValue(IOD, 'language', 'DETECTSENT', alias)
 	]
 }
 

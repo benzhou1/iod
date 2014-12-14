@@ -4,8 +4,10 @@
 
 'use strict';
 
-var _ = require('lodash')
 var U = require('../utils')
+var ASTests = require('../action-schema-tests-utils')
+
+var _ = require('lodash')
 var should = require('should')
 var T = require('../../lib/transform')
 
@@ -31,11 +33,11 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.actSchemaTests.noInputs(IOD, 'VIEWDOC', action),
-		U.actSchemaTests.invalidBooleanType(IOD, 'raw_html', 'VIEW', alias),
-		U.actSchemaTests.invalidArrayString(IOD, 'highlight_expression', 'VIEWDOC', action),
-		U.actSchemaTests.invalidArrayString(IOD, 'start_tag', 'VIEW', alias),
-		U.actSchemaTests.invalidArrayString(IOD, 'end_tag', 'VIEWDOC', action),
+		ASTests.noInputs(IOD, 'VIEWDOC', action),
+		ASTests.invalidBooleanType(IOD, 'raw_html', 'VIEW', alias),
+		ASTests.invalidArrayString(IOD, 'highlight_expression', 'VIEWDOC', action),
+		ASTests.invalidArrayString(IOD, 'start_tag', 'VIEW', alias),
+		ASTests.invalidArrayString(IOD, 'end_tag', 'VIEWDOC', action),
 
 		{
 			name: 'unequal pair length highlight_expression-start_tag',

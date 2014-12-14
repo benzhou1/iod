@@ -6,6 +6,7 @@
 
 var _ = require('lodash')
 var U = require('../utils')
+var RSTests = require('../request-schema-tests-utils')
 
 /**
  * Only supports specific type of actions.
@@ -25,14 +26,14 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.reqSchemaTests.empty(IOD),
-		U.reqSchemaTests.invalidMajorVer(IOD),
-		U.reqSchemaTests.invalidAction(IOD),
-		U.reqSchemaTests.invalidApiVer(IOD),
-		U.reqSchemaTests.invalidMethod(IOD),
-		U.reqSchemaTests.invalidParams(IOD),
-		U.reqSchemaTests.invalidFiles(IOD),
-		U.reqSchemaTests.invalidGetResults(IOD)
+		RSTests.empty(),
+		RSTests.invalidMajorVer(IOD),
+		RSTests.invalidAction(IOD),
+		RSTests.invalidApiVer(IOD),
+		RSTests.invalidMethod(IOD),
+		RSTests.invalidParams(IOD),
+		RSTests.invalidFiles(IOD),
+		RSTests.invalidGetResults(IOD)
 	]
 }
 

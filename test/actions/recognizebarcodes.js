@@ -4,8 +4,10 @@
 
 'use strict';
 
-var _ = require('lodash')
 var U = require('../utils')
+var ASTests = require('../action-schema-tests-utils')
+
+var _ = require('lodash')
 var should = require('should')
 var T = require('../../lib/transform')
 
@@ -31,10 +33,10 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		U.actSchemaTests.noInputs(IOD, 'RECBAR', action),
-		U.actSchemaTests.invalidArrayString(IOD, 'barcode_type', 'READBAR', alias),
-		U.actSchemaTests.invalidEnumValue(IOD, 'barcode_orientation', 'RECBAR', action),
-		U.actSchemaTests.invalidEnumValue(IOD, 'barcode_type', 'READBAR', alias)
+		ASTests.noInputs(IOD, 'RECBAR', action),
+		ASTests.invalidArrayString(IOD, 'barcode_type', 'READBAR', alias),
+		ASTests.invalidEnumValue(IOD, 'barcode_orientation', 'RECBAR', action),
+		ASTests.invalidEnumValue(IOD, 'barcode_type', 'READBAR', alias)
 	]
 }
 
