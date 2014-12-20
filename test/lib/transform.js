@@ -86,6 +86,7 @@ describe('#TRANSFORM', function() {
 		it('should get back original value since not an object', function() {
 			var arr = [1, null, undefined]
 
+			should.not.exists(T.compactObj(null))
 			T.compactObj(arr).should.be.eql(arr)
 			T.compactObj('string').should.be.eql('string')
 			T.compactObj(1).should.be.eql(1)
@@ -95,7 +96,7 @@ describe('#TRANSFORM', function() {
 
 	describe('.toString', function() {
 		it('should not of converted array to string', function() {
-			T.toString([1, 2, 3]).should.be.eql([1, 2, 3])
+			T.toString(['a', 'b', 'c']).should.be.eql(['a', 'b', 'c'])
 		})
 
 		it('should of converted array elements to strings', function() {

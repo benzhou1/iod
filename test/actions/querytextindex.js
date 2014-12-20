@@ -41,9 +41,10 @@ exports.schemaTests = function(IOD) {
 		ASTests.invalidMinimum(IOD, 'max_page_results', 0, 'QTI', action),
 		ASTests.invalidNumberType(IOD, 'absolute_max_results', 'QUERY', alias),
 		ASTests.invalidMinimum(IOD, 'absolute_max_results', 0, 'QTI', action),
-		// TODO: wait for fix in production indexex
+		// TODO: wait for fix in production indexes
 //		ASTests.withRequired({ text: 'blah'}).invalidArrayString(IOD, 'indexes', 'QUERY', alias),
-//		ASTests.withRequired({ text: 'blah'}).invalidArrayString(IOD, 'database_match', 'QTI', action),
+//		ASTests.withRequired({ text: 'blah'}).invalidArrayString(IOD, 'database_match',
+//			'QTI', action),
 		ASTests.invalidEnumValue(IOD, 'print', 'QUERY', alias),
 		ASTests.invalidStringType(IOD, 'print_fields', 'QTI', action),
 		ASTests.invalidEnumValue(IOD, 'highlight', 'QUERY', alias),

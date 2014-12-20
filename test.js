@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('lodash')
 var child_process = require('child_process')
 
 child_process.fork(
@@ -21,7 +22,26 @@ child_process.exec(
 		'index.js'
 	].join(' '),
 	function(err, stdout, stderr) {
-	console.log()
-	console.log('Running JsHint:\n')
-	console.log(stdout)
-})
+		console.log()
+		console.log('Running JsHint:\n')
+
+		var out = ''
+		var line = ''
+		var ignore = [
+			'Bad option: \'index\'',
+			'\'should\' is defined but never used.'
+		]
+
+		_.each(stdout, function(c) {
+			if (c === '\n') {
+				var match = _.any(ignore, function(str) {
+					return _.contains(line, str)
+				})
+				if (!match) out += line + c
+				line = ''
+			}
+			else line += c
+		})
+		console.log(out)
+	}
+)

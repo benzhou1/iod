@@ -1,5 +1,5 @@
 /**
- * Test data for addtotextindex action.
+ * Test data for test indexing actions.
  */
 
 'use strict';
@@ -28,6 +28,11 @@ var filePath = __dirname + '/../files/' + action
  * Specific type of action.
  */
 exports.type = 'api'
+
+/**
+ * List of request-types to skip.
+ */
+exports.skipTypes = ['result', 'status']
 
 /**
  * Returns list of schema tests for action.
@@ -116,8 +121,23 @@ exports.tests = function(IOD, data) {
 	}
 
 	return [
+//		{
+//			name: 'create index=test,flavor=explorer',
+//			IODOpts: {
+//				action: T.attempt(U.paths.CREATETI, createAction)(IOD),
+//				params: {
+//					index: 'test',
+//					flavor: 'explorer'
+//				}
+//			},
+//			wait: 120,
+//			it: [
+//				U.shouldBeSuccessful,
+//				_.partial(U.shouldHaveResults, createAction)
+//			]
+//		},
 		{
-			name: 'json=doc,index=test,dm=duplicate,addmeta,refPref',
+			name: 'add json=doc,index=test,dm=duplicate,addmeta,refPref',
 			IODOpts: {
 				action: T.attempt(U.paths.ADDTOTI, action)(IOD),
 				params: _.defaults({ json: json }, defParams)
@@ -128,7 +148,7 @@ exports.tests = function(IOD, data) {
 			]
 		},
 		{
-			name: 'url=idolondemand.com,dm=duplicate,addmeta,refPref',
+			name: 'add url=idolondemand.com,dm=duplicate,addmeta,refPref',
 			IODOpts: {
 				action: T.attempt(U.paths.ADDTOTI, action)(IOD),
 				params: _.defaults({
@@ -141,7 +161,7 @@ exports.tests = function(IOD, data) {
 			]
 		},
 		{
-			name: 'reference=addtotextindex,dm=duplicate,addmeta,refPref',
+			name: 'add reference=addtotextindex,dm=duplicate,addmeta,refPref',
 			IODOpts: {
 				action: T.attempt(U.paths.ADDTOTI, action)(IOD),
 				params: _.defaults({
@@ -154,7 +174,7 @@ exports.tests = function(IOD, data) {
 			]
 		},
 		{
-			name: 'file=addtotextindex,dm=duplicate,addmeta,refPref',
+			name: 'add file=addtotextindex,dm=duplicate,addmeta,refPref',
 			IODOpts: {
 				action: T.attempt(U.paths.ADDTOTI, action)(IOD),
 				params: defParams,
@@ -166,7 +186,7 @@ exports.tests = function(IOD, data) {
 			]
 		},
 		{
-			name: 'file=multiple,dm=duplicate,addmeta,refPref',
+			name: 'add file=multiple,dm=duplicate,addmeta,refPref',
 			IODOpts: {
 				action: T.attempt(U.paths.ADDTOTI, action)(IOD),
 				params: _.defaults({
@@ -186,7 +206,7 @@ exports.tests = function(IOD, data) {
 			multFiles: true
 		},
 		{
-			name: 'file=invalid,dm=duplicate,addmeta,refPref',
+			name: 'add file=invalid,dm=duplicate,addmeta,refPref',
 			IODOpts: {
 				action: T.attempt(U.paths.ADDTOTI, action)(IOD),
 				params: defParams,
@@ -197,7 +217,65 @@ exports.tests = function(IOD, data) {
 				_.partial(U.shouldBeInError, 'ENOENT')
 			],
 			shouldError: true
-		}
+		},
+		{
+			name: 'deletefrom index=test,index_reference=reference',
+			IODOpts: {
+				action: T.attempt(U.paths.DELFROMTI, deleteFromAction)(IOD),
+				params: {
+					index: 'test',
+					index_reference: ['reference']
+				}
+			},
+			it: [
+				U.shouldBeSuccessful,
+				_.partial(U.shouldHaveResults, deleteFromAction)
+			]
+		},
+		// TODO: wait for fix in production
+//		{
+//			name: 'deletefrom index=test,delete_all_documents=true',
+//			IODOpts: {
+//				action: T.attempt(U.paths.DELFROMTI, deleteFromAction)(IOD),
+//				params: {
+//					index: 'test',
+//					delete_all_documents: true
+//				}
+//			},
+//			it: [
+//				U.shouldBeSuccessful,
+//				_.partial(U.shouldHaveResults, deleteFromAction)
+//			]
+//		},
+		{
+			name: 'indexstatus index=test',
+			IODOpts: {
+				action: T.attempt(U.paths.DELFROMTI, statusAction)(IOD),
+				params: {
+					index: 'test',
+					delete_all_documents: true
+				}
+			},
+			it: [
+				U.shouldBeSuccessful,
+				// TODO: wait for indexstatus schema fix
+//				_.partial(U.shouldHaveResults, statusAction)
+			]
+		},
+//		{
+//			name: 'delete index=test,confirm',
+//			IODOpts: {
+//				action: T.attempt(U.paths.DELETETI, deleteAction)(IOD),
+//				params: {
+//					index: 'test',
+//					confirm: T.attempt(T.get('confirm'))(data)
+//				}
+//			},
+//			it: [
+//				U.shouldBeSuccessful,
+//				_.partial(U.shouldHaveResults, deleteAction)
+//			]
+//		}
 	]
 }
 
@@ -207,15 +285,18 @@ exports.tests = function(IOD, data) {
  * 2.) Prepare object store reference.
  *
  * @param {IOD} IOD - IOD object
- * @param {Function} done - Function(data)
+ * @param {Function} callback - Function(data)
  * @throws {Error} - If failed to delete existing test index
  */
-exports.prepare = function(IOD, done) {
-	async.waterfall([
-		apply(U.prepare.textIndex, IOD),
+// TODO: right now requires that test index already exists
+exports.prepare = function(IOD, callback) {
+	async.series({
+//		clean: apply(U.prepare.cleanIndex, IOD),
+//
+//		confirm: apply(U.prepare.confirmToken, IOD),
 		// Always get a new store object reference
-		apply(U.prepare.reference, IOD, 'nocache', filePath)
-	], function(err, res) {
-		done({ ref: res })
+		ref: apply(U.prepare.reference, IOD, 'nocache', filePath)
+	}, function(err, res) {
+		callback(res)
 	})
 }

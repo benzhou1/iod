@@ -62,8 +62,7 @@ exports.tests = [
 		},
 		skip: function(ActionTest) {
 			return !!ActionTest.IODOpts.files ||
-				!!ActionTest.shouldError ||
-				ActionTest.IODOpts.action === 'addtotextindex'
+				!!ActionTest.shouldError
 		}
 	},
 	{
@@ -79,8 +78,7 @@ exports.tests = [
 			]
 		},
 		skip: function(ActionTest) {
-			return !!ActionTest.shouldError ||
-				ActionTest.IODOpts.action === 'addtotextindex'
+			return !!ActionTest.shouldError
 		}
 	},
 	{

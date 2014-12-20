@@ -42,6 +42,8 @@ var includeAct = []
 var excludeAct = ['expandcontainer', 'recognizeimages']
 // Set to true to run only ActionSchemaTests
 var actionSchemaOnly = false
+// Set to true to run only simple tests(Sync request type and IOD object view create only)
+var simpleTest = true
 
 if (!_.isEmpty(includeReq)) ReqTests = _.pick(ReqTests, includeReq)
 if (!_.isEmpty(excludeReq)) ReqTests = _.omit(ReqTests, excludeReq)
@@ -90,6 +92,14 @@ _.each(ReqTests, function(ReqTest, reqType) {
 			 * request-type then move on to next action.
 			 */
 			if (ActionTest.type !== ReqTest.type) return
+			/**
+			 * If request-type is in ActionTest skip list then move one to next action.
+			 */
+			if (ActionTest.skipTypes && _.contains(ActionTest.skipTypes, reqType)) return
+			/**
+			 * If simpleTest is set to true, skip all RequestTests except for `sync`
+			 */
+			if (simpleTest && reqType !== 'sync') return
 
 			describe('#' + action.toUpperCase(), function() {
 				/**
@@ -156,18 +166,21 @@ _.each(ReqTests, function(ReqTest, reqType) {
 							itActionTest(ActionTest, reqTest, action)
 						})
 
-						// Runs with IOD created via a new instance
-						describe('[NEW IOD]' + reqTest.name, function() {
-							before(function(callback) {
-								this[action] = this[action] || {}
-								this[action][reqTest.name] = {}
-								var env = this[action][reqTest.name]
+						// If simpleTest is set to true skip, IOD via new tests
+						if (!simpleTest) {
+							// Runs with IOD created via a new instance
+							describe('[NEW IOD]' + reqTest.name, function() {
+								before(function(callback) {
+									this[action] = this[action] || {}
+									this[action][reqTest.name] = {}
+									var env = this[action][reqTest.name]
 
-								beforeActionTest(U.IOD, reqTest, ActionTest, env, callback)
+									beforeActionTest(U.IOD, reqTest, ActionTest, env, callback)
+								})
+
+								itActionTest(ActionTest, reqTest, action)
 							})
-
-							itActionTest(ActionTest, reqTest, action)
-						})
+						}
 					})
 				}
 			})
@@ -199,8 +212,18 @@ function beforeActionTest(IOD, reqTest, ActionTest, env, callback) {
 				if (reqTest.skip && reqTest.skip(actionTest)) {
 					return done()
 				}
-				reqTest.beforeFn(IOD, actionTest,
-					U.beforeDoneFn(env, actionTest.name, done))
+				reqTest.beforeFn(IOD, actionTest, function(err, res) {
+					/**
+					 * Wait for a specified number of seconds before moving on to the
+					 * next ActionTest.
+					 */
+					if (actionTest.wait) {
+						console.log('[WAIT] - Waiting ' + actionTest.wait + ' seconds...')
+						setTimeout(U.beforeDoneFn(env, actionTest.name, done),
+							actionTest.wait*1000, err, res)
+					}
+					else U.beforeDoneFn(env, actionTest.name, done)(err, res)
+				})
 			})
 		})
 

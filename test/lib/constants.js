@@ -8,7 +8,6 @@ var _ = require('lodash')
 var U = require('../utils')
 var should = require('should')
 var iod = require('../../index')
-var async = require('../lib/async-ext')
 
 describe('#IOD constants via create method', function() {
 	U.timeout(this)
@@ -82,13 +81,13 @@ describe('#IOD constants via new instance', function() {
 		IOD.apiKey.should.be.eql('apikey')
 		IOD.host.should.be.eql('http://host')
 		IOD.port.should.be.eql(1111)
-		IOD.reqOpts.should.be.eql({ key: 'val', timeout: 20000 })
+		IOD.reqOpts.should.be.eql({ key: 'val', timeout: 300000 })
 
 		IOD1.apiKey.should.be.eql('apikey')
-		IOD1.reqOpts.should.be.eql({ key: 'val', timeout: 20000 })
+		IOD1.reqOpts.should.be.eql({ key: 'val', timeout: 300000 })
 
 		IOD2.apiKey.should.be.eql('apikey')
 		IOD2.host.should.be.eql('http://host')
-		IOD2.reqOpts.should.be.eql({ key: 'val', timeout: 20000 })
+		IOD2.reqOpts.should.be.eql({ key: 'val', timeout: 300000 })
 	})
 })

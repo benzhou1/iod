@@ -60,7 +60,7 @@ var IOD = function(apiKey, host, port, reqOpts) {
 	iod.apiKey = apiKey
 	iod.host = host || httpsHost
 	iod.port = port || httpsPort
-	iod.reqOpts = _.defaults(reqOpts || {}, { timeout: 20000 })
+	iod.reqOpts = _.defaults(reqOpts || {}, { timeout: 300000 })
 	this.ACTIONS = _.cloneDeep(CONSTANTS.ACTIONS)
 
 	SchemaU.initSchemas(iod)

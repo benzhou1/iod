@@ -10,7 +10,7 @@ var should = require('should')
 var async = require('../lib/async-ext')
 
 describe('#GENERAL', function() {
-	U.timeout(this)
+	this.timeout(60000)
 
 	before(function(callback) {
 		this.gen = {}
@@ -108,9 +108,7 @@ describe('#GENERAL', function() {
 		U.shouldError(this.gen.port)
 	})
 
-	// Wait for fix
-//	it('should error with invalid apiKey', function() {
-//		console.log(this.gen.apiKey)
-//		U.shouldError(this.gen.apiKey)
-//	})
+	it('should error with invalid apiKey', function() {
+		U.shouldError(this.gen.apiKey)
+	})
 })

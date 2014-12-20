@@ -5,7 +5,6 @@
 'use strict';
 
 var _ = require('lodash')
-var U = require('../utils')
 var RSTests = require('../request-schema-tests-utils')
 
 /**

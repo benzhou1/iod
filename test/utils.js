@@ -96,7 +96,7 @@ var commonPaths = exports.paths = {
 	REF: T.walk(['actions', 0, 'result', 'reference'])
 }
 
-var commonPrepare = exports.prepare = {
+exports.prepare = {
 	/**
 	 * Given a file path `filePath` store file in IDOL onDemand via storeobject action.
 	 * Cached reference from results.
@@ -105,30 +105,129 @@ var commonPrepare = exports.prepare = {
 	 * @param {IOD} IOD - IOD object
 	 * @param {String} action - Action name
 	 * @param {String} filePath - Path to file to store
-	 * @param {Function} done - Done(reference)
-	 * @throws {Error} - If error on storeobject action
-	 * @throws {Error} - If couldn't find reference in results
+	 * @param {Function} done - Done(null, reference)
 	 */
 	reference: function(IOD, action, filePath, done) {
-		if (action !== 'nocache' && cachedRef[action]) return done(null, cachedRef[action])
-		else commonIODReq.storeObject(IOD, filePath, function(err, ref) {
-			cachedRef[action] = ref
-			done(null, ref)
+		console.log('[PREPARING] - Preparing a object store reference...')
+		if (action !== 'nocache' && cachedRef[action]) {
+			console.log('[PREPARING] - Found a reference in the cache...')
+			done(null, cachedRef[action])
+		}
+		else {
+			console.log('[PREPARING] - Getting reference from IOD')
+			commonIODReq.storeObject(IOD, filePath, function(err, ref) {
+				cachedRef[action] = ref
+				done(null, ref)
+			})
+		}
+	},
+
+	/**
+	 * Checks if `test` index exists, if so delete it.
+	 *
+	 * @param {IOD} IOD - IOD object
+	 * @param {Function} done - Done()
+	 */
+	cleanIndex: function(IOD, done) {
+		console.log('[PREPARING] - Preparing a clean index test...')
+		commonIODReq.listResources(IOD, function(err, resources) {
+			var testIndex = _.find(resources.private_resources, function(resource) {
+				return resource.resource === 'test'
+			})
+			if (testIndex) {
+				console.log('[PREPARING] - Test index found, deleting...')
+				commonIODReq.deleteIndex(IOD, done)
+			}
+			else {
+				console.log('[PREPARING] - Test index not found...')
+				done()
+			}
 		})
 	},
 
-	textIndex: function(IOD, done) {
-		commonIODReq.listIndexes(IOD, function(err, indexes) {
-			var testIndex = _.find(indexes.index, function(index) {
-				return index.index === 'test'
+	/**
+	 * Checks if `test` index exists, if not create it.
+	 *
+	 * @param {IOD} IOD - IOD object
+	 * @param {Function} done - Done()
+	 */
+	testIndex: function(IOD, done) {
+		console.log('[PREPARING] - Preparing a test index...')
+		commonIODReq.listResources(IOD, function(err, resources) {
+			var testIndex = _.find(resources.private_resources, function(resource) {
+				return resource.resource === 'test'
 			})
-			if (testIndex) done()
-			else commonIODReq.createIndex(IOD, done)
+			if (testIndex) {
+				console.log('[PREPARING] - Test index found...')
+				done()
+			}
+			else {
+				console.log('[PREPARING] - Text index not found, creating...')
+				commonIODReq.createIndex(IOD, done)
+			}
 		})
+	},
+
+	/**
+	 * Gets a delete token for `test` index.
+	 *
+	 * @param {IOD} IOD - IOD object
+	 * @param {Function} done - Done(null, delete token)
+	 */
+	confirmToken: function(IOD, done) {
+		console.log('[PREPARING] - Preparing a delete token...')
+		deleteIndex(IOD, null, done)
 	}
 }
 
+/**
+ * Verifies action response with it's response schema.
+ *
+ * @param {String} action - Action name
+ * @param {Object} response - Action response
+ */
+function iodRequestResultCheck(action, response) {
+	var errors = shouldMatchResSchema(action, response)
+	if (errors) throw new Error(action + ' failed to to match response schema, with ' +
+		'errors: ' + prettyPrint(errors))
+}
+
+/**
+ * Sends `deletetextindex` action.
+ *
+ * @param {IOD} IOD - IOD object
+ * @param {String | null} confirm - Confirmation token
+ * @param {Function} callback - Callback(null, token | null)
+ */
+function deleteIndex(IOD, confirm, callback) {
+	var IODOpts = {
+		action: T.attempt(commonPaths.DELETETI, 'deletetextindex')(IOD),
+		params: _.defaults({ index: 'test' }, confirm ? { confirm: confirm } : {})
+	}
+	IOD.sync(IODOpts, function(err, res) {
+		if (err) throw new Error('Deletetextindex errored: ' + prettyPrint(err))
+		else if (confirm && (!res || !res.deleted || res.deleted !== true)) {
+			console.log('CONFIRM: ', confirm)
+			throw new Error('Failed to delete text index: ' + prettyPrint(res))
+		}
+		else if (!confirm && (!res || !res.confirm)) {
+			throw new Error('Failed to get confirmation: ' + prettyPrint(res))
+		}
+		else {
+			iodRequestResultCheck('deletetextindex', res)
+			callback(null, confirm ? null : res.confirm)
+		}
+	})
+}
+
 var commonIODReq = exports.IODReq = {
+	/**
+	 * Sends `storeobject` action.
+	 *
+	 * @param {IOD} IOD - IOD object
+	 * @param {String} filePath - File path to file to store
+	 * @param {Function} callback - Callback(null, reference)
+	 */
 	storeObject: function(IOD, filePath, callback) {
 		var IODOpts = {
 			action: T.attempt(commonPaths.STOREOBJ, 'storeobject')(IOD),
@@ -136,52 +235,81 @@ var commonIODReq = exports.IODReq = {
 			getResults: true
 		}
 		IOD.sync(IODOpts, function(err, res) {
-			if (err) throw new Error('Failed to store object: ' +
-				exports.prettyPrint(err))
+			if (err) throw new Error('Failed to store object: ' + prettyPrint(err))
 			else {
 				if (!res || !res.reference) {
 					throw new Error('Could not find reference from storeobject: ' +
-						exports.prettyPrint(res))
+						prettyPrint(res))
 				}
-
+				iodRequestResultCheck('storeobject', res)
 				callback(null, res.reference)
 			}
 		})
 	},
 
-	// TODO: switch to listresources
-	listIndexes: function(IOD, callback) {
+	/**
+	 * Sends `listresources` action.
+	 *
+	 * @param {IOD} IOD - IOD object
+	 * @param {Function} callback - Callback(null, list of resources)
+	 */
+	listResources: function(IOD, callback) {
 		var IODOpts = {
-			action: T.attempt(commonPaths.LISTI, 'listindexes')(IOD),
+			action: T.attempt(commonPaths.LISTR, 'listresources')(IOD),
 			params: {
 				type: 'content',
 				flavor: 'explorer'
 			}
 		}
 		IOD.sync(IODOpts, function(err, res) {
-			if (err) throw new Error('Failed to get list of indexes: ' +
-				exports.prettyPrint(err))
-			else if (!res || !res.index) throw new Error('List of user indexes not found: ' +
-				exports.prettyPrint(res))
-			else callback(null, res)
+			if (err) throw new Error('Failed to get list of indexes: ' + prettyPrint(err))
+			else if (!res || !res.private_resources) {
+				throw new Error('List of private resources not found: ' + prettyPrint(res))
+			}
+			else {
+				//TODO: wait for listresources schema fix
+//				iodRequestResultCheck('listresources', res)
+				callback(null, res)
+			}
 		})
 	},
 
+	/**
+	 * Sends `createtextindex` action, creating a `test` index.
+	 *
+	 * @param {IOD} IOD - IOD object
+	 * @param {Function} callback - Callback()
+	 */
 	createIndex: function(IOD, callback) {
 		var IODOpts = {
 			action: T.attempt(commonPaths.CREATETI, 'createtextindex')(IOD),
 			params: {
-				index: 'test'
+				index: 'test',
+				flavor: 'explorer'
 			}
 		}
 		IOD.sync(IODOpts, function(err, res) {
-			if (err) throw new Error('Failed to create test index: ' +
-				exports.prettyPrint(err))
+			if (err) throw new Error('Failed to create test index: ' + prettyPrint(err))
 			else if (!res || res.message !== 'index created') {
 				throw new Error('Test index was not created successfully: ' +
-					exports.prettyPrint(res))
+					prettyPrint(res))
 			}
-			else callback(null, res)
+			else {
+				iodRequestResultCheck('createtextindex', res)
+				callback(null, res)
+			}
+		})
+	},
+
+	/**
+	 * Force deletes `test` index.
+	 *
+	 * @param {IOD} IOD - IOD object
+	 * @param {Function} callback - Callback()
+	 */
+	deleteIndex: function(IOD, callback) {
+		deleteIndex(IOD, null, function(err, confirm) {
+			deleteIndex(IOD, confirm, callback)
 		})
 	}
 }
@@ -192,7 +320,7 @@ var commonIODReq = exports.IODReq = {
  * @param {*} v - Some value
  * @returns {String}
  */
-exports.prettyPrint = function(v) {
+var prettyPrint = exports.prettyPrint = function(v) {
 	return JSON.stringify(v, null, 2)
 }
 
@@ -215,12 +343,12 @@ exports.createJobAction = function(IODOpts, i) {
 }
 
 /**
- * Sets 60 seconds as timeout for test.
+ * Sets 300 seconds as timeout for test.
  *
  * @param {Object} that - this
  */
 exports.timeout = function(that) {
-	that.timeout(60000)
+	that.timeout(300000)
 }
 
 /**
@@ -260,6 +388,29 @@ exports.beforeDoneFn = function(env, path, callback) {
 }
 
 /**
+ * Checks that action result matches it's response schema.
+ *
+ * @param {String} action - Action name
+ * @param {Object} result - Action results
+ * @param {Object} env - Environment object
+ * @returns {Array | null} - Schema errors
+ */
+function shouldMatchResSchema(action, result, env) {
+	var errors = SchemaU.validateWithPrettyErr(cachedIOD, action + '.response',
+		result)
+
+	if (errors) {
+		console.log('Results did not match', action,
+			'\'s response schema:', prettyPrint(errors))
+		console.log('Results: ', prettyPrint(result))
+		console.log('Response: ', prettyPrint(env ? env.response : result))
+	}
+
+	should.not.exist(errors)
+	return errors
+}
+
+/**
  * Given a environment object `env` look for a schema error.
  * Find a schema error where the message contains a the string `msg` and the path
  * contains the string `key`
@@ -280,8 +431,7 @@ exports.shouldBeInSchemaError = function(msg, key, env) {
 		else return _.contains(error.message, msg) && _.contains(error.path, key)
 	})
 
-	if (!error) console.log('shouldBeInSchemaError - env.error: ',
-		exports.prettyPrint(env.error))
+	if (!error) console.log('shouldBeInSchemaError - env.error:', prettyPrint(env.error))
 
 	should.exists(error)
 	return env
@@ -294,7 +444,7 @@ exports.shouldBeInSchemaError = function(msg, key, env) {
  * @returns {Object} - env
  */
 exports.shouldError = function(env) {
-	if (!env.error) console.log('shouldError - env: ', exports.prettyPrint(env))
+	if (!env.error) console.log('shouldError - env: ', prettyPrint(env))
 	should.exists(env.error)
 	return env
 }
@@ -306,8 +456,7 @@ exports.shouldError = function(env) {
  * @returns {Object} - env
  */
 exports.shouldBeSuccessful = function(env) {
-	if (env.error) console.log('shouldBeSuccessful - env.error: ',
-		exports.prettyPrint(env.error))
+	if (env.error) console.log('shouldBeSuccessful - env.error:', prettyPrint(env.error))
 
 	should.not.exists(env.error)
 	return env
@@ -351,27 +500,12 @@ exports.shouldBeJobId = function(env) {
  */
 exports.shouldHaveResults = function(action, env) {
 	var jobActionResults = env.response.actions
-	var shouldMatchResSchema = function(result) {
-		var errors = SchemaU.validateWithPrettyErr(cachedIOD, action + '.response',
-			result)
-
-		if (errors) {
-			console.log('Results did not match ' + action +
-				'\'s response schema: ', exports.prettyPrint(errors))
-			console.log('Results: ', exports.prettyPrint(result))
-			console.log('Response: ', exports.prettyPrint(env.response))
-		}
-
-		should.not.exist(errors)
-		return errors
-	}
-
 	if (jobActionResults) {
 		_.each(jobActionResults, function(actionRes) {
-			if (shouldMatchResSchema(actionRes.result)) return false
+			if (shouldMatchResSchema(action, actionRes.result, env)) return false
 		})
 	}
-	else shouldMatchResSchema(env.response)
+	else shouldMatchResSchema(action, env.response, env)
 	return env
 }
 
@@ -388,47 +522,4 @@ exports.shouldBeStatus = function(env) {
 	_.size(env.response.actions).should.eql(1)
 	env.response.actions[0].should.have.properties('status', 'action', 'version')
 	return env
-}
-
-exports.shouldBeDeleted = function(env) {
-	var deleted = env.response.deleted
-	if (deleted !== true) console.log('Did not delete index successfully: ',
-		exports.prettyPrint(env.response))
-	deleted.should.be.true
-	return env
-}
-
-exports.shouldBeConfirm = function(env) {
-	var confirm = env.response.confirm
-	if (!confirm) console.log('Confirm not found in response: ',
-		exports.prettyPrint(env.response))
-	should.exists(confirm)
-	return env
-}
-
-exports.deleteTextIndex = function(IOD, index, confirm, callback) {
-	var IODOpts = {
-		action: T.attempt(commonPaths.DELETETI, 'deletetextindex')(IOD),
-		params: {
-			index: index,
-			confirm: confirm
-		}
-	}
-	IOD.sync(IODOpts, function(err, res) {
-		if (err) throw new Error('Failed to delete text index: ' +
-			exports.prettyPrint(err))
-		else if (confirm && (!res || !res.deleted || res.deleted !== true)) {
-			throw new Error('Failed to deleted text index: ' + exports.prettyPrint(res))
-		}
-		else if (!confirm && (!res || !res.confirm)) {
-			throw new Error('Failed to get confirmation: ' + exports.prettyPrint(res))
-		}
-		else callback(null, confirm ? null : res.confirm)
-	})
-}
-
-exports.forceDeleteTextIndex = function(IOD, index, callback) {
-	exports.deleteTextIndex(IOD, index, null, function(err, confirm) {
-		exports.deleteTextIndex(IOD, index, confirm, callback)
-	})
 }
