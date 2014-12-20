@@ -93,7 +93,8 @@ var commonPaths = exports.paths = {
 	ADDTOTI: T.walk(['ACTIONS', 'API', 'ADDTOTEXTINDEX']),
 	DELFROMTI: T.walk(['ACTIONS', 'API', 'DELETEFROMTEXTINDEX']),
 	INDEXSTATUS: T.walk(['ACTIONS', 'API', 'INDEXSTATUS']),
-	REF: T.walk(['actions', 0, 'result', 'reference'])
+	REF: T.walk(['actions', 0, 'result', 'reference']),
+	RECSPEECH: T.walk(['actions', 0, 'result', 'RECOGNIZESPEECH'])
 }
 
 exports.prepare = {
@@ -388,6 +389,19 @@ exports.beforeDoneFn = function(env, path, callback) {
 }
 
 /**
+ * Default it check. Checks that request was successful and results are valid.
+ *
+ * @param {String} action - Action name
+ * @returns {Array} - It checks
+ */
+exports.defIt = function(action) {
+	return [
+		shouldBeSuccessful,
+		_.partial(shouldHaveResults, action)
+	]
+}
+
+/**
  * Checks that action result matches it's response schema.
  *
  * @param {String} action - Action name
@@ -455,7 +469,7 @@ exports.shouldError = function(env) {
  * @param {Object} env - Environment object
  * @returns {Object} - env
  */
-exports.shouldBeSuccessful = function(env) {
+var shouldBeSuccessful = exports.shouldBeSuccessful = function(env) {
 	if (env.error) console.log('shouldBeSuccessful - env.error:', prettyPrint(env.error))
 
 	should.not.exists(env.error)
@@ -498,7 +512,7 @@ exports.shouldBeJobId = function(env) {
  * @param {String} action - Action name
  * @param {Object} env - Environment object
  */
-exports.shouldHaveResults = function(action, env) {
+var shouldHaveResults = exports.shouldHaveResults = function(action, env) {
 	var jobActionResults = env.response.actions
 	if (jobActionResults) {
 		_.each(jobActionResults, function(actionRes) {
