@@ -95,7 +95,8 @@ var commonPaths = exports.paths = {
 	INDEXSTATUS: T.walk(['ACTIONS', 'API', 'INDEXSTATUS']),
 	REF: T.walk(['actions', 0, 'result', 'reference']),
 	RECSPEECH: T.walk(['actions', 0, 'result', 'RECOGNIZESPEECH']),
-	RETRIEVEIF: T.walk(['actions', 0, 'result', 'RETRIEVEINDEXFIELDS'])
+	RETRIEVEIF: T.walk(['actions', 0, 'result', 'RETRIEVEINDEXFIELDS']),
+	EXTRACTC: T.walk(['actions', 0, 'result', 'EXTRACTCONCEPTS'])
 }
 
 exports.prepare = {
