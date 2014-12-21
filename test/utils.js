@@ -94,7 +94,8 @@ var commonPaths = exports.paths = {
 	DELFROMTI: T.walk(['ACTIONS', 'API', 'DELETEFROMTEXTINDEX']),
 	INDEXSTATUS: T.walk(['ACTIONS', 'API', 'INDEXSTATUS']),
 	REF: T.walk(['actions', 0, 'result', 'reference']),
-	RECSPEECH: T.walk(['actions', 0, 'result', 'RECOGNIZESPEECH'])
+	RECSPEECH: T.walk(['actions', 0, 'result', 'RECOGNIZESPEECH']),
+	RETRIEVEIF: T.walk(['actions', 0, 'result', 'RETRIEVEINDEXFIELDS'])
 }
 
 exports.prepare = {
