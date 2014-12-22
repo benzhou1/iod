@@ -281,8 +281,9 @@ exports.tests = function(IOD, data) {
 
 /**
  * Preparation function.
- * 1.) Prepare test index if it isn't already created.
- * 2.) Prepare object store reference.
+ * 1.) Prepare a clean test index if it isn't already deleted.
+ * 2.) Prepares a delete token for test index.
+ * 3.) Prepare object store reference.
  *
  * @param {IOD} IOD - IOD object
  * @param {Function} callback - Function(data)

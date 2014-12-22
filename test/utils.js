@@ -96,7 +96,14 @@ var commonPaths = exports.paths = {
 	REF: T.walk(['actions', 0, 'result', 'reference']),
 	RECSPEECH: T.walk(['actions', 0, 'result', 'RECOGNIZESPEECH']),
 	RETRIEVEIF: T.walk(['actions', 0, 'result', 'RETRIEVEINDEXFIELDS']),
-	EXTRACTC: T.walk(['actions', 0, 'result', 'EXTRACTCONCEPTS'])
+	EXTRACTC: T.walk(['actions', 0, 'result', 'EXTRACTCONCEPTS']),
+	ADDSTORE: T.walk(['actions', 0, 'result', 'ADDSTORE']),
+	ADDUSER: T.walk(['actions', 0, 'result', 'ADDUSER']),
+	LISTSTORE: T.walk(['actions', 0, 'result', 'LISTSTORES']),
+	LISTUSER: T.walk(['actions', 0, 'result', 'LISTUSERS']),
+	DELSTORE: T.walk(['actions', 0, 'result', 'DELETESTORE']),
+	DELUSER: T.walk(['actions', 0, 'result', 'DELETEUSER']),
+	AUTH: T.walk(['actions', 0, 'result', 'AUTHENTICATE'])
 }
 
 exports.prepare = {
@@ -143,6 +150,30 @@ exports.prepare = {
 			}
 			else {
 				console.log('[PREPARING] - Test index not found...')
+				done()
+			}
+		})
+	},
+
+	/**
+	 * Checks is test store exists, if so delete it.
+	 *
+	 * @param {IOD} IOD - IOD object
+	 * @param {Function} done - Done()
+	 */
+	cleanStore: function(IOD, done) {
+		console.log('[PREPARING] - Preparing a clean store test...')
+		commonIODReq.listStores(IOD, function(err, stores) {
+			var testStore = _.find(stores.stores, function(store) {
+				return store === 'teststore'
+			})
+
+			if (testStore) {
+				console.log('[PREPARING] - Test store found, deleting...')
+				commonIODReq.deleteStore(IOD, done)
+			}
+			else {
+				console.log('[PREPARING] - Test store not found...')
 				done()
 			}
 		})
@@ -207,6 +238,7 @@ function deleteIndex(IOD, confirm, callback) {
 		action: T.attempt(commonPaths.DELETETI, 'deletetextindex')(IOD),
 		params: _.defaults({ index: 'test' }, confirm ? { confirm: confirm } : {})
 	}
+
 	IOD.sync(IODOpts, function(err, res) {
 		if (err) throw new Error('Deletetextindex errored: ' + prettyPrint(err))
 		else if (confirm && (!res || !res.deleted || res.deleted !== true)) {
@@ -278,6 +310,30 @@ var commonIODReq = exports.IODReq = {
 	},
 
 	/**
+	 * Sends `liststores` action.
+	 *
+	 * @param {IOD} IOD - IOD object
+	 * @param {Function} callback - Callback(null, list of stores)
+	 */
+	listStores: function(IOD, callback) {
+		var IODOpts = {
+			action: T.attempt(commonPaths.LISTSTORE, 'liststores')(IOD),
+			params: {}
+		}
+
+		IOD.sync(IODOpts, function(err, res) {
+			if (err) throw new Error('Failed to get list of stores: ' + prettyPrint(err))
+			else if (!res || !res.stores) {
+				throw new Error('List of stores not found: ' + prettyPrint(res))
+			}
+			else {
+				iodRequestResultCheck('liststores', res)
+				callback(null, res)
+			}
+		})
+	},
+
+	/**
 	 * Sends `createtextindex` action, creating a `test` index.
 	 *
 	 * @param {IOD} IOD - IOD object
@@ -313,6 +369,27 @@ var commonIODReq = exports.IODReq = {
 	deleteIndex: function(IOD, callback) {
 		deleteIndex(IOD, null, function(err, confirm) {
 			deleteIndex(IOD, confirm, callback)
+		})
+	},
+
+	/**
+	 * Deletes test store.
+	 *
+	 * @param {IOD} IOD - IOD object
+	 * @param {Function} callback - Callback()
+	 */
+	deleteStore: function(IOD, callback) {
+		var IODOpts = {
+			action: T.attempt(commonPaths.DELSTORE, 'deletestore')(IOD),
+			params: { store: 'teststore' }
+		}
+
+		IOD.sync(IODOpts, function(err, res) {
+			if (err) throw new Error('Failed to delete test store: ' + prettyPrint(err))
+			else if (!res || !res.message || res.message !== 'store was deleted') {
+				throw new Error('Failed to deletet test store: ' + prettyPrint(res))
+			}
+			else callback()
 		})
 	}
 }
