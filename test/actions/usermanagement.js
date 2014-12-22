@@ -11,16 +11,19 @@ var _ = require('lodash')
 var should = require('should')
 var T = require('../../lib/transform')
 
-var async = require('../../lib/async-ext')
-var apply = async.apply
-
 var addStoreAction = 'addstore'
+var prependAddStoreAction = ASTests.withPrepend(addStoreAction)
 var addUserAction = 'adduser'
+var prependAddUserAction = ASTests.withPrepend(addUserAction)
 var listStoreAction = 'liststores'
 var listUserAction = 'listusers'
+var prependListUsereAction = ASTests.withPrepend(listUserAction)
 var delStoreAction = 'deletestore'
+var prependDelStoreAction = ASTests.withPrepend(delStoreAction)
 var delUserAction = 'deleteuser'
+//var prependDelUserAction = ASTests.withPrepend(delUserAction)
 var authAction = 'authenticate'
+var prependAuthAction = ASTests.withPrepend(authAction)
 
 /**
  * Specific type of action.
@@ -30,14 +33,14 @@ exports.type = 'api'
 /**
  * List of request-types to skip.
  */
-exports.skipTypes = ['result', 'status']
+exports.skipTypes = ['result', 'status', 'job']
 
 /**
  * Returns list of schema tests for action.
  * Schema Tests consist of: {
  * 	{String} name - Name of test,
  * 	{Object} IODOpts - IOD options,
- *	{Function} it - Array of functions to execute that validates test,
+ *	{Function} it - Array of functions to execute that validates test
  * }
  *
  * @param {IOD} IOD - IOD object
@@ -46,28 +49,35 @@ exports.skipTypes = ['result', 'status']
 exports.schemaTests = function(IOD) {
 	return [
 		// Addstore
-		ASTests.missingRequired(IOD, 'store', 'ADDSTORE', addStoreAction),
+		prependAddStoreAction.missingRequired(IOD, 'store', 'ADDSTORE', addStoreAction),
+		prependAddStoreAction.invalidStringType(IOD, 'store', 'ADDSTORE', addStoreAction),
 
 		// Adduser
-		ASTests.missingRequired(IOD, 'store', 'ADDUSER', addUserAction),
-		ASTests.missingRequired(IOD, 'email', 'ADDUSER', addUserAction),
-		ASTests.missingRequired(IOD, 'password', 'ADDUSER', addUserAction),
+		prependAddUserAction.missingRequired(IOD, 'store', 'ADDUSER', addUserAction),
+		prependAddUserAction.invalidStringType(IOD, 'store', 'ADDUSER', addUserAction),
+		prependAddUserAction.missingRequired(IOD, 'email', 'ADDUSER', addUserAction),
+		prependAddUserAction.invalidStringType(IOD, 'email', 'ADDUSER', addUserAction),
+		prependAddUserAction.missingRequired(IOD, 'password', 'ADDUSER', addUserAction),
 
 		// Listuser
-		ASTests.missingRequired(IOD, 'store', 'LISTSTORE', listStoreAction),
+		prependListUsereAction.missingRequired(IOD, 'store', 'LISTUSER', listUserAction),
+		prependListUsereAction.invalidStringType(IOD, 'store', 'LISTUSER', listUserAction),
 
 		// Deletestore
-		ASTests.missingRequired(IOD, 'store', 'DELSTORE', delStoreAction),
+		prependDelStoreAction.missingRequired(IOD, 'store', 'DELSTORE', delStoreAction),
+		prependDelStoreAction.invalidStringType(IOD, 'store', 'DELSTORE', delStoreAction),
 
 		// Deleteuser
-		ASTests.missingRequired(IOD, 'store', 'DELUSER', delUserAction),
-		ASTests.missingRequired(IOD, 'email', 'DELUSER', delUserAction),
+		prependListUsereAction.missingRequired(IOD, 'store', 'DELUSER', delUserAction),
+		prependListUsereAction.missingRequired(IOD, 'email', 'DELUSER', delUserAction),
 
 		// Authenticate
-		ASTests.missingRequired(IOD, 'mechanism', 'AUTH', authAction),
-		ASTests.missingRequired(IOD, 'store', 'AUTH', authAction),
-		ASTests.invalidStringType(IOD, 'user', 'AUTH', authAction),
-		ASTests.invalidStringType(IOD, 'password', 'AUTH', authAction)
+		prependAuthAction.missingRequired(IOD, 'mechanism', 'AUTH', authAction),
+		prependAuthAction.invalidStringType(IOD, 'mechanism', 'AUTH', authAction),
+		prependAuthAction.missingRequired(IOD, 'store', 'AUTH', authAction),
+		prependAuthAction.invalidStringType(IOD, 'store', 'AUTH', authAction),
+		prependAuthAction.invalidStringType(IOD, 'user', 'AUTH', authAction),
+		prependAuthAction.invalidStringType(IOD, 'password', 'AUTH', authAction)
 	]
 }
 
@@ -77,7 +87,8 @@ exports.schemaTests = function(IOD) {
  * 	{String} name - Name of test,
  * 	{Object} IODOpts - IOD options,
  *	{Function} it - Array of functions to execute that validates test,
- *	{Boolean} shouldError - True if test is expected to error
+ *	{Boolean} shouldError - True if test is expected to error,
+  *	{Boolean} noJobId - True to skip jobId test
  * }
  *
  * @param {IOD} IOD - IOD object
@@ -85,7 +96,7 @@ exports.schemaTests = function(IOD) {
  * @returns {Array} - List of ActionTests
  */
 exports.tests = function(IOD, data) {
-	return [
+	var tests = [
 //		{
 //			name: 'addstore store=teststore',
 //			IODOpts: {
@@ -155,6 +166,12 @@ exports.tests = function(IOD, data) {
 //			it: U.defIt(delStoreAction)
 //		}
 	]
+
+	// Skip jobId tests
+	return _.map(tests, function(test) {
+		test.noJobId = true
+		return test
+	})
 }
 
 /**
@@ -165,7 +182,7 @@ exports.tests = function(IOD, data) {
  * @param {Function} callback - Function(data)
  * @throws {Error} - If failed to delete existing test index
  */
-// TODO: wait for fix in production
+// TODO: right now requires that test store and user already exists
 exports.prepare = function(IOD, callback) {
 //	U.prepare.cleanStore(IOD, callback)
 	callback()

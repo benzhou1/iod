@@ -15,13 +15,20 @@ var async = require('../../lib/async-ext')
 var apply = async.apply
 
 var createAction = 'createtextindex'
+var prependCreateAction = ASTests.withPrepend(createAction)
 var statusAction = 'indexstatus'
+var prependStatusAction = ASTests.withPrepend(statusAction)
 var listAction = 'listindexes'
+var prependListAction = ASTests.withPrepend(listAction)
 var listRAction = 'listresources'
+var prependListRAction = ASTests.withPrepend(listRAction)
 var deleteAction = 'deletetextindex'
+var prependDeleteAction = ASTests.withPrepend(deleteAction)
 var deleteFromAction = 'deletefromtextindex'
+var prependDelFromAction = ASTests.withPrepend(deleteFromAction)
 
 var action = 'addtotextindex'
+var prependAddAction = ASTests.withPrepend(action)
 var filePath = __dirname + '/../files/' + action
 
 /**
@@ -32,7 +39,7 @@ exports.type = 'api'
 /**
  * List of request-types to skip.
  */
-exports.skipTypes = ['result', 'status']
+exports.skipTypes = ['result', 'status', 'job']
 
 /**
  * Returns list of schema tests for action.
@@ -48,45 +55,51 @@ exports.skipTypes = ['result', 'status']
 exports.schemaTests = function(IOD) {
 	return [
 		// Addtotextindex
-		ASTests.withRequired({ index: 'test' }).noInputs(IOD, 'ADDTOTI', action),
-		ASTests.missingRequired(IOD, 'index', 'ADDTOTI', action),
-		ASTests.invalidEnumValue(IOD, 'duplicate_mode', 'ADDTOTI', action),
-		ASTests.invalidArrayObj(IOD, 'additional_metadata', 'ADDTOTI', action),
-		ASTests.invalidArrayString(IOD, 'reference_prefix', 'ADDTOTI', action),
+		prependAddAction.withRequired({ index: 'test' }).noInputs(IOD, 'ADDTOTI', action),
+		prependAddAction.missingRequired(IOD, 'index', 'ADDTOTI', action),
+		prependAddAction.invalidStringType(IOD, 'index', 'ADDTOTI', action),
+		prependAddAction.invalidEnumValue(IOD, 'duplicate_mode', 'ADDTOTI', action),
+		prependAddAction.invalidArrayObj(IOD, 'additional_metadata', 'ADDTOTI', action),
+		prependAddAction.invalidArrayString(IOD, 'reference_prefix', 'ADDTOTI', action),
 		ASTests.withRequired({ index: 'test' }).uneqlFileAddMeta(IOD, filePath, 'ADDTOTI', action),
-		ASTests.uneqlFileRefPref(IOD, filePath, 'ADDTOTI', action, { index: 'test' }),
+		prependAddAction.uneqlFileRefPref(IOD, filePath, 'ADDTOTI', action, { index: 'test' }),
 
 		// Createtextindex
-		ASTests.missingRequired(IOD, 'index', 'CREATETI', createAction),
-		ASTests.missingRequired(IOD, 'flavor', 'CREATETI', createAction),
-		ASTests.invalidStringType(IOD, 'description', 'CREATETI', createAction),
+		prependCreateAction.missingRequired(IOD, 'index', 'CREATETI', createAction),
+		prependCreateAction.invalidStringType(IOD, 'index', 'CREATETI', createAction),
+		prependCreateAction.missingRequired(IOD, 'flavor', 'CREATETI', createAction),
+		prependCreateAction.invalidStringType(IOD, 'flavor', 'CREATETI', createAction),
+		prependCreateAction.invalidStringType(IOD, 'description', 'CREATETI', createAction),
 
 		// Deletetextindex
-		ASTests.missingRequired(IOD, 'index', 'DELETETI', deleteAction),
-		ASTests.invalidStringType(IOD, 'confirm', 'DELETETI', deleteAction),
+		prependDeleteAction.missingRequired(IOD, 'index', 'DELETETI', deleteAction),
+		prependDeleteAction.invalidStringType(IOD, 'index', 'DELETETI', deleteAction),
+		prependDeleteAction.invalidStringType(IOD, 'confirm', 'DELETETI', deleteAction),
 
 		// Deletefromtextindex
 		// TODO: wait for fix in production for index_reference
-		ASTests.missingRequired(IOD, 'index', 'DELFROMTI', deleteFromAction),
-//		ASTests.withRequired({ index: 'test1' }).invalidArrayString(IOD, 'index_reference',
-//			'DELFROMTI', deleteFromAction),
-		ASTests.withRequired({ index: 'test1' }).invalidBooleanType(IOD, 'delete_all_documents',
-			'DELFROMTI', deleteFromAction),
+		prependDelFromAction.missingRequired(IOD, 'index', 'DELFROMTI', deleteFromAction),
+		prependDelFromAction.invalidStringType(IOD, 'index', 'DELFROMTI', deleteFromAction),
+//		prependDelFromAction.withRequired({ index: 'test1' })
+// 			.invalidArrayString(IOD, 'index_reference', 'DELFROMTI', deleteFromAction),
+		prependDelFromAction.withRequired({ index: 'test1' })
+			.invalidBooleanType(IOD, 'delete_all_documents', 'DELFROMTI', deleteFromAction),
 
 		// Indexstatus
-		ASTests.missingRequired(IOD, 'index', 'INDEXSTATUS', statusAction),
+		prependStatusAction.missingRequired(IOD, 'index', 'INDEXSTATUS', statusAction),
+		prependStatusAction.invalidStringType(IOD, 'index', 'INDEXSTATUS', statusAction),
 
 		// Listindexes
-		ASTests.invalidEnumValue(IOD, 'type', 'LISTI', listAction),
-		ASTests.invalidEnumValue(IOD, 'flavor', 'LISTI', listAction),
-		ASTests.invalidArrayString(IOD, 'type', 'LISTI', listAction),
-		ASTests.invalidArrayString(IOD, 'flavor', 'LISTI', listAction),
+		prependListAction.invalidEnumValue(IOD, 'type', 'LISTI', listAction),
+		prependListAction.invalidEnumValue(IOD, 'flavor', 'LISTI', listAction),
+		prependListAction.invalidArrayString(IOD, 'type', 'LISTI', listAction),
+		prependListAction.invalidArrayString(IOD, 'flavor', 'LISTI', listAction),
 
 		// Listresources
-		ASTests.invalidEnumValue(IOD, 'type', 'LISTR', listRAction),
-		ASTests.invalidEnumValue(IOD, 'flavor', 'LISTR', listRAction),
-		ASTests.invalidArrayString(IOD, 'type', 'LISTR', listRAction),
-		ASTests.invalidArrayString(IOD, 'flavor', 'LISTR', listRAction)
+		prependListRAction.invalidEnumValue(IOD, 'type', 'LISTR', listRAction),
+		prependListRAction.invalidEnumValue(IOD, 'flavor', 'LISTR', listRAction),
+		prependListRAction.invalidArrayString(IOD, 'type', 'LISTR', listRAction),
+		prependListRAction.invalidArrayString(IOD, 'flavor', 'LISTR', listRAction)
 	]
 }
 
@@ -97,7 +110,8 @@ exports.schemaTests = function(IOD) {
  * 	{Object} IODOpts - IOD options,
  *	{Function} it - Array of functions to execute that validates test,
  *	{Boolean} shouldError - True if test is expected to error
- *	{Number} wait - Number of seconds to wait before running next test
+ *	{Number} wait - Number of seconds to wait before running next test,
+ *	{Boolean} noJobId - True to skip jobId test
  * }
  *
  * @param {IOD} IOD - IOD object
@@ -120,7 +134,7 @@ exports.tests = function(IOD, data) {
 		}]
 	}
 
-	return [
+	var tests = [
 //		{
 //			name: 'create index=test,flavor=explorer',
 //			IODOpts: {
@@ -277,6 +291,12 @@ exports.tests = function(IOD, data) {
 //			]
 //		}
 	]
+
+	// Skip jobId tests
+	return _.map(tests, function(test) {
+		test.noJobId = true
+		return test
+	})
 }
 
 /**

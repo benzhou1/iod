@@ -222,6 +222,15 @@ function beforeActionTest(IOD, reqTest, ActionTest, env, callback) {
 						setTimeout(U.beforeDoneFn(env, actionTest.name, done),
 							actionTest.wait*1000, err, res)
 					}
+					/**
+					 * Wait until `waitUntil` callback function is called before moving
+					 * on to next test.
+					 */
+					else if (actionTest.waitUntil) {
+						actionTest.waitUntil(function() {
+							U.beforeDoneFn(env, actionTest.name, done)(err, res)
+						})
+					}
 					else U.beforeDoneFn(env, actionTest.name, done)(err, res)
 				})
 			})

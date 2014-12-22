@@ -4,6 +4,7 @@ var _ = require('lodash')
 var U = require('./utils')
 var T = require('../lib/transform')
 
+// TODO: rewrite into class
 module.exports = {
 	/**
 	 * Returns a ActionSchemaTest which should check for a required parameter error.
@@ -51,6 +52,22 @@ module.exports = {
 			IODOpts: {
 				action: T.attempt(U.paths[path], action)(IOD),
 				params: T.maplet(paramName)([1, 2, 3])
+			},
+			it: [
+				U.shouldError,
+				_.partial(U.shouldBeInSchemaError, 'type', paramName)
+			]
+		}
+	},
+	/**
+	 * Returns a ActionSchemaTest which should check for a invalid object type error.
+	 */
+	invalidObjType: function(IOD, paramName, path, action) {
+		return {
+			name: 'invalid object for ' + paramName,
+			IODOpts: {
+				action: T.attempt(U.paths[path], action)(IOD),
+				params: T.maplet(paramName)('not an object')
 			},
 			it: [
 				U.shouldError,
@@ -213,6 +230,25 @@ module.exports.withRequired = function(required) {
 			var args = [].slice.call(arguments)
 			var test = schemaTest.apply(null, args)
 			test.IODOpts.params = _.defaults({}, required, test.IODOpts.params)
+
+			return test
+		}
+	})
+}
+
+/**
+ * Wraps all common action schema tests.
+ * Prepends `prepend` to the test name of all tests.
+ *
+ * @param {String} prepend - String to prepend
+ * @returns {Object} - Action schema test
+ */
+module.exports.withPrepend = function(prepend) {
+	return _.mapValues(module.exports, function(schemaTest) {
+		return function() {
+			var args = [].slice.call(arguments)
+			var test = schemaTest.apply(null, args)
+			test.name = prepend + ' ' + test.name
 
 			return test
 		}

@@ -62,7 +62,8 @@ exports.tests = [
 		},
 		skip: function(ActionTest) {
 			return !!ActionTest.IODOpts.files ||
-				!!ActionTest.shouldError
+				!!ActionTest.shouldError ||
+				!!ActionTest.noJobId
 		}
 	},
 	{
@@ -78,7 +79,8 @@ exports.tests = [
 			]
 		},
 		skip: function(ActionTest) {
-			return !!ActionTest.shouldError
+			return !!ActionTest.shouldError ||
+				!!ActionTest.noJobId
 		}
 	},
 	{

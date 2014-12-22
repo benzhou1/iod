@@ -189,7 +189,8 @@ exports.tests = [
 		},
 		skip: function(ActionTest) {
 			return !!ActionTest.shouldError ||
-				!!ActionTest.multFiles
+				!!ActionTest.multFiles ||
+				!!ActionTest.noJobId
 		}
 	},
 	{

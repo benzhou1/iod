@@ -14,6 +14,8 @@ var SchemaU = require('../lib/schema')
 var apiKey = '<your api key>'
 var host = null // override host
 var port = null // override port
+// TODO: configurable test index
+var testCon = exports.testCon = 'testcon' // test connector name
 
 // New instance of IOD class.
 exports.IOD = new IOD(apiKey, host, port)
@@ -103,7 +105,37 @@ var commonPaths = exports.paths = {
 	LISTUSER: T.walk(['actions', 0, 'result', 'LISTUSERS']),
 	DELSTORE: T.walk(['actions', 0, 'result', 'DELETESTORE']),
 	DELUSER: T.walk(['actions', 0, 'result', 'DELETEUSER']),
-	AUTH: T.walk(['actions', 0, 'result', 'AUTHENTICATE'])
+	AUTH: T.walk(['actions', 0, 'result', 'AUTHENTICATE']),
+	CONSTATUS: T.walk(['actions', 0, 'result', 'CONNECTORSTATUS']),
+	CREATECON: T.walk(['actions', 0, 'result', 'CREATECONNECTOR']),
+	DELCON: T.walk(['actions', 0, 'result', 'DELETECONNECTOR']),
+	RETRIEVECON: T.walk(['actions', 0, 'result', 'RETRIEVECONFIG']),
+	STARTCON: T.walk(['actions', 0, 'result', 'STARTCONNECTOR']),
+	UPDATECON: T.walk(['actions', 0, 'result', 'UPDATECONNECTOR'])
+}
+
+/**
+ * Get test connector status every 5 seconds.
+ * Continues until test connector is finished.
+ *
+ * @param {Function} waitCB - waitCB()
+ */
+var waitUntilFinished = exports.waitUntilFinished = function(IOD) {
+	return function(waitCB) {
+		var cb = function(err, status) {
+			if (status.status === 'FINISHED' || status.status === 'IDLE') {
+				console.log('[WAIT] - Test connector finished running...')
+				waitCB()
+			}
+			else {
+				console.log('[WAIT] - Test connector not finished: ' +
+					status.status + '...')
+				setTimeout(commonIODReq.connectorStatus, 5000, IOD, cb)
+			}
+		}
+
+		setTimeout(commonIODReq.connectorStatus, 5000, IOD, cb)
+	}
 }
 
 exports.prepare = {
@@ -139,8 +171,10 @@ exports.prepare = {
 	 * @param {Function} done - Done()
 	 */
 	cleanIndex: function(IOD, done) {
+		var params = { type: 'content', flavor: 'explorer' }
+
 		console.log('[PREPARING] - Preparing a clean index test...')
-		commonIODReq.listResources(IOD, function(err, resources) {
+		commonIODReq.listResources(IOD, params, function(err, resources) {
 			var testIndex = _.find(resources.private_resources, function(resource) {
 				return resource.resource === 'test'
 			})
@@ -174,6 +208,34 @@ exports.prepare = {
 			}
 			else {
 				console.log('[PREPARING] - Test store not found...')
+				done()
+			}
+		})
+	},
+
+	/**
+	 * Checks if test connector exists, if so delete it.
+	 *
+	 * @param {IOD} IOD - IOD object
+	 * @param {Function} done - Done()
+	 */
+	cleanConnector: function(IOD, done) {
+		var params = { type: 'connector', flavor: 'web_cloud'}
+
+		console.log('[PREPARING] - Preparing a clean connector test...')
+		commonIODReq.listResources(IOD, params, function(err, resources) {
+			var testCon = _.find(resources.private_resources, function(resource) {
+				return resource.resource === testCon
+			})
+			if (testCon) {
+				console.log('[PREPARING] - Test connector found, waiting until finished...')
+				waitUntilFinished(IOD)(function() {
+					console.log('[PREPARING] - Test connector finished, deleting...')
+					commonIODReq.deleteConnector(IOD, done)
+				})
+			}
+			else {
+				console.log('[PREPARING] - Test connector not found...')
 				done()
 			}
 		})
@@ -286,18 +348,16 @@ var commonIODReq = exports.IODReq = {
 	 * Sends `listresources` action.
 	 *
 	 * @param {IOD} IOD - IOD object
+	 * @param {Object} params - IODOpts params
 	 * @param {Function} callback - Callback(null, list of resources)
 	 */
-	listResources: function(IOD, callback) {
+	listResources: function(IOD, params, callback) {
 		var IODOpts = {
 			action: T.attempt(commonPaths.LISTR, 'listresources')(IOD),
-			params: {
-				type: 'content',
-				flavor: 'explorer'
-			}
+			params: params
 		}
 		IOD.sync(IODOpts, function(err, res) {
-			if (err) throw new Error('Failed to get list of indexes: ' + prettyPrint(err))
+			if (err) throw new Error('Failed to get list of resources: ' + prettyPrint(err))
 			else if (!res || !res.private_resources) {
 				throw new Error('List of private resources not found: ' + prettyPrint(res))
 			}
@@ -387,9 +447,57 @@ var commonIODReq = exports.IODReq = {
 		IOD.sync(IODOpts, function(err, res) {
 			if (err) throw new Error('Failed to delete test store: ' + prettyPrint(err))
 			else if (!res || !res.message || res.message !== 'store was deleted') {
-				throw new Error('Failed to deletet test store: ' + prettyPrint(res))
+				throw new Error('Failed to delete test store: ' + prettyPrint(res))
 			}
 			else callback()
+		})
+	},
+
+	/**
+	 * Deletes test connector.
+	 *
+	 * @param {IOD} IOD - IOD object
+	 * @param {Function} callback - Callback()
+	 */
+	deleteConnector: function(IOD, callback) {
+		var IODOpts = {
+			action: T.attempt(commonPaths.DELCON, 'deleteconnector')(IOD),
+			params: { connector: testCon }
+		}
+
+		IOD.sync(IODOpts, function(err, res) {
+			if (err) throw new Error('Failed to delete test connector: ' + prettyPrint(err))
+			else if (!res || !res.deleted) {
+				throw new Error('Failed to delete test connector: ' + prettyPrint(res))
+			}
+			else {
+				iodRequestResultCheck('deleteconnector', res)
+				callback()
+			}
+		})
+	},
+
+	/**
+	 * Sends `connectorstatus` action.
+	 *
+	 * @param {IOD} IOD - IOD object
+	 * @param {Function} callback - Callback(null, status)
+	 */
+	connectorStatus: function(IOD, callback) {
+		var IODOpts = {
+			action: T.attempt(commonPaths.CONSTATUS, 'connectorstatus')(IOD),
+			params: { connector: testCon }
+		}
+
+		IOD.sync(IODOpts, function(err, res) {
+			if (err) throw new Error('Failed to get connector status: ' + prettyPrint(err))
+			else if (!res || !res.status) {
+				throw new Error('Failed to get connector status: ' + prettyPrint(res))
+			}
+			else {
+				iodRequestResultCheck('connectorstatus', res)
+				callback(null, res)
+			}
 		})
 	}
 }
