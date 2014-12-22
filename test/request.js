@@ -213,14 +213,26 @@ function beforeActionTest(IOD, reqTest, ActionTest, env, callback) {
 					return done()
 				}
 				reqTest.beforeFn(IOD, actionTest, function(err, res) {
+					if (err) return U.beforeDoneFn(env, actionTest.name, done)(err, res)
+
 					/**
 					 * Wait for a specified number of seconds before moving on to the
 					 * next ActionTest.
 					 */
 					if (actionTest.wait) {
 						console.log('[WAIT] - Waiting ' + actionTest.wait + ' seconds...')
-						setTimeout(U.beforeDoneFn(env, actionTest.name, done),
-							actionTest.wait*1000, err, res)
+						var wait = function(secs) {
+							if (secs > 0) {
+								console.log('[WAIT] - ' + secs + ' seconds left...')
+								setTimeout(wait, 10000, secs - 10)
+							}
+							else {
+								console.log('[WAIT} - Done waiting...')
+								U.beforeDoneFn(env, actionTest.name, done)(err, res)
+							}
+						}
+
+						setTimeout(wait, 10000, actionTest.wait-10)
 					}
 					/**
 					 * Wait until `waitUntil` callback function is called before moving

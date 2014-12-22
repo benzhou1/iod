@@ -8,6 +8,9 @@ var _ = require('lodash')
 var U = require('../utils')
 var ASTests = require('../action-schema-tests-utils')
 
+var async = require('../../lib/async-ext')
+var apply = async.apply
+
 var should = require('should')
 var T = require('../../lib/transform')
 
@@ -116,7 +119,7 @@ exports.tests = function(IOD, data) {
 					},
 					destination: {
 						action: 'addtotextindex',
-						index: 'test'
+						index: U.testIndex
 					},
 					schedule: {
 						frequency: {
@@ -150,7 +153,7 @@ exports.tests = function(IOD, data) {
 					},
 					destination: {
 						action: 'addtotextindex',
-						index: 'test'
+						index: U.testIndex
 					},
 					schedule: {
 						frequency: {
@@ -171,7 +174,7 @@ exports.tests = function(IOD, data) {
 					connector: U.testCon,
 					destination: {
 						action: 'addtotextindex',
-						index: 'test'
+						index: U.testIndex
 					}
 				}
 			},
@@ -205,9 +208,8 @@ exports.tests = function(IOD, data) {
 
 /**
  * Preparation function.
- * 1.) Prepare a clean test index if it isn't already deleted.
- * 2.) Prepares a delete token for test index.
- * 3.) Prepare object store reference.
+ * 1.) Prepare a test index.
+ * 2.) Prepares a clean connector test, deletes test connector if it doesn't already exists.
  *
  * @param {IOD} IOD - IOD object
  * @param {Function} callback - Function(data)
@@ -215,5 +217,9 @@ exports.tests = function(IOD, data) {
  */
 // TODO: right now requires that test index already exists
 exports.prepare = function(IOD, callback) {
-	U.prepare.cleanConnector(IOD, callback)
+	async.series({
+//		index: apply(U.prepare.testIndex, IOD),
+
+		clean: apply(U.prepare.cleanConnector, IOD)
+	}, callback)
 }

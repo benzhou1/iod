@@ -101,7 +101,7 @@ exports.tests = function(IOD, data) {
 //			name: 'addstore store=teststore',
 //			IODOpts: {
 //				action: T.attempt(U.paths.ADDSTORE, addStoreAction)(IOD),
-//				params: { store: 'teststore' }
+//				params: { store: U.testStore }
 //			},
 //			it: U.defIt(addStoreAction)
 //		},
@@ -110,9 +110,9 @@ exports.tests = function(IOD, data) {
 //			IODOpts: {
 //				action: T.attempt(U.paths.ADDUSER, addUserAction)(IOD),
 //				params: {
-//					store: 'teststore',
-//					email: 'test@test.com',
-//					password: 'test'
+//					store: U.testStore,
+//					email: U.testUser,
+//					password: U.testPass
 //				}
 //			},
 //			it: U.defIt(addUserAction)
@@ -123,9 +123,9 @@ exports.tests = function(IOD, data) {
 				action: T.attempt(U.paths.AUTH, authAction)(IOD),
 				params: {
 					mechanism: 'simple',
-					store: 'teststore',
-					user: 'test@test.com',
-					password: 'test'
+					store: U.testStore,
+					user: U.testUser,
+					password: U.testPass
 				}
 			},
 			it: U.defIt(authAction)
@@ -142,7 +142,7 @@ exports.tests = function(IOD, data) {
 			name: 'listuser store=teststore',
 			IODOpts: {
 				action: T.attempt(U.paths.LISTUSER, listUserAction)(IOD),
-				params: { store: 'teststore' }
+				params: { store: U.testStore }
 			},
 			it: U.defIt(listUserAction)
 		},
@@ -151,8 +151,8 @@ exports.tests = function(IOD, data) {
 //			IODOpts: {
 //				action: T.attempt(U.paths.DELUSER, delUserAction)(IOD),
 //				params: {
-//					store: 'teststore',
-//					email: 'test@test.com'
+//					store: U.testStore,
+//					email: U.testUser
 //				}
 //			},
 //			it: U.defIt(delUserAction)
@@ -161,7 +161,7 @@ exports.tests = function(IOD, data) {
 //			name: 'deletestore store=teststore',
 //			IODOpts: {
 //				action: T.attempt(U.paths.DELSTORE, delStoreAction)(IOD),
-//				params: { store: 'teststore' }
+//				params: { store: U.testStore }
 //			},
 //			it: U.defIt(delStoreAction)
 //		}

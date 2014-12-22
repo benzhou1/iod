@@ -120,7 +120,7 @@ exports.schemaTests = function(IOD) {
  */
 exports.tests = function(IOD, data) {
 	var defParams = {
-		index: 'test',
+		index: U.testIndex,
 		duplicate_mode: 'replace',
 		additional_metadata: { addMeta: 'addMeta' },
 		reference_prefix: 'prefix'
@@ -140,7 +140,7 @@ exports.tests = function(IOD, data) {
 //			IODOpts: {
 //				action: T.attempt(U.paths.CREATETI, createAction)(IOD),
 //				params: {
-//					index: 'test',
+//					index: U.testIndex,
 //					flavor: 'explorer'
 //				}
 //			},
@@ -237,7 +237,7 @@ exports.tests = function(IOD, data) {
 			IODOpts: {
 				action: T.attempt(U.paths.DELFROMTI, deleteFromAction)(IOD),
 				params: {
-					index: 'test',
+					index: U.testIndex,
 					index_reference: ['reference']
 				}
 			},
@@ -252,7 +252,7 @@ exports.tests = function(IOD, data) {
 //			IODOpts: {
 //				action: T.attempt(U.paths.DELFROMTI, deleteFromAction)(IOD),
 //				params: {
-//					index: 'test',
+//					index: U.testIndex,
 //					delete_all_documents: true
 //				}
 //			},
@@ -266,7 +266,7 @@ exports.tests = function(IOD, data) {
 			IODOpts: {
 				action: T.attempt(U.paths.DELFROMTI, statusAction)(IOD),
 				params: {
-					index: 'test',
+					index: U.testIndex,
 					delete_all_documents: true
 				}
 			},
@@ -281,7 +281,7 @@ exports.tests = function(IOD, data) {
 //			IODOpts: {
 //				action: T.attempt(U.paths.DELETETI, deleteAction)(IOD),
 //				params: {
-//					index: 'test',
+//					index: U.testIndex,
 //					confirm: T.attempt(T.get('confirm'))(data)
 //				}
 //			},

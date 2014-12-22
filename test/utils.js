@@ -14,8 +14,11 @@ var SchemaU = require('../lib/schema')
 var apiKey = '<your api key>'
 var host = null // override host
 var port = null // override port
-// TODO: configurable test index
 var testCon = exports.testCon = 'testcon' // test connector name
+var testIndex = exports.testIndex = 'testindex' // test index name
+var testStore = exports.testStore = 'teststore' // test store name
+exports.testUser = 'test@test.com' // test user name
+exports.testPass = 'testpassword' // test password
 
 // New instance of IOD class.
 exports.IOD = new IOD(apiKey, host, port)
@@ -175,10 +178,10 @@ exports.prepare = {
 
 		console.log('[PREPARING] - Preparing a clean index test...')
 		commonIODReq.listResources(IOD, params, function(err, resources) {
-			var testIndex = _.find(resources.private_resources, function(resource) {
-				return resource.resource === 'test'
+			var test = _.find(resources.private_resources, function(resource) {
+				return resource.resource === testIndex
 			})
-			if (testIndex) {
+			if (test) {
 				console.log('[PREPARING] - Test index found, deleting...')
 				commonIODReq.deleteIndex(IOD, done)
 			}
@@ -198,11 +201,11 @@ exports.prepare = {
 	cleanStore: function(IOD, done) {
 		console.log('[PREPARING] - Preparing a clean store test...')
 		commonIODReq.listStores(IOD, function(err, stores) {
-			var testStore = _.find(stores.stores, function(store) {
-				return store === 'teststore'
+			var test = _.find(stores.stores, function(store) {
+				return store === testStore
 			})
 
-			if (testStore) {
+			if (test) {
 				console.log('[PREPARING] - Test store found, deleting...')
 				commonIODReq.deleteStore(IOD, done)
 			}
@@ -224,10 +227,10 @@ exports.prepare = {
 
 		console.log('[PREPARING] - Preparing a clean connector test...')
 		commonIODReq.listResources(IOD, params, function(err, resources) {
-			var testCon = _.find(resources.private_resources, function(resource) {
+			var test = _.find(resources.private_resources, function(resource) {
 				return resource.resource === testCon
 			})
-			if (testCon) {
+			if (test) {
 				console.log('[PREPARING] - Test connector found, waiting until finished...')
 				waitUntilFinished(IOD)(function() {
 					console.log('[PREPARING] - Test connector finished, deleting...')
@@ -251,7 +254,7 @@ exports.prepare = {
 		console.log('[PREPARING] - Preparing a test index...')
 		commonIODReq.listResources(IOD, function(err, resources) {
 			var testIndex = _.find(resources.private_resources, function(resource) {
-				return resource.resource === 'test'
+				return resource.resource === testIndex
 			})
 			if (testIndex) {
 				console.log('[PREPARING] - Test index found...')
@@ -298,7 +301,7 @@ function iodRequestResultCheck(action, response) {
 function deleteIndex(IOD, confirm, callback) {
 	var IODOpts = {
 		action: T.attempt(commonPaths.DELETETI, 'deletetextindex')(IOD),
-		params: _.defaults({ index: 'test' }, confirm ? { confirm: confirm } : {})
+		params: _.defaults({ index: testIndex }, confirm ? { confirm: confirm } : {})
 	}
 
 	IOD.sync(IODOpts, function(err, res) {
@@ -403,7 +406,7 @@ var commonIODReq = exports.IODReq = {
 		var IODOpts = {
 			action: T.attempt(commonPaths.CREATETI, 'createtextindex')(IOD),
 			params: {
-				index: 'test',
+				index: testIndex,
 				flavor: 'explorer'
 			}
 		}
@@ -441,7 +444,7 @@ var commonIODReq = exports.IODReq = {
 	deleteStore: function(IOD, callback) {
 		var IODOpts = {
 			action: T.attempt(commonPaths.DELSTORE, 'deletestore')(IOD),
-			params: { store: 'teststore' }
+			params: { store: testStore }
 		}
 
 		IOD.sync(IODOpts, function(err, res) {
@@ -449,7 +452,10 @@ var commonIODReq = exports.IODReq = {
 			else if (!res || !res.message || res.message !== 'store was deleted') {
 				throw new Error('Failed to delete test store: ' + prettyPrint(res))
 			}
-			else callback()
+			else {
+				iodRequestResultCheck('deletestore', res)
+				callback()
+			}
 		})
 	},
 
