@@ -9,9 +9,12 @@
 var url = require('url')
 var _ = require('lodash')
 var IodU = require('./lib/iod')
+var T = require('./lib/transform')
 var SchemaU = require('./lib/schema')
-var async = require('./lib/async-ext')
 var CONSTANTS = require('./lib/constants')
+
+var async = require('./lib/async-ext')
+var apply = async.apply
 
 /**
  * Creates a IOD object with specified apiKey, host and port.
@@ -61,7 +64,7 @@ var IOD = function(apiKey, host, port, reqOpts) {
 	iod.host = host || httpsHost
 	iod.port = port || httpsPort
 	iod.reqOpts = _.defaults(reqOpts || {}, { timeout: 300000 })
-	this.ACTIONS = _.cloneDeep(CONSTANTS.ACTIONS)
+	iod.ACTIONS = _.cloneDeep(CONSTANTS.ACTIONS)
 
 	SchemaU.initSchemas(iod)
 
@@ -96,17 +99,24 @@ IOD.create = function(apiKey, host, port, reqOpts, callback) {
 
 	var iod = new IOD(apiKey, host, port, reqOpts)
 
-	IodU.getAvailableApis(iod, async.doneFn(callback, function(apis) {
-		var apiEnums = _.mapValues(apis, function(value, actionName) {
-			return actionName.toLowerCase()
-		})
+	IodU.getAvailableApis(iod, async.split(function(apis) {
+		IodU.getFlavorSchemas(iod, async.doneFn(callback, function(flavorSchemaModel) {
+			var apiEnums = _(apis).pairs()
+				.map(function(pair) {
+					var actionName = pair[0]
+					return [actionName.toUpperCase(), actionName]
+				})
+				.zipObject()
+				.value()
 
-		_.defaults(iod.ACTIONS, { API: apiEnums })
-		SchemaU.addReqTypeSchemas(iod)
-		SchemaU.addActionSchemas(iod, apis)
+			_.defaults(iod.ACTIONS, { API: apiEnums })
+			SchemaU.addReqTypeSchemas(iod)
+			SchemaU.addActionSchemas(iod, apis)
+			flavorSchemaModel && SchemaU.addFlavorSchemas(iod, flavorSchemaModel)
 
-		return iod
-	}))
+			return iod
+		}))
+	}, callback))
 }
 
 /**
