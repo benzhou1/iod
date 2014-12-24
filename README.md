@@ -13,7 +13,7 @@ IOD provides the following benifits:
 3. Client side validation of parameter pairs (Parameters that are of array type and are required to have the same length as another parameter).
 4. Cliend side validation of flavor specific parameters (i.e. createtextindex, createconnector).
 
-It uses the request package to handle all http request and file uploads for you. The only thing you need to know is how to create an `IODOpt` object. Each IOD request type has their own JSON schema for creating the `IODOpt` object described by [Json-Schema](http://json-schema.org).
+It uses the request package to handle all http request and file uploads for you. The only information you need to know is how to create an `IODOpt` object. Each IOD request type has their own JSON schema for creating the `IODOpt` object described by [Json-Schema](http://json-schema.org).
 
 If you are behind a proxy, all you need to do is modify the `HTTP_PROXY` and `HTTPS_PROXY` environment variables (i.e. `http://10.5.16.105:8080`). If you don't want proxy to be applied to certain host, just modify the `NO_PROXY` environment variable with comma serparated list of host to not apply proxy to. Wildcards are allowed (i.e. `localhost,10.*`).
 
