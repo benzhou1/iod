@@ -468,7 +468,7 @@ IOD.sync(IODOpts, function(err, res) {
 <a name="job" />
 ### job(IODOpts, callback)
 
-Makes a job request to IDOL onDemand with options specified from `IODOpts`. Job request is asynchronous and allows you to send multiple actions at a time. It will return a `jobId` in which case you can get the status/result of the action by calling the `status`/`result` methods. More information can be found [here](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm).
+Makes a job request to IDOL onDemand with options specified from `IODOpts`. Job request is asynchronous and allows you to send multiple actions at a time. It will return a `jobId` in which case you can get the status/result of the action by calling the [`status`](#status)/[`result`](#result) methods. More information can be found [here](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm).
 
 #### Parameters
 * `IODOpts` - IOD options (see Schema below)
