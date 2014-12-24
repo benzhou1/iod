@@ -16,7 +16,7 @@ describe('#IOD constants via create method', function() {
 		var env = this
 
 		U.createIOD(function(err, IOD) {
-			if (err) return callback()
+			if (err) callback()
 			else {
 				env.IOD = IOD
 				callback()

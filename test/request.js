@@ -62,8 +62,6 @@ _.each(ReqTests, function(ReqTest, reqType) {
 				var env = this.schema
 
 				U.createIOD(function(err, IOD) {
-					if (err) return callback()
-
 					var beforeFns = _.map(ReqTest.schemaTests(IOD), function(SchemaTest) {
 						return function(done) {
 							IOD[reqType](SchemaTest.IODOpts,
@@ -71,7 +69,8 @@ _.each(ReqTests, function(ReqTest, reqType) {
 						}
 					})
 
-					async.waterfall(beforeFns, callback)
+					if (err) callback()
+					else async.waterfall(beforeFns, callback)
 				})
 			})
 
@@ -163,8 +162,8 @@ _.each(ReqTests, function(ReqTest, reqType) {
 								var env = this[action][reqTest.name]
 
 								U.createIOD(function(err, IOD) {
-									if (err) return callback()
-									beforeActionTest(IOD, reqTest, ActionTest, env, callback)
+									if (err) callback()
+									else beforeActionTest(IOD, reqTest, ActionTest, env, callback)
 								})
 							})
 
@@ -214,9 +213,8 @@ function beforeActionTest(IOD, reqTest, ActionTest, env, callback) {
 				 * If current RequestTest does not support the current
 				 * ActionTest then skip.
 				 */
-				if (reqTest.skip && reqTest.skip(actionTest)) {
-					return done()
-				}
+				if (reqTest.skip && reqTest.skip(actionTest)) return done()
+
 				reqTest.beforeFn(IOD, actionTest, function(err, res) {
 					if (err) return U.beforeDoneFn(env, actionTest.name, done)(err, res)
 
