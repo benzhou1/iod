@@ -8,13 +8,10 @@ If you are new to what IDOL onDemand has to offer, check out their website at: [
 
 IOD provides the following benifits:
 
-1.) Client side parameter schema validation of all allowed actions along with aliases.
-
-2.) Client side validation of required input sources.
-
-3.) Client side validation of parameter pairs (Parameters that are of array type and are required to have the same length as another parameter).
-
-4.) Cliend side validation of flavor specific parameters (i.e. createtextindex, createconnector).
+1. Client side parameter schema validation of all allowed actions along with aliases.
+2. Client side validation of required input sources.
+3. Client side validation of parameter pairs (Parameters that are of array type and are required to have the same length as another parameter).
+4. Cliend side validation of flavor specific parameters (i.e. createtextindex, createconnector).
 
 It uses the request package to handle all http request and file uploads for you. The only thing you need to know is how to create an `IODOpt` object. Each IOD request type has their own JSON schema for creating the `IODOpt` object described by [Json-Schema](http://json-schema.org).
 
