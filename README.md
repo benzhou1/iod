@@ -249,9 +249,9 @@ This only exists if IOD object is created via `create` method
   * Property names are `<IDOL onDemand action name>`.`<parameters or response>` (e.g. `schemas.schema['analyzesentiment.parameters']`)
   * Also contains flavor specific schemas where property names are `<IDOL onDemand action name>`.`<flavor>` (e.g. `schemas.schema['createconnector.web_cloud']`)
   * Property values are the parameter schema, response schema, or flavor schema for that action.
-2. `schemas.parameters` (object containing all parameters for every allowed action)
+2. `schemas.parameters` (object containing all parameter names for every allowed action)
   * Property names are `<IDOL onDemand action name>` (e.g. `schemas.parameters.analyzesentiment`)
-  * Property values are list of all parameters for that action.
+  * Property values are list of all parameter names for that action.
 3. `schemas.inputs` (object containing all input sources for every allowed action)
   * Property names are `<IDOL onDemand action name>` (e.g. `schemas.inputs.analyzesentiment`)
   * Property values are list of all input sources for that action.
