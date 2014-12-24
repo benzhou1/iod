@@ -30,20 +30,23 @@ var requireDir = require('require-dir')
 var Actions = requireDir(__dirname + '/actions')
 var ReqTests = requireDir(__dirname + '/request-types')
 
-// Include request-type tests
-var includeReq = []
-// Exclude request-type tests
-var excludeReq = []
-// Include action tests
-var includeAct = []
-// Exclude action tests
-// Quota for expandcontainer is 500, don't run unless we really have to
-// Quota for recognizeimages is 1000, don't run unless we really have to
-var excludeAct = ['expandcontainer', 'recognizeimages']
-// Set to true to run only ActionSchemaTests
-var actionSchemaOnly = false
-// Set to true to run only simple tests(Sync request type and IOD object view create only)
-var simpleTest = true
+var config = require('./config_defaults')
+
+try {
+	// To override default config, create a config.js file
+	var overrideCfg = require('./config')
+	config = _.defaults({}, overrideCfg, config)
+}
+// No config.js file found
+catch(e) {}
+
+// Extract configuration parameters for config
+var includeReq = config.includeReq
+var excludeReq = config.excludeReq
+var includeAct = config.includeAct
+var excludeAct = config.excludeAct
+var actionSchemaOnly = config.actionSchemaOnly
+var simpleTest = config.simpleTest
 
 if (!_.isEmpty(includeReq)) ReqTests = _.pick(ReqTests, includeReq)
 if (!_.isEmpty(excludeReq)) ReqTests = _.omit(ReqTests, excludeReq)

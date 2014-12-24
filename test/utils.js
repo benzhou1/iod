@@ -9,16 +9,25 @@ var IOD = require('../index')
 var should = require('should')
 var T = require('../lib/transform')
 var SchemaU = require('../lib/schema')
+var config = require('./config_defaults')
 
-// TODO: pass in these as config file
-var apiKey = '<your api key>'
-var host = null // override host
-var port = null // override port
-var testCon = exports.testCon = 'testcon' // test connector name
-var testIndex = exports.testIndex = 'testindex' // test index name
-var testStore = exports.testStore = 'teststore' // test store name
-exports.testUser = 'test@test.com' // test user name
-exports.testPass = 'testpassword' // test password
+try {
+	// To override default config, create a config.js file
+	var overrideCfg = require('./config')
+	config = _.defaults({}, overrideCfg, config)
+}
+// No config.js file found
+catch(e) {}
+
+// Extract configuration parameters from config
+var apiKey = config.apiKey
+var host = config.host
+var port = config.port
+var testCon = exports.testCon = config.testCon
+var testIndex = exports.testIndex = config.testIndex
+var testStore = exports.testStore = config.testStore
+exports.testUser = config.testUser
+exports.testPass = config.testPass
 
 // New instance of IOD class.
 exports.IOD = new IOD(apiKey, host, port)
