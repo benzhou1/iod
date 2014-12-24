@@ -76,10 +76,7 @@ exports.tests = function(IOD, data) {
 				action: T.attempt(U.paths.FRC, action)(IOD),
 				params: _.defaults({ text: 'cats and dogs' }, defParams)
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'url=idolondemand.com,ft,ss,mr,indexes,md,maxd,ms',
@@ -89,10 +86,7 @@ exports.tests = function(IOD, data) {
 					url: 'http://www.idolondemand.com'
 				}, defParams)
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, alias)
-			]
+			it: U.defIt(alias)
 		},
 		{
 			name: 'reference=findrelatedconcepts,ft,ss,mr,indexes,md,maxd,ms',
@@ -102,10 +96,7 @@ exports.tests = function(IOD, data) {
 					reference: T.attempt(T.get('ref'))(data)
 				}, defParams)
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'file=cats and dogs,ft,ss,mr,indexes,md,maxd,ms',
@@ -114,10 +105,7 @@ exports.tests = function(IOD, data) {
 				params: defParams,
 				files: [filePath]
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, alias)
-			]
+			it: U.defIt(alias)
 		},
 		{
 			name: 'file=invalid,ft,ss,mr,indexes,md,maxd,ms',

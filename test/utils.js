@@ -11,7 +11,7 @@ var T = require('../lib/transform')
 var SchemaU = require('../lib/schema')
 
 // TODO: pass in these as config file
-var apiKey = '<your api key>'
+var apiKey = '6ee6cbee-f94b-4688-a697-259fd8545d94'
 var host = null // override host
 var port = null // override port
 var testCon = exports.testCon = 'testcon' // test connector name

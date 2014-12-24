@@ -100,10 +100,7 @@ exports.tests = function(IOD, data) {
 				action: T.attempt(U.paths.VIEWDOC, action)(IOD),
 				params: _.defaults({ url: 'http://www.google.com'}, defParams)
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'reference=viewdocument,hlexp=text,st=<u>,et=</u>',
@@ -113,10 +110,7 @@ exports.tests = function(IOD, data) {
 					reference: T.attempt(T.get('ref'))(data)
 				}, defParams)
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, alias)
-			]
+			it: U.defIt(alias)
 		},
 		{
 			name: 'file=viewdocument,hlexp=text,st=<u>,et=</u>',
@@ -125,10 +119,7 @@ exports.tests = function(IOD, data) {
 				params: defParams,
 				files: [filePath]
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'file=invalid,hlexp=text,st=<u>,et=</u>',

@@ -68,10 +68,7 @@ exports.tests = function(IOD, data) {
 				action: T.attempt(U.paths.HLTEXT, action)(IOD),
 				params: _.defaults({ text: 'cats and dogs' }, defParams)
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'url=idolondemand.com,hlexp=cats,st=<u>,et=</u>',
@@ -79,10 +76,7 @@ exports.tests = function(IOD, data) {
 				action: T.attempt(U.paths.HL, alias)(IOD),
 				params: _.defaults({ url: 'http://www.idolondemand.com' }, defParams)
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, alias)
-			]
+			it: U.defIt(alias)
 		},
 		{
 			name: 'reference=expandterms,hlexp=cats,st=<u>,et=</u>',
@@ -92,10 +86,7 @@ exports.tests = function(IOD, data) {
 					reference: T.attempt(T.get('ref'))(data)
 				}, defParams)
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'file=cats and dogs,hlexp=cats,st=<u>,et=</u>',
@@ -104,10 +95,7 @@ exports.tests = function(IOD, data) {
 				params: defParams,
 				files: [filePath]
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, alias)
-			]
+			it: U.defIt(alias)
 		},
 		{
 			name: 'file=invalid,hlexp=cats,st=<u>,et=</u>',

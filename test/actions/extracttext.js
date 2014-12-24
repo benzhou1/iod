@@ -78,10 +78,7 @@ exports.tests = function(IOD, data) {
 						'HP_License_terms_may2012.doc'
 				}, defParams)
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'reference=extracttext,et,em,addMeta,refPre,pass',
@@ -91,10 +88,7 @@ exports.tests = function(IOD, data) {
 					reference: T.attempt(T.get('ref'))(data)
 				}, defParams)
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'file=extracttext,et,em,addMeta,refPre,pass',
@@ -103,10 +97,7 @@ exports.tests = function(IOD, data) {
 				params: defParams,
 				files: [filePath]
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'file=multiple,et,em,addMeta,refPre,pass',
@@ -122,10 +113,7 @@ exports.tests = function(IOD, data) {
 				}, defParams),
 				files: [filePath, filePath, filePath]
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			],
+			it: U.defIt(action),
 			multFiles: true
 		},
 		{

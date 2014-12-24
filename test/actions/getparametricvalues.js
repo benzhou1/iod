@@ -75,10 +75,7 @@ exports.tests = function(IOD, data) {
 				action: T.attempt(U.paths.GPV, action)(IOD),
 				params: defParams
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'file=invalid,i,txt,ft,mv,ms,dc,sort',

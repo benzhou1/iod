@@ -66,10 +66,7 @@ exports.tests = function(IOD, data) {
 					show_alternatives: true
 				}
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'url=idolondemand.com,et=companies_eng,sa=true',
@@ -81,10 +78,7 @@ exports.tests = function(IOD, data) {
 					show_alternatives: true
 				}
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, alias)
-			]
+			it: U.defIt(alias)
 		},
 		{
 			name: 'reference=extractentities,et=people_eng,sa=true',
@@ -96,10 +90,7 @@ exports.tests = function(IOD, data) {
 					show_alternatives: true
 				}
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'file=Taylor Swift,et=people_eng,sa=true',
@@ -111,10 +102,7 @@ exports.tests = function(IOD, data) {
 				},
 				files: [filePath]
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, alias)
-			]
+			it: U.defIt(alias)
 		},
 		{
 			name: 'file=invalid,et=people_eng,sa=true',

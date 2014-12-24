@@ -66,10 +66,7 @@ exports.tests = function(IOD, data) {
 					image_type: 'complex_3d'
 				}
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'reference=recognizeimages,indexes=corporatelogos,it=3d',
@@ -81,10 +78,7 @@ exports.tests = function(IOD, data) {
 					image_type: 'complex_3d'
 				}
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, alias)
-			]
+			it: U.defIt(alias)
 		},
 		{
 			name: 'file=recognizeimages,indexes=corporatelogos,it=3d',
@@ -96,10 +90,7 @@ exports.tests = function(IOD, data) {
 				},
 				files: [filePath]
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'file=invalid,indexes=corporatelogos,it=3d',

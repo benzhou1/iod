@@ -62,10 +62,7 @@ exports.tests = function(IOD, data) {
 					additional_metadata: true
 				}
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'url=idolondemand.com,additional_metadata=true',
@@ -76,10 +73,7 @@ exports.tests = function(IOD, data) {
 					additional_metadata: true
 				}
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, alias)
-			]
+			it: U.defIt(alias)
 		},
 		{
 			name: 'reference=identifylanguage,additional_metadata=true',
@@ -90,10 +84,7 @@ exports.tests = function(IOD, data) {
 					additional_metadata: true
 				}
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'file=cats and dogs,additional_metadata=true',
@@ -102,10 +93,7 @@ exports.tests = function(IOD, data) {
 				params: { additional_metadata: true	},
 				files: [filePath]
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, alias)
-			]
+			it: U.defIt(alias)
 		},
 		{
 			name: 'file=invalid,additional_metadata=true',

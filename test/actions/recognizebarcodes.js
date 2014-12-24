@@ -65,10 +65,7 @@ exports.tests = function(IOD, data) {
 					barcode_orientation: 'any'
 				}
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'reference=recognizebarcodes,bt=all1d,bo=any',
@@ -80,10 +77,7 @@ exports.tests = function(IOD, data) {
 					barcode_orientation: 'any'
 				}
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, alias)
-			]
+			it: U.defIt(alias)
 		},
 		{
 			name: 'file=recognizebarcodes,bt=all1d,bo=any',
@@ -95,10 +89,7 @@ exports.tests = function(IOD, data) {
 				},
 				files: [filePath]
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'file=invalid,bt=all1d,bo=any',

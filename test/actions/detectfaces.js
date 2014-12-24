@@ -63,10 +63,7 @@ exports.tests = function(IOD, data) {
 					additional: true
 				}
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'reference=detectfaces,add=true',
@@ -77,10 +74,7 @@ exports.tests = function(IOD, data) {
 					additional: true
 				}
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, alias)
-			]
+			it: U.defIt(alias)
 		},
 		{
 			name: 'file=detectfaces,add=true',
@@ -91,10 +85,7 @@ exports.tests = function(IOD, data) {
 				},
 				files: [filePath]
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'file=invalid,add=true',

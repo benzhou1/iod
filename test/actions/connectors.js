@@ -142,7 +142,6 @@ exports.tests = function(IOD, data) {
 					description: 'A description'
 				}
 			},
-			// TODO: use defIt everywhere
 			it: U.defIt(createAction)
 		},
 		{

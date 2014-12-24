@@ -96,10 +96,7 @@ exports.tests = function(IOD, data) {
 				action: T.attempt(U.paths.FINDSIM, action)(IOD),
 				params: _.defaults({ text: 'cats and dogs' }, defParams)
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'url=idolondemand.com,ft,srt,mpr,i,p,pf,hl,md,mxd,ms,s,tr,st,et,sum',
@@ -109,10 +106,7 @@ exports.tests = function(IOD, data) {
 					url: 'http://www.idolondemand.com'
 				}, defParams)
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'reference=findsimilar,ft,srt,mpr,i,p,pf,hl,md,mxd,ms,s,tr,st,et,sum',
@@ -122,10 +116,7 @@ exports.tests = function(IOD, data) {
 					reference: T.attempt(T.get('ref'))(data)
 				}, defParams)
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'file=cats and dogs,ft,srt,mpr,i,p,pf,hl,md,mxd,ms,s,tr,st,et,sum',
@@ -134,10 +125,7 @@ exports.tests = function(IOD, data) {
 				params: defParams,
 				files: [filePath]
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'file=invalid,ft,srt,mpr,i,p,pf,hl,md,mxd,ms,s,tr,st,et,sum',

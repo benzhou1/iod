@@ -62,10 +62,7 @@ exports.tests = function(IOD, data) {
 					mode: 'document_photo'
 				}
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'reference=ocrdocument,mode=document_photo',
@@ -76,10 +73,7 @@ exports.tests = function(IOD, data) {
 					mode: 'document_photo'
 				}
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, alias)
-			]
+			it: U.defIt(alias)
 		},
 		{
 			name: 'file=ocrdocument,mode=document_photo',
@@ -90,10 +84,7 @@ exports.tests = function(IOD, data) {
 				},
 				files: [filePath]
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'file=invalid,mode=document_photo',

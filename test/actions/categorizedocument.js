@@ -71,10 +71,7 @@ exports.tests = function(IOD, data) {
 				action: T.attempt(U.paths.CATDOC, action)(IOD),
 				params: _.defaults({ text: 'cats and dogs' }, defParams)
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'url=idolondemand.com,ft,mr,i,pr,prf',
@@ -84,10 +81,7 @@ exports.tests = function(IOD, data) {
 					url: 'http://www.idolondemand.com'
 				}, defParams)
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'reference=categorizedocument,ft,mr,i,pr,prf',
@@ -97,10 +91,7 @@ exports.tests = function(IOD, data) {
 					reference: T.attempt(T.get('ref'))(data)
 				}, defParams)
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'file=cats and dogs,ft,mr,i,pr,prf',
@@ -109,10 +100,7 @@ exports.tests = function(IOD, data) {
 				params: defParams,
 				files: [filePath]
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'json=cats and dogs,ft,mr,i,pr,prf',
@@ -124,10 +112,7 @@ exports.tests = function(IOD, data) {
 					}
 				}, defParams)
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'file=invalid,ft,mr,i,pr,prf',

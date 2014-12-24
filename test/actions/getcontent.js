@@ -77,10 +77,7 @@ exports.tests = function(IOD, data) {
 				action: T.attempt(U.paths.GETCONT, action)(IOD),
 				params: defParams
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'file=invalid,ft,ss,mr,indexes,md,maxd,ms',

@@ -70,10 +70,7 @@ exports.tests = function(IOD, data) {
 				action: T.attempt(U.paths.EXPANDTERMS, action)(IOD),
 				params: _.defaults({ text: 'cats and dogs' }, defParams)
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'url=idolondemand.com,exp,mt,stem,sort',
@@ -81,10 +78,7 @@ exports.tests = function(IOD, data) {
 				action: T.attempt(U.paths.EXPANDTERM, alias)(IOD),
 				params: _.defaults({ url: 'http://www.idolondemand.com' }, defParams)
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, alias)
-			]
+			it: U.defIt(alias)
 		},
 		{
 			name: 'reference=expandterms,exp,mt,stem,sort',
@@ -94,10 +88,7 @@ exports.tests = function(IOD, data) {
 					reference: T.attempt(T.get('ref'))(data)
 				}, defParams)
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'file=cats and dogs,exp,mt,stem,sort',
@@ -106,10 +97,7 @@ exports.tests = function(IOD, data) {
 				params: defParams,
 				files: [filePath]
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, alias)
-			]
+			it: U.defIt(alias)
 		},
 		{
 			name: 'file=invalid,exp,mt,stem,sort',

@@ -170,10 +170,7 @@ exports.tests = function(IOD, data) {
 				action: T.attempt(U.paths.ADDTOTI, action)(IOD),
 				params: _.defaults({ json: json }, defParams)
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'add url=idolondemand.com,dm=duplicate,addmeta,refPref',
@@ -183,10 +180,7 @@ exports.tests = function(IOD, data) {
 					url: 'https://www.idolondemand.com'
 				}, defParams)
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'add reference=addtotextindex,dm=duplicate,addmeta,refPref',
@@ -196,10 +190,7 @@ exports.tests = function(IOD, data) {
 					reference: T.attempt(T.get('ref'))(data)
 				}, defParams)
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'add file=addtotextindex,dm=duplicate,addmeta,refPref',
@@ -208,10 +199,7 @@ exports.tests = function(IOD, data) {
 				params: defParams,
 				files: [filePath]
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'add file=multiple,dm=duplicate,addmeta,refPref',
@@ -227,10 +215,7 @@ exports.tests = function(IOD, data) {
 				}, defParams),
 				files: [filePath, filePath, filePath]
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			],
+			it: U.defIt(action),
 			multFiles: true
 		},
 		{

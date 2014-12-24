@@ -64,10 +64,7 @@ exports.tests = function(IOD, data) {
 					depth: 2
 				}
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'reference=expandcontainer,password=[1,2,3],depth=2',
@@ -79,10 +76,7 @@ exports.tests = function(IOD, data) {
 					depth: 2
 				}
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, alias)
-			]
+			it: U.defIt(alias)
 		},
 		{
 			name: 'file=expandcontainer,password=[1,2,3],depth=2',
@@ -94,10 +88,7 @@ exports.tests = function(IOD, data) {
 				},
 				files: [filePath]
 			},
-			it: [
-				U.shouldBeSuccessful,
-				_.partial(U.shouldHaveResults, action)
-			]
+			it: U.defIt(action)
 		},
 		{
 			name: 'file=invalid,password=[1,2,3],depth=2',
