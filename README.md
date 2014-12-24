@@ -269,9 +269,9 @@ Creates an IOD object with specified `apiKey` and returns it as the second argum
 
 #### Parameters
 * `apiKey` - Your IDOL onDemand api key
-* `host` - Can override IDOL onDemand host (for developers)
-* `port` - Can override IDOL onDemand port (for developers)
-* `reqOpts` - Can override the request options when making request.
+* `host` - Optionally, can override IDOL onDemand host (for developers)
+* `port` - Optionally, can override IDOL onDemand port (for developers)
+* `reqOpts` - Optionally, can override the request options when making request.
 * `callback` - `Callback(err, IOD)` that accepts an error as its first argument `err` and an IOD object as the second arugument `IOD`
 
 #### Example
