@@ -49,6 +49,13 @@ exports.skipTypes = ['result', 'status', 'job']
  * @returns {Array} - List of SchemaTests
  */
 exports.schemaTests = function(IOD) {
+	var defParams = {
+		connector: 'connector',
+		flavor: 'web_cloud',
+		config: {},
+		destination: {}
+	}
+
 	return [
 		// Connectorstatus
 		prependStatusAction.missingRequired(IOD, 'connector', 'CONSTATUS', statusAction),
@@ -65,6 +72,11 @@ exports.schemaTests = function(IOD) {
 		prependCreateAction.invalidObjType(IOD, 'destination', 'CREATECON', createAction),
 		prependCreateAction.invalidObjType(IOD, 'schedule', 'CREATECON', createAction),
 		prependCreateAction.invalidStringType(IOD, 'description', 'CREATECON', createAction),
+
+		// Basic createconnector flavor
+		ASTests.withRequired(defParams).missingRequired(IOD, 'url', 'CREATECON', createAction),
+		ASTests.withRequired(defParams).missingRequired(IOD, 'action', 'CREATECON', createAction),
+		ASTests.withRequired(defParams).missingRequired(IOD, 'index', 'CREATECON', createAction),
 
 		// Deletetextindex
 		prependDeleteAction.missingRequired(IOD, 'connector', 'DELETECON', deleteAction),

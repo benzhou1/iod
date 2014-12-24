@@ -53,6 +53,11 @@ exports.skipTypes = ['result', 'status', 'job']
  * @returns {Array} - List of SchemaTests
  */
 exports.schemaTests = function(IOD) {
+	var defParams = {
+		index: 'index',
+		flavor: 'standard'
+	}
+
 	return [
 		// Addtotextindex
 		prependAddAction.withRequired({ index: 'test' }).noInputs(IOD, 'ADDTOTI', action),
@@ -70,6 +75,15 @@ exports.schemaTests = function(IOD) {
 		prependCreateAction.missingRequired(IOD, 'flavor', 'CREATETI', createAction),
 		prependCreateAction.invalidStringType(IOD, 'flavor', 'CREATETI', createAction),
 		prependCreateAction.invalidStringType(IOD, 'description', 'CREATETI', createAction),
+
+		// Basic createtextindex standard
+		ASTests.withRequired(defParams)
+			.invalidNumberType(IOD, 'expire_time', 'CREATETI', createAction),
+		// TODO: wait for fix in flavors items
+//		ASTests.withRequired(defParams)
+//			.invalidArrayString(IOD, 'index_fields', 'CREATETI', createAction),
+//		ASTests.withRequired(defParams)
+//			.invalidArrayString(IOD, 'parametric_fields', 'CREATETI', createAction),
 
 		// Deletetextindex
 		prependDeleteAction.missingRequired(IOD, 'index', 'DELETETI', deleteAction),
@@ -264,11 +278,8 @@ exports.tests = function(IOD, data) {
 		{
 			name: 'indexstatus index=test',
 			IODOpts: {
-				action: T.attempt(U.paths.DELFROMTI, statusAction)(IOD),
-				params: {
-					index: U.testIndex,
-					delete_all_documents: true
-				}
+				action: T.attempt(U.paths.INDEXSTATUS, statusAction)(IOD),
+				params: { index: U.testIndex }
 			},
 			it: [
 				U.shouldBeSuccessful,

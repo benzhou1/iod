@@ -9,12 +9,9 @@
 var url = require('url')
 var _ = require('lodash')
 var IodU = require('./lib/iod')
-var T = require('./lib/transform')
 var SchemaU = require('./lib/schema')
-var CONSTANTS = require('./lib/constants')
-
 var async = require('./lib/async-ext')
-var apply = async.apply
+var CONSTANTS = require('./lib/constants')
 
 /**
  * Creates a IOD object with specified apiKey, host and port.

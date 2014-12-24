@@ -27,6 +27,7 @@ describe('#IOD constants via create method', function() {
 	it('should have existing constants', function() {
 		should.exists(this.IOD.ACTIONS)
 		should.exists(this.IOD.ACTIONS.API)
+		should.exists(this.IOD.ACTIONS.API.QUERYTEXTINDEX)
 		_.size(this.IOD.ACTIONS.API).should.not.be.eql(0)
 		_.size(this.IOD.ACTIONS.DISCOVERY).should.not.be.eql(0)
 

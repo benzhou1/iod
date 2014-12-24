@@ -97,9 +97,9 @@ _.each(ReqTests, function(ReqTest, reqType) {
 			 */
 			if (ActionTest.skipTypes && _.contains(ActionTest.skipTypes, reqType)) return
 			/**
-			 * If simpleTest is set to true, skip all RequestTests except for `sync`
+			 * If simpleTest is set to true, skip `result` and `status` RequestTests
 			 */
-			if (simpleTest && reqType !== 'sync') return
+			if (simpleTest && (reqType === 'result' || reqType === 'status')) return
 
 			describe('#' + action.toUpperCase(), function() {
 				/**
@@ -149,7 +149,12 @@ _.each(ReqTests, function(ReqTest, reqType) {
 				// If set don't run ActionTests
 				if (!actionSchemaOnly) {
 					// Runs every RequestTest for current request-type
-					_.each(ReqTest.tests, function(reqTest) {
+					_.each(ReqTest.tests, function(reqTest, i) {
+						/**
+						 * If simpletest is set to true, only run first ReqTest
+						 */
+						if (simpleTest && i > 0) return
+
 						// Runs with IOD created via the create method
 						describe('[CREATE IOD]' + reqTest.name, function() {
 							before(function(callback) {

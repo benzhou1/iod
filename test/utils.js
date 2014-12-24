@@ -10,7 +10,7 @@ var should = require('should')
 var T = require('../lib/transform')
 var SchemaU = require('../lib/schema')
 
-// TODO: pass in these as command line args
+// TODO: pass in these as config file
 var apiKey = '<your api key>'
 var host = null // override host
 var port = null // override port
