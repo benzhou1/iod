@@ -245,7 +245,7 @@ exports.tests = function(IOD, data) {
 				_.partial(U.shouldHaveResults, deleteFromAction)
 			]
 		},
-		// TODO: wait for fix in production
+		// TODO: wait for fix in production for delete_all_documents
 //		{
 //			name: 'deletefrom index=test,delete_all_documents=true',
 //			IODOpts: {

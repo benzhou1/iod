@@ -4,7 +4,6 @@ var _ = require('lodash')
 var U = require('./utils')
 var T = require('../lib/transform')
 
-// TODO: rewrite into class
 module.exports = {
 	/**
 	 * Returns a ActionSchemaTest which should check for a required parameter error.
