@@ -2,11 +2,18 @@
 
 For the entire README, I will be refering to the IOD.js package as **IOD** and the IDOL onDemand server as **IDOL onDemand**.
 
-IOD is an IDOL onDemand framework which makes it easy to send api requests to IDOL onDemand. It is easy to make all the [different types of request](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm) along with the [different allowed actions](https://www.idolondemand.com/developer/docs/APIDiscovery.html) that are available to you.
+IOD is an IDOL onDemand framework which makes it easy to send api requests to IDOL onDemand. It is easy to make all the [different types of request](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm) using all the [different allowed actions](https://www.idolondemand.com/developer/docs/APIDiscovery.html) that are available to you.
 
 If you are new to what IDOL onDemand has to offer, check out their website at: [IDOL onDemand](http://www.idolondemand.com)
 
-IOD provides client side schema validation of all allowed actions before sending your request off to IDOL onDemand. It also handles validation for action aliases and parameter aliases. Required input sources and array parameters that are required to have the same length are validated as well. It uses the request package to handle all http request and file uploads for you. The only thing you need to know is how to create an `IODOpt` object. Each IOD request type has their own JSON schema for creating the `IODOpt` object described by [Json-Schema](http://json-schema.org).
+IOD provides the following benifits:
+
+1.) Client side parameter schema validation of all allowed actions along with aliases.
+2.) Client side validation of required input sources.
+3.) Client side validation of parameter pairs (Parameters that are of array type and are required to have the same length as another parameter).
+4.) Cliend side validation of flavor specific parameters (i.e. createtextindex, createconnector).
+
+It uses the request package to handle all http request and file uploads for you. The only thing you need to know is how to create an `IODOpt` object. Each IOD request type has their own JSON schema for creating the `IODOpt` object described by [Json-Schema](http://json-schema.org).
 
 If you are behind a proxy, all you need to do is modify the `HTTP_PROXY` and `HTTPS_PROXY` environment variables (i.e. `http://10.5.16.105:8080`). If you don't want proxy to be applied to certain host, just modify the `NO_PROXY` environment variable with comma serparated list of host to not apply proxy to. Wildcards are allowed (i.e. `localhost,10.*`).
 
