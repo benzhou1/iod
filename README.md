@@ -193,9 +193,9 @@ Creates a new instance of IOD class with specified `apiKey`. You can override th
 
 #### Parameters
 * `apiKey` - Your IDOL onDemand api key
-* `host` - Can override IDOL onDemand host (for developers)
-* `port` - Can override IDOL onDemand port (for developers)
-* `reqOpts` - Can override the request options when making request.
+* `host` - Optionally, can override IDOL onDemand host (for developers)
+* `port` - Optionally, Can override IDOL onDemand port (for developers)
+* `reqOpts` - Optionally, Can override the request options when making request.
 
 #### Properties
 * `apiKey` - Your IDOL onDemand api key
@@ -204,7 +204,7 @@ Creates a new instance of IOD class with specified `apiKey`. You can override th
 * `reqOpts` - Your set request options
 * `ACTIONS` - Object containing constant values for IDOL onDemand actions. See [ACTIONS](#actions)
 * `TYPES` - Object containing constant values for IOD request types. See [TYPES](#types)
-* `VERSIONS` - Object containing constant vlaues for IDOL onDemand versions. See [VERSIONS](#versions)
+* `VERSIONS` - Object containing constant values for IDOL onDemand versions. See [VERSIONS](#versions)
 * `schemas` - Object containing schemas and data related to IDOL onDemand actions. See [schemas](#constSchemas)
 
 # Constants
@@ -222,7 +222,7 @@ There are two types of actions:
   * (e.g. `ACTIONS.API.EXTRACTEXT`)
   
 <a name="types" />
-#### `TYPES` - Object with properties containing the all different request types
+#### `TYPES` - Object with properties containing all the different request types
 
 1. [`TYPES.ASYNC`](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm)
 2. [`TYPES.SYNC`](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm)
@@ -232,7 +232,7 @@ There are two types of actions:
 6. [`TYPES.DISCOVERY`](https://www.idolondemand.com/developer/docs/APIDiscovery.html)
 
 <a name="versions" />
-#### `VERSIONS` - Object with properties containing all the versions
+#### `VERSIONS` - Object with properties containing all the different versions
 
 There are two types of versions:
 
@@ -247,7 +247,8 @@ This only exists if IOD object is created via `create` method
 
 1. `schemas.schema` (object containing parameter and response schema for every allowed action)
   * Property names are `<IDOL onDemand action name>`.`<parameters or response>` (e.g. `schemas.schema['analyzesentiment.parameters']`)
-  * Property values are the parameter schema or response schema for that action.
+  * Also contains flavor specific schemas where property names are `<IDOL onDemand action name>`.`<flavor>` (e.g. `schemas.schema['createconnector.web_cloud']`)
+  * Property values are the parameter schema, response schema, or flavor schema for that action.
 2. `schemas.parameters` (object containing all parameters for every allowed action)
   * Property names are `<IDOL onDemand action name>` (e.g. `schemas.parameters.analyzesentiment`)
   * Property values are list of all parameters for that action.
