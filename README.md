@@ -285,7 +285,7 @@ IOD.create('api key', function(err, IOD) {
 <a name="async" />
 ### async(IODOpts, callback)
 
-Makes an async request to IDOL onDemand with options specified from `IODOpts`. Async request returns a `jobId` in which case you can get the status/result of the action using the `status`/`result` methods. More information can be found [here](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm).
+Makes an async request to IDOL onDemand with options specified from `IODOpts`. Async request returns a `jobId` in which case you can get the status/result of the action using the [`status`](#status)/[`result`](#result) methods. More information can be found [here](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm).
 
 #### Parameters
 * `IODOpts` - IOD options (see Schema below)
