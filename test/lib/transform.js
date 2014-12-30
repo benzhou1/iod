@@ -161,6 +161,19 @@ describe('#TRANSFORM', function() {
 			}
 
 			T.seq([fn, fn, fn, fn])(0).should.be.eql(4)
+		}),
+
+		it('should not have mutated fns', function() {
+			var fn = function(acc) {
+				return acc + 1
+			}
+			var fn1 = function(acc) {
+				return acc >= 3 ? 0 : (acc + 1)
+			}
+			var fns = [fn, fn, fn, fn1]
+
+			T.seq(fns)(0).should.be.eql(0)
+			T.seq(fns)(0).should.be.eql(0)
 		})
 	})
 
