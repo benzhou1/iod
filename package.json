@@ -35,7 +35,6 @@
     "request": "^2.44.0",
     "jjv": "^1.0.2",
     "jjve": "^0.4.0",
-    "wildcard": "^1.1.0",
     "async": "^0.9.0"
   },
   "devDependencies": {
