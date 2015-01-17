@@ -12,6 +12,8 @@ IOD provides the following benifits:
 2. Client side validation of required input sources.
 3. Client side validation of parameter pairs (Parameters that are of array type and are required to have the same length as another parameter).
 4. Cliend side validation of flavor specific parameters (i.e. createtextindex, createconnector).
+5. Polling for results from async/job requests.
+6. Automatic retry on 5000(Backend request failed) and 7000(Request timeout) errors for sync requests.
 
 It uses the request package to handle all http request and file uploads for you. The only information you need to know is how to create an `IODOpt` object. Each IOD request type has their own JSON schema for creating the `IODOpt` object described by [Json-Schema](http://json-schema.org).
 
@@ -178,6 +180,7 @@ console.log('Request options: ', IOD.reqOpts)
 
 ### Methods
 * [`create`](#create)
+* [`onFinished`](#onFinished)
 * [`async`](#async)
 * [`sync`](#sync)
 * [`job`](#job)
@@ -282,6 +285,24 @@ IOD.create('api key', function(err, IOD) {
 })
 ```
 
+<a name="onFinished" />
+### onFinished(jobID, listener)
+
+Listens for an async/job request based off the specified `jobID` to finish. Then call `listener` passing in an error as the first argument and the results of the job as the second.
+
+#### Parameters
+* `jobID` - JobID reeturned from an async/job request.
+* `listener` - `Listener(err, res)` that gets called when job is finished that accepts an error as its first argument `err` and the response from the async/job requests as its second `res`.
+
+#### Example
+```javascript
+// JobID can be obtained when sending an async/job request.
+IOD.onFinished(jobID, function(err, res) {
+	console.log('ERR: ', err)
+	console.log('RES: ', res)
+})
+```
+
 <a name="async" />
 ### async(IODOpts, callback)
 
@@ -320,7 +341,7 @@ Makes an async request to IDOL onDemand with options specified from `IODOpts`. A
 		"method": {
 			"enum": ["get", "post"],
 			"default": "get",
-			"description": "Http method"
+			"description": "Http method."
 		},
 		"params": {
 			"type": "object",
@@ -335,7 +356,12 @@ Makes an async request to IDOL onDemand with options specified from `IODOpts`. A
 		},
 		"getResults": {
 			"type": "boolean",
-			"description": "True to wait for results of action to be available"
+			"description": "True to wait for results of action to be available."
+		},
+		"pollInterval": {
+			"type": "integer",
+			"description": "Number of ms to wait between polling results.",
+			"default": 5000
 		}
 	},
 	"required": [ "action" ]
@@ -376,6 +402,28 @@ IOD.async(IODOpts, function(err, res) {
 })
 ```
 
+#### Example listening for onFinished event
+```javascript
+// IODOpts for async request, polling every 3 seconds for results
+var IODOpts = {
+	action: IOD.ACTIONS.ANALYZESENTIMENT,
+	params: { text: '=)' },
+	pollingInterval: 3000
+}
+
+// Set up listener for for finished event based off jobId
+IOD.async(IODOpts, function(err, res) {
+	if (err) console.log('ERR: ', err)
+	else {
+		var jobID = res.jobID
+		IOD.onFinished(jobID, function(err, res) {
+			console.log('FINERR: ', err)
+			console.log('RES: ', res)
+		})
+	}
+}
+```
+
 <a name="sync" />
 ### sync(IODOpts, callback)
 
@@ -414,7 +462,7 @@ Makes an sync request to IDOL onDemand with options specified from `IODOpts`. Sy
 		"method": {
 			"enum": ["get", "post"],
 			"default": "get",
-			"description": "Http method"
+			"description": "Http method."
 		},
 		"params": {
 			"type": "object",
@@ -426,6 +474,11 @@ Makes an sync request to IDOL onDemand with options specified from `IODOpts`. Sy
 				"type": "string"
 			},
 			"description": "IOD action input files. Should be array of file paths."
+		},
+		retries: {
+			"type": "integer",
+			"description": "Number of times to retry on timeout or unknown errors.",
+			"default": 1
 		}
 	},
 	"required": [ "action" ]
@@ -462,6 +515,21 @@ var IODOpts = {
 IOD.sync(IODOpts, function(err, res) {
 	console.log('ERROR: ', err)
 	console.log('RESPONSE: ', res)
+})
+```
+
+#### Example with retries
+```javascript
+// IODOpts for sync request that retries 3 times on 5000 or 7000 errors.
+var IODOpts = {
+	action: IOD.ACTIONS.API.ANALYZESENTIMENT,
+	params: { text: '=)' },
+	retries: 3
+}
+
+IOD.sync(IODOpts, function(err, res) {
+	console.log('ERR: ', err)
+	console.log('RES: ', res)
 })
 ```
 
@@ -541,7 +609,12 @@ Makes a job request to IDOL onDemand with options specified from `IODOpts`. Job 
 		},
 		"getResults": {
 			"type": "boolean",
-			"description": "True to wait for results of action to be available"
+			"description": "True to wait for results of action to be available."
+		},
+		"pollInterval": {
+			"type": "integer",
+			"description": "Number of ms to wait between polling results.",
+			"default": 5000
 		}
 	},
 	"required": [ "job" ]
@@ -616,6 +689,45 @@ IOD.job(IODOpts, function(err, res) {
 	console.log('ERROR: ', err)
 	console.log('RESPONSE: ', res)
 })
+```
+
+#### Example listening for onFinished event
+```javascript
+// IODOpts for job request, polling every 3 seconds for results
+var IODOpts = {
+	majorVersion: IOD.VERSIONS.MAJOR.V1,
+	job: {
+		actions: [
+			{
+				name: IOD.ACTIONS.API.ANALYZESENTIMENT,
+				version: IOD.VERSIONS.API.V1,
+				params: {
+					text: '=)'
+				}
+			},
+			{
+				name: IOD.ACTIONS.API.ANALYZESENTIMENT,
+				version: IOD.VERSIONS.API.V1,
+				params: {
+					text: '=('
+				}
+			}
+		]
+	},
+	pollingInterval: 3000
+}
+
+// Set up listener for for finished event based off jobId
+IOD.job(IODOpts, function(err, res) {
+	if (err) console.log('ERR: ', err)
+	else {
+		var jobID = res.jobID
+		IOD.onFinished(jobID, function(err, res) {
+			console.log('FINERR: ', err)
+			console.log('RES: ', res)
+		})
+	}
+}
 ```
 
 <a name="status" />
