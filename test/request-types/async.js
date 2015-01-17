@@ -51,23 +51,6 @@ exports.schemaTests = function(IOD) {
  */
 exports.tests = [
 	{
-		name: '[POST] - should have jobId',
-		beforeFn: function(IOD, ActionTest, done) {
-			var IODOpts = _.defaults({ method: 'post' }, ActionTest.IODOpts)
-			IOD.async(IODOpts, done)
-		},
-		itFn: function() {
-			return [
-				U.shouldBeSuccessful,
-				U.shouldBeJobId
-			]
-		},
-		skip: function(ActionTest) {
-			return !!ActionTest.shouldError ||
-				!!ActionTest.noJobId
-		}
-	},
-	{
 		name: '[GET] - should have waited and gotten results',
 		beforeFn: function(IOD, ActionTest, done) {
 			var IODOpts = _.defaults({ getResults: true }, ActionTest.IODOpts)
@@ -92,6 +75,27 @@ exports.tests = [
 		},
 		itFn: function(ActionTest) {
 			return ActionTest.it
+		}
+	},
+	{
+		name: '[EVENT] - should have gotten finished event',
+		beforeFn: function(IOD, ActionTest, done) {
+			var IODOpts = ActionTest.IODOpts
+
+			IOD.async(IODOpts, function(err, res) {
+				if (err) done(err)
+				else {
+					var jobId = res.jobID
+					IOD.onFinished(jobId, done)
+				}
+			})
+		},
+		itFn: function(ActionTest) {
+			return ActionTest.it
+		},
+		skip: function(ActionTest) {
+			return !!ActionTest.shouldError ||
+				!!ActionTest.noJobId
 		}
 	}
 ]

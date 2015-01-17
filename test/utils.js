@@ -133,7 +133,8 @@ var commonPaths = exports.paths = {
 var waitUntilFinished = exports.waitUntilFinished = function(IOD) {
 	return function(waitCB) {
 		var cb = function(err, status) {
-			if (status.status === 'FINISHED' || status.status === 'IDLE') {
+			if (status.status === 'FINISHED' || status.status === 'IDLE' ||
+				status.status === 'ERROR') {
 				console.log('[WAIT] - Test connector finished running...')
 				waitCB()
 			}
