@@ -149,26 +149,28 @@ exports.tests = function(IOD, data) {
 	}
 
 	var tests = [
-//		{
-//			name: 'create index=test,flavor=explorer',
-//			IODOpts: {
-//				action: T.attempt(U.paths.CREATETI, createAction)(IOD),
-//				params: {
-//					index: U.testIndex,
-//					flavor: 'explorer'
-//				}
-//			},
-//			wait: 120,
-//			it: [
-//				U.shouldBeSuccessful,
-//				_.partial(U.shouldHaveResults, createAction)
-//			]
-//		},
+		{
+			name: 'create index=test,flavor=explorer',
+			IODOpts: {
+				action: T.attempt(U.paths.CREATETI, createAction)(IOD),
+				params: {
+					index: U.testIndex,
+					flavor: 'explorer'
+				},
+				retries: 2
+			},
+			wait: 60,
+			it: [
+				U.shouldBeSuccessful,
+				_.partial(U.shouldHaveResults, createAction)
+			]
+		},
 		{
 			name: 'add json=doc,index=test,dm=duplicate,addmeta,refPref',
 			IODOpts: {
 				action: T.attempt(U.paths.ADDTOTI, action)(IOD),
-				params: _.defaults({ json: json }, defParams)
+				params: _.defaults({ json: json }, defParams),
+				retries: 2
 			},
 			it: U.defIt(action)
 		},
@@ -178,7 +180,8 @@ exports.tests = function(IOD, data) {
 				action: T.attempt(U.paths.ADDTOTI, action)(IOD),
 				params: _.defaults({
 					url: 'https://www.idolondemand.com'
-				}, defParams)
+				}, defParams),
+				retries: 2
 			},
 			it: U.defIt(action)
 		},
@@ -188,7 +191,8 @@ exports.tests = function(IOD, data) {
 				action: T.attempt(U.paths.ADDTOTI, action)(IOD),
 				params: _.defaults({
 					reference: T.attempt(T.get('ref'))(data)
-				}, defParams)
+				}, defParams),
+				retries: 2
 			},
 			it: U.defIt(action)
 		},
@@ -197,7 +201,8 @@ exports.tests = function(IOD, data) {
 			IODOpts: {
 				action: T.attempt(U.paths.ADDTOTI, action)(IOD),
 				params: defParams,
-				files: [filePath]
+				files: [filePath],
+				retries: 2
 			},
 			it: U.defIt(action)
 		},
@@ -213,7 +218,8 @@ exports.tests = function(IOD, data) {
 					],
 					reference_prefix: ['prefix', 'prefix', 'prefix']
 				}, defParams),
-				files: [filePath, filePath, filePath]
+				files: [filePath, filePath, filePath],
+				retries: 2
 			},
 			it: U.defIt(action),
 			multFiles: true
@@ -223,7 +229,8 @@ exports.tests = function(IOD, data) {
 			IODOpts: {
 				action: T.attempt(U.paths.ADDTOTI, action)(IOD),
 				params: defParams,
-				files: ['invalid file path']
+				files: ['invalid file path'],
+				retries: 2
 			},
 			it: [
 				U.shouldError,
@@ -238,7 +245,8 @@ exports.tests = function(IOD, data) {
 				params: {
 					index: U.testIndex,
 					index_reference: ['reference']
-				}
+				},
+				retries: 2
 			},
 			it: [
 				U.shouldBeSuccessful,
@@ -264,7 +272,8 @@ exports.tests = function(IOD, data) {
 			name: 'indexstatus index=test',
 			IODOpts: {
 				action: T.attempt(U.paths.INDEXSTATUS, statusAction)(IOD),
-				params: { index: U.testIndex }
+				params: { index: U.testIndex },
+				retries: 2
 			},
 			it: [
 				U.shouldBeSuccessful,
@@ -272,20 +281,21 @@ exports.tests = function(IOD, data) {
 //				_.partial(U.shouldHaveResults, statusAction)
 			]
 		},
-//		{
-//			name: 'delete index=test,confirm',
-//			IODOpts: {
-//				action: T.attempt(U.paths.DELETETI, deleteAction)(IOD),
-//				params: {
-//					index: U.testIndex,
-//					confirm: T.attempt(T.get('confirm'))(data)
-//				}
-//			},
-//			it: [
-//				U.shouldBeSuccessful,
-//				_.partial(U.shouldHaveResults, deleteAction)
-//			]
-//		}
+		{
+			name: 'delete index=test,confirm',
+			IODOpts: {
+				action: T.attempt(U.paths.DELETETI, deleteAction)(IOD),
+				params: {
+					index: U.testIndex,
+					confirm: T.attempt(T.get('confirm'))(data)
+				},
+				retries: 2
+			},
+			it: [
+				U.shouldBeSuccessful,
+				_.partial(U.shouldHaveResults, deleteAction)
+			]
+		}
 	]
 
 	// Skip jobId tests
@@ -308,9 +318,9 @@ exports.tests = function(IOD, data) {
 // TODO: right now requires that test index already exists
 exports.prepare = function(IOD, callback) {
 	async.series({
-//		clean: apply(U.prepare.cleanIndex, IOD),
-//
-//		confirm: apply(U.prepare.confirmToken, IOD),
+		clean: apply(U.prepare.cleanIndex, IOD),
+
+		confirm: apply(U.prepare.confirmToken, IOD),
 		// Always get a new store object reference
 		ref: apply(U.prepare.reference, IOD, 'nocache', filePath)
 	}, function(err, res) {

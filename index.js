@@ -8,10 +8,12 @@
 
 var url = require('url')
 var _ = require('lodash')
+var events = require('events')
 var IodU = require('./lib/iod')
 var SchemaU = require('./lib/schema')
 var async = require('./lib/async-ext')
 var CONSTANTS = require('./lib/constants')
+var eventEmitter = new events.EventEmitter();
 
 /**
  * Creates a IOD object with specified apiKey, host and port.
@@ -62,6 +64,7 @@ var IOD = function(apiKey, host, port, reqOpts) {
 	iod.port = port || httpsPort
 	iod.reqOpts = _.defaults(reqOpts || {}, { timeout: 300000 })
 	iod.ACTIONS = _.cloneDeep(CONSTANTS.ACTIONS)
+	iod.eventEmitter = eventEmitter
 
 	SchemaU.initSchemas(iod)
 
@@ -246,6 +249,19 @@ IOD.prototype.status = function(IODOpts, callback) {
 IOD.prototype.job = function(IODOpts, callback) {
 	var IOD = this
 	IodU.asyncAction(IOD, _.cloneDeep(IODOpts), IOD.TYPES.JOB, callback)
+}
+
+/**
+ * Listens for when an async/job request finishes then call the listener function
+ * `callback` where the first parameter is an error if one occurs and the second parameter
+ * is the results of the async/job request.
+ *
+ * @param {String} jobId - Job id
+ * @param {Function} callback - Callback(err, res)
+ */
+IOD.prototype.onFinished = function(jobId, callback) {
+	var IOD = this
+	IOD.eventEmitter.once(jobId, callback)
 }
 
 /**

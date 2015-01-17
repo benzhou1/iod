@@ -4,7 +4,9 @@
 
 'use strict';
 
+var U = require('../utils')
 var _ = require('lodash')
+var T = require('../../lib/transform')
 var RSTests = require('../request-schema-tests-utils')
 
 /**
@@ -31,7 +33,25 @@ exports.schemaTests = function(IOD) {
 		RSTests.invalidApiVer(IOD),
 		RSTests.invalidMethod(IOD),
 		RSTests.invalidParams(IOD),
-		RSTests.invalidFiles(IOD)
+		RSTests.invalidFiles(IOD),
+
+		{
+			name: 'retries not an integer',
+			IODOpts: {
+				majorVersion: T.attempt(U.paths.MAJORV1)(IOD),
+				action: T.attempt(U.paths.SENTIMENT)(IOD),
+				apiVersion: T.attempt(U.paths.APIV1)(IOD),
+				method: 'get',
+				params: { text: '=)'},
+				files: ['files'],
+				getResults: 'not a boolean',
+				retries: 'a string'
+			},
+			it: [
+				U.shouldError,
+				_.partial(U.shouldBeInSchemaError, 'type', 'retries')
+			]
+		}
 	]
 }
 

@@ -30,11 +30,11 @@ exports.schemaTests = function(IOD) {
 		RSTests.empty(),
 		RSTests.invalidMajorVer(IOD),
 		RSTests.invalidGetResults(IOD),
+		RSTests.invalidPollInterval(IOD),
 
 		{
 			name: 'missing required actions in job',
 			IODOpts: {
-				majorVersion: T.attempt(U.paths.MAJORV1)(IOD),
 				job: {}
 			},
 			it: [
@@ -45,7 +45,6 @@ exports.schemaTests = function(IOD) {
 		{
 			name: 'actions for job is not an array',
 			IODOpts: {
-				majorVersion: T.attempt(U.paths.MAJORV1)(IOD),
 				job: { actions: 'not an array' }
 			},
 			it: [
@@ -56,7 +55,6 @@ exports.schemaTests = function(IOD) {
 		{
 			name: 'invalid action name in job',
 			IODOpts: {
-				majorVersion: T.attempt(U.paths.MAJORV1)(IOD),
 				job: { actions: [{ name: 'invalid action' }] }
 			},
 			it: [
@@ -67,7 +65,6 @@ exports.schemaTests = function(IOD) {
 		{
 			name: 'invalid version name in job',
 			IODOpts: {
-				majorVersion: T.attempt(U.paths.MAJORV1)(IOD),
 				job: { actions: [
 					{
 						name: T.attempt(U.paths.SENTIMENT)(IOD),
@@ -83,11 +80,9 @@ exports.schemaTests = function(IOD) {
 		{
 			name: 'params in job is not an object',
 			IODOpts: {
-				majorVersion: T.attempt(U.paths.MAJORV1)(IOD),
 				job: { actions: [
 					{
 						name: T.attempt(U.paths.SENTIMENT)(IOD),
-						version: T.attempt(U.paths.APIV1)(IOD),
 						params: 'not an object'
 					}
 				] }
@@ -100,17 +95,14 @@ exports.schemaTests = function(IOD) {
 		{
 			name: 'empty object for files array in job',
 			IODOpts: {
-				majorVersion: T.attempt(U.paths.MAJORV1)(IOD),
 				job: {
 					actions: [
 						{
 							name: T.attempt(U.paths.SENTIMENT)(IOD),
-							version: T.attempt(U.paths.APIV1)(IOD),
 							params: { text: '=)' }
 						}
 					]
 				},
-				getResults: false,
 				files: [{}]
 			},
 			it: [
@@ -121,17 +113,14 @@ exports.schemaTests = function(IOD) {
 		{
 			name: 'name for object in files array in job not a string',
 			IODOpts: {
-				majorVersion: T.attempt(U.paths.MAJORV1)(IOD),
 				job: {
 					actions: [
 						{
 							name: T.attempt(U.paths.SENTIMENT)(IOD),
-							version: T.attempt(U.paths.APIV1)(IOD),
 							params: { text: '=)' }
 						}
 					]
 				},
-				getResults: false,
 				files: [{ name: {} }]
 			},
 			it: [
@@ -142,17 +131,14 @@ exports.schemaTests = function(IOD) {
 		{
 			name: 'path for object in files array in job not a string',
 			IODOpts: {
-				majorVersion: T.attempt(U.paths.MAJORV1)(IOD),
 				job: {
 					actions: [
 						{
 							name: T.attempt(U.paths.SENTIMENT)(IOD),
-							version: T.attempt(U.paths.APIV1)(IOD),
 							params: { text: '=)' }
 						}
 					]
 				},
-				getResults: false,
 				files: [{ name: 'filename', path: {} }]
 			},
 			it: [
@@ -176,24 +162,6 @@ exports.schemaTests = function(IOD) {
  */
 exports.tests = [
 	{
-		name: '[POST] - should have jobId',
-		beforeFn: function(IOD, ActionTest, done) {
-			var IODOpts = transformIODOptsForJob(ActionTest.IODOpts)
-			IOD.job(IODOpts, done)
-		},
-		itFn: function() {
-			return [
-				U.shouldBeSuccessful,
-				U.shouldBeJobId
-			]
-		},
-		skip: function(ActionTest) {
-			return !!ActionTest.shouldError ||
-				!!ActionTest.multFiles ||
-				!!ActionTest.noJobId
-		}
-	},
-	{
 		name: '[POST] - should have results',
 		beforeFn: function(IOD, ActionTest, done) {
 			var IODOpts = transformIODOptsForJob(ActionTest.IODOpts)
@@ -206,6 +174,27 @@ exports.tests = [
 		},
 		skip: function(ActionTest) {
 			return !!ActionTest.multFiles
+		}
+	},
+	{
+		name: '[EVENT] - should have gotten finished event',
+		beforeFn: function(IOD, ActionTest, done) {
+			var IODOpts = transformIODOptsForJob(ActionTest.IODOpts)
+			IOD.job(IODOpts, function(err, res) {
+				if (err) done(err)
+				else {
+					var jobId = res.jobID
+					IOD.onFinished(jobId, done)
+				}
+			})
+		},
+		itFn: function(ActionTest) {
+			return ActionTest.it
+		},
+		skip: function(ActionTest) {
+			return !!ActionTest.noJobId ||
+				!!ActionTest.shouldError ||
+				!!ActionTest.multFiles
 		}
 	}
 ]

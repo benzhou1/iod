@@ -33,7 +33,8 @@ exports.schemaTests = function(IOD) {
 		RSTests.invalidMethod(IOD),
 		RSTests.invalidParams(IOD),
 		RSTests.invalidFiles(IOD),
-		RSTests.invalidGetResults(IOD)
+		RSTests.invalidGetResults(IOD),
+		RSTests.invalidPollInterval(IOD)
 	]
 }
 
@@ -49,23 +50,6 @@ exports.schemaTests = function(IOD) {
  * @type {Array}
  */
 exports.tests = [
-	{
-		name: '[GET] - should have jobId',
-		beforeFn: function(IOD, ActionTest, done) {
-			IOD.async(ActionTest.IODOpts, done)
-		},
-		itFn: function() {
-			return [
-				U.shouldBeSuccessful,
-				U.shouldBeJobId
-			]
-		},
-		skip: function(ActionTest) {
-			return !!ActionTest.IODOpts.files ||
-				!!ActionTest.shouldError ||
-				!!ActionTest.noJobId
-		}
-	},
 	{
 		name: '[POST] - should have jobId',
 		beforeFn: function(IOD, ActionTest, done) {
