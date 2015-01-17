@@ -1,6 +1,6 @@
 {
   "name": "iod",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "An Idol on Demand framework.",
   "author": "Ben Zhou <benzhou29@outlook.com>",
   "main": "index.js",
