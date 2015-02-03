@@ -1,6 +1,6 @@
 {
   "name": "iod",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An Idol on Demand REST client.",
   "author": "Ben Zhou <benzhou29@outlook.com>",
   "main": "index.js",
