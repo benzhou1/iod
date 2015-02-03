@@ -5,7 +5,6 @@
 'use strict';
 
 var _ = require('lodash')
-var U = require('../utils')
 var RSTests = require('../request-schema-tests-utils')
 
 /**
@@ -27,14 +26,18 @@ exports.type = 'api'
 exports.schemaTests = function(IOD) {
 	return [
 		RSTests.empty(),
-		RSTests.invalidMajorVer(IOD),
-		RSTests.invalidAction(IOD),
-		RSTests.invalidApiVer(IOD),
-		RSTests.invalidMethod(IOD),
-		RSTests.invalidParams(IOD),
-		RSTests.invalidFiles(IOD),
-		RSTests.invalidGetResults(IOD),
-		RSTests.invalidPollInterval(IOD)
+		RSTests.invalidMajorVer(),
+		RSTests.invalidAction(),
+		RSTests.invalidApiVer(),
+		RSTests.invalidMethod(),
+		RSTests.invalidParams(),
+		RSTests.invalidFiles(),
+		RSTests.invalidGetResults(),
+		RSTests.invalidPollInterval(),
+		RSTests.invalidCallbackObj(),
+		RSTests.emptyCallbackObj(),
+		RSTests.invalidCallbackUri(),
+		RSTests.invalidCallbackMethod()
 	]
 }
 
@@ -75,27 +78,6 @@ exports.tests = [
 		},
 		itFn: function(ActionTest) {
 			return ActionTest.it
-		}
-	},
-	{
-		name: '[EVENT] - should have gotten finished event',
-		beforeFn: function(IOD, ActionTest, done) {
-			var IODOpts = ActionTest.IODOpts
-
-			IOD.async(IODOpts, function(err, res) {
-				if (err) done(err)
-				else {
-					var jobId = res.jobID
-					IOD.onFinished(jobId, done)
-				}
-			})
-		},
-		itFn: function(ActionTest) {
-			return ActionTest.it
-		},
-		skip: function(ActionTest) {
-			return !!ActionTest.shouldError ||
-				!!ActionTest.noJobId
 		}
 	}
 ]

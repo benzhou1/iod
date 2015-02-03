@@ -2,7 +2,6 @@
 
 var _ = require('lodash')
 var U = require('./utils')
-var T = require('../lib/transform')
 
 module.exports = {
 	/**
@@ -31,13 +30,10 @@ module.exports = {
 	/**
 	 * Returns a ReqSchemaTest which should check for invalid action error.
 	 */
-	invalidAction: function(IOD) {
+	invalidAction: function() {
 		return {
 			name: 'invalid action',
-			IODOpts: {
-				majorVersion: T.attempt(U.paths.MAJORV1)(IOD),
-				action: 'invalid action'
-			},
+			IODOpts: { action: 'invalid action' },
 			it: [
 				U.shouldError,
 				_.partial(U.shouldBeInSchemaError, 'enum', 'action')
@@ -47,14 +43,10 @@ module.exports = {
 	/**
 	 * Returns a ReqSchemaTest which should check for invalid apiVersion error.
 	 */
-	invalidApiVer: function(IOD) {
+	invalidApiVer: function() {
 		return {
 			name: 'invalid apiVersion',
-			IODOpts: {
-				majorVersion: T.attempt(U.paths.MAJORV1)(IOD),
-				action: T.attempt(U.paths.SENTIMENT)(IOD),
-				apiVersion: 'invalid api version'
-			},
+			IODOpts: { apiVersion: 'invalid api version' },
 			it: [
 				U.shouldError,
 				_.partial(U.shouldBeInSchemaError, 'enum', 'apiVersion')
@@ -64,15 +56,10 @@ module.exports = {
 	/**
 	 * Returns a ReqSchemaTest which should check for invalid method error.
 	 */
-	invalidMethod: function(IOD) {
+	invalidMethod: function() {
 		return {
 			name: 'invalid method',
-			IODOpts: {
-				majorVersion: T.attempt(U.paths.MAJORV1)(IOD),
-				action: T.attempt(U.paths.SENTIMENT)(IOD),
-				apiVersion: T.attempt(U.paths.APIV1)(IOD),
-				method: 'invalid method'
-			},
+			IODOpts: { method: 'invalid method' },
 			it: [
 				U.shouldError,
 				_.partial(U.shouldBeInSchemaError, 'enum', 'method')
@@ -82,16 +69,10 @@ module.exports = {
 	/**
 	 * Returns a ReqSchemaTest which should check for invalid params error.
 	 */
-	invalidParams: function(IOD) {
+	invalidParams: function() {
 		return {
 			name: 'params not an object',
-			IODOpts: {
-				majorVersion: T.attempt(U.paths.MAJORV1)(IOD),
-				action: T.attempt(U.paths.SENTIMENT)(IOD),
-				apiVersion: T.attempt(U.paths.APIV1)(IOD),
-				method: 'get',
-				params: 'string params'
-			},
+			IODOpts: { params: 'string params' },
 			it: [
 				U.shouldError,
 				_.partial(U.shouldBeInSchemaError, 'type', 'params')
@@ -101,17 +82,10 @@ module.exports = {
 	/**
 	 * Returns a ReqSchemaTest which should check for invalid files error.
 	 */
-	invalidFiles: function(IOD) {
+	invalidFiles: function() {
 		return {
 			name: 'files not an array',
-			IODOpts: {
-				majorVersion: T.attempt(U.paths.MAJORV1)(IOD),
-				action: T.attempt(U.paths.SENTIMENT)(IOD),
-				apiVersion: T.attempt(U.paths.APIV1)(IOD),
-				method: 'get',
-				params: { text: '=)'},
-				files: { key: 'not array' }
-			},
+			IODOpts: { files: { key: 'not array' } },
 			it: [
 				U.shouldError,
 				_.partial(U.shouldBeInSchemaError, 'type', 'files')
@@ -121,14 +95,10 @@ module.exports = {
 	/**
 	 * Returns a ReqSchemaTest which should check for invalid jobId error.
 	 */
-	invalidJobId: function(IOD) {
+	invalidJobId: function() {
 		return {
 			name: 'jodId not a string',
-			IODOpts: {
-				majorVersion: T.attempt(U.paths.MAJORV1)(IOD),
-				method: 'get',
-				jobId: {}
-			},
+			IODOpts: { jobId: {} },
 			it: [
 				U.shouldError,
 				_.partial(U.shouldBeInSchemaError, 'type', 'jobId')
@@ -138,18 +108,10 @@ module.exports = {
 	/**
 	 * Returns a ReqSchemaTest which should check for invalid getResults error.
 	 */
-	invalidGetResults: function(IOD) {
+	invalidGetResults: function() {
 		return {
 			name: 'getResults not a boolean',
-			IODOpts: {
-				majorVersion: T.attempt(U.paths.MAJORV1)(IOD),
-				action: T.attempt(U.paths.SENTIMENT)(IOD),
-				apiVersion: T.attempt(U.paths.APIV1)(IOD),
-				method: 'get',
-				params: { text: '=)'},
-				files: ['files'],
-				getResults: 'not a boolean'
-			},
+			IODOpts: { getResults: 'not a boolean' },
 			it: [
 				U.shouldError,
 				_.partial(U.shouldBeInSchemaError, 'type', 'getResults')
@@ -159,22 +121,65 @@ module.exports = {
 	/**
 	 * Returns a ReqSchemaTest which should check for invalid pollInterval error.
 	 */
-	invalidPollInterval: function(IOD) {
+	invalidPollInterval: function() {
 		return {
 			name: 'pollInterval not an integer',
-			IODOpts: {
-				majorVersion: T.attempt(U.paths.MAJORV1)(IOD),
-				action: T.attempt(U.paths.SENTIMENT)(IOD),
-				apiVersion: T.attempt(U.paths.APIV1)(IOD),
-				method: 'get',
-				params: { text: '=)'},
-				files: ['files'],
-				getResults: 'not a boolean',
-				pollInterval: 'a string'
-			},
+			IODOpts: { pollInterval: 'a string' },
 			it: [
 				U.shouldError,
 				_.partial(U.shouldBeInSchemaError, 'type', 'pollInterval')
+			]
+		}
+	},
+	/**
+	 * Returns a ReqSchemaTest which should check for invalid callback object.
+	 */
+	invalidCallbackObj: function() {
+		return {
+			name: 'callback not an object',
+			IODOpts: { callback: ['not and object'] },
+			it: [
+				U.shouldError,
+				_.partial(U.shouldBeInSchemaError, 'type', 'callback')
+			]
+		}
+	},
+	/**
+	 * Returns a ReqSchemaTest which should check missing required uri property.
+	 */
+	emptyCallbackObj: function() {
+		return {
+			name: 'uri missing',
+			IODOpts: { callback: {} },
+			it: [
+				U.shouldError,
+				_.partial(U.shouldBeInSchemaError, 'required', 'uri')
+			]
+		}
+	},
+	/**
+	 * Returns a ReqSchemaTest which should check uri property being a string.
+	 */
+	invalidCallbackUri: function() {
+		return {
+			name: 'uri not a string',
+			IODOpts: { callback: { uri: {} } },
+			it: [
+				U.shouldError,
+				_.partial(U.shouldBeInSchemaError, 'type', 'uri')
+			]
+		}
+	},
+	/**
+	 * Returns a ReqSchemaTest which should check valid enum for method property.
+	 */
+	invalidCallbackMethod: function() {
+		return {
+			name: 'method does not match enum',
+			IODOpts: { callback: { uri: 'blah', method: 'blah' } },
+			it: [
+				U.shouldError,
+				_.partial(U.shouldBeInSchemaError, 'enum', 'method')
 			]
 		}
 	}

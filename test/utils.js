@@ -63,6 +63,8 @@ var cachedRef = {}
  * Common object walk paths.
  */
 var commonPaths = exports.paths = {
+	APIV1: T.walk(['VERSIONS', 'API', 'V1']),
+	MAJORV1: T.walk(['VERSIONS', 'MAJOR', 'V1']),
 	SENTIMENT: T.walk(['ACTIONS', 'API', 'ANALYZESENTIMENT']),
 	DETECTSENT: T.walk(['ACTIONS', 'API', 'DETECTSENTIMENT']),
 	EXPANDCONT: T.walk(['ACTIONS', 'API', 'EXPANDCONTAINER']),
@@ -260,9 +262,9 @@ exports.prepare = {
 	 */
 	testIndex: function(IOD, done) {
 		console.log('[PREPARING] - Preparing a test index...')
-		commonIODReq.listResources(IOD, function(err, resources) {
+		commonIODReq.listResources(IOD, { type: 'content' }, function(err, resources) {
 			var testIndex = _.find(resources.private_resources, function(resource) {
-				return resource.resource === testIndex
+				return resource.resource === exports.testIndex
 			})
 			if (testIndex) {
 				console.log('[PREPARING] - Test index found...')
@@ -310,7 +312,7 @@ function deleteIndex(IOD, confirm, callback) {
 	var IODOpts = {
 		action: T.attempt(commonPaths.DELETETI, 'deletetextindex')(IOD),
 		params: _.defaults({ index: testIndex }, confirm ? { confirm: confirm } : {}),
-		retries: 2
+		retries: 3
 	}
 
 	IOD.sync(IODOpts, function(err, res) {
@@ -341,7 +343,8 @@ var commonIODReq = exports.IODReq = {
 		var IODOpts = {
 			action: T.attempt(commonPaths.STOREOBJ, 'storeobject')(IOD),
 			files: [filePath],
-			getResults: true
+			getResults: true,
+			retries: 3
 		}
 		IOD.sync(IODOpts, function(err, res) {
 			if (err) throw new Error('Failed to store object: ' + prettyPrint(err))
@@ -366,7 +369,8 @@ var commonIODReq = exports.IODReq = {
 	listResources: function(IOD, params, callback) {
 		var IODOpts = {
 			action: T.attempt(commonPaths.LISTR, 'listresources')(IOD),
-			params: params
+			params: params,
+			retries: 3
 		}
 		IOD.sync(IODOpts, function(err, res) {
 			if (err) throw new Error('Failed to get list of resources: ' + prettyPrint(err))
@@ -390,7 +394,8 @@ var commonIODReq = exports.IODReq = {
 	listStores: function(IOD, callback) {
 		var IODOpts = {
 			action: T.attempt(commonPaths.LISTSTORE, 'liststores')(IOD),
-			params: {}
+			params: {},
+			retries: 3
 		}
 
 		IOD.sync(IODOpts, function(err, res) {
@@ -418,7 +423,7 @@ var commonIODReq = exports.IODReq = {
 				index: testIndex,
 				flavor: 'explorer'
 			},
-			retries: 2
+			retries: 3
 		}
 		IOD.sync(IODOpts, function(err, res) {
 			if (err) throw new Error('Failed to create test index: ' + prettyPrint(err))
@@ -455,7 +460,7 @@ var commonIODReq = exports.IODReq = {
 		var IODOpts = {
 			action: T.attempt(commonPaths.DELSTORE, 'deletestore')(IOD),
 			params: { store: testStore },
-			retries: 2
+			retries: 3
 		}
 
 		IOD.sync(IODOpts, function(err, res) {

@@ -31,9 +31,9 @@ exports.noActionSchema = true
 exports.schemaTests = function(IOD) {
 	return [
 		RSTests.empty(),
-		RSTests.invalidMajorVer(IOD),
-		RSTests.invalidMethod(IOD),
-		RSTests.invalidJobId(IOD)
+		RSTests.invalidMajorVer(),
+		RSTests.invalidMethod(),
+		RSTests.invalidJobId()
 	]
 }
 
@@ -58,7 +58,7 @@ exports.tests = [
 				else if (!res.jobID) throw new Error('JobId not found: ' +
 					U.prettyPrint(res))
 
-				IOD.result({ jobId: res.jobID }, done)
+				IOD.result({ jobId: res.jobID, retries: 3 }, done)
 			})
 		},
 		itFn: function(ActionTest) {
@@ -78,10 +78,7 @@ exports.tests = [
 				else if (!res.jobID) throw new Error('JobId not found: ' +
 					U.prettyPrint(res))
 
-				IOD.result({
-					jobId: res.jobID,
-					method: 'post'
-				}, done)
+				IOD.result({ jobId: res.jobID, method: 'post', retries: 3 }, done)
 			})
 		},
 		itFn: function(ActionTest) {

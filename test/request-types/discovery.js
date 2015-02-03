@@ -31,10 +31,10 @@ exports.noActionSchema = true
 exports.schemaTests = function(IOD) {
 	return [
 		RSTests.empty(),
-		RSTests.invalidMajorVer(IOD),
-		RSTests.invalidAction(IOD),
-		RSTests.invalidMethod(IOD),
-		RSTests.invalidParams(IOD)
+		RSTests.invalidMajorVer(),
+		RSTests.invalidAction(),
+		RSTests.invalidMethod(),
+		RSTests.invalidParams()
 	]
 }
 

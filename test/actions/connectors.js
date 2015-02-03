@@ -231,6 +231,7 @@ exports.prepare = function(IOD, callback) {
 	async.series({
 //		index: apply(U.prepare.testIndex, IOD),
 
-		clean: apply(U.prepare.cleanConnector, IOD)
+		clean: apply(U.prepare.cleanConnector, IOD),
+		index: apply(U.prepare.testIndex, IOD)
 	}, callback)
 }

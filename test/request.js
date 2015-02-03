@@ -72,7 +72,7 @@ _.each(ReqTests, function(ReqTest, reqType) {
 						}
 					})
 
-					if (err) throw Error('Failed to create IOD object: ', err)
+					if (err) throw Error('Failed to create IOD object: ' + err)
 					else async.waterfall(beforeFns, callback)
 				})
 			})

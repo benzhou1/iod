@@ -27,13 +27,13 @@ exports.type = 'api'
  */
 exports.schemaTests = function(IOD) {
 	return [
-		RSTests.empty(IOD),
-		RSTests.invalidMajorVer(IOD),
-		RSTests.invalidAction(IOD),
-		RSTests.invalidApiVer(IOD),
-		RSTests.invalidMethod(IOD),
-		RSTests.invalidParams(IOD),
-		RSTests.invalidFiles(IOD),
+		RSTests.empty(),
+		RSTests.invalidMajorVer(),
+		RSTests.invalidAction(),
+		RSTests.invalidApiVer(),
+		RSTests.invalidMethod(),
+		RSTests.invalidParams(),
+		RSTests.invalidFiles(),
 
 		{
 			name: 'retries not an integer',
@@ -70,7 +70,7 @@ exports.tests = [
 	{
 		name: '[GET] - should have gotten results',
 		beforeFn: function(IOD, ActionTest, done) {
-			IOD.sync(ActionTest.IODOpts, done)
+			IOD.sync(_.defaults({ retries: 3 }, ActionTest.IODOpts), done)
 		},
 		itFn: function(ActionTest) {
 			return ActionTest.it
@@ -82,7 +82,7 @@ exports.tests = [
 	{
 		name: '[POST] - should have gotten results',
 		beforeFn: function(IOD, ActionTest, done) {
-			var IODOpts = _.defaults({ method: 'post' }, ActionTest.IODOpts)
+			var IODOpts = _.defaults({ method: 'post', retries: 3 }, ActionTest.IODOpts)
 			IOD.sync(IODOpts, done)
 		},
 		itFn: function(ActionTest) {

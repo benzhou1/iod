@@ -1,5 +1,5 @@
 /**
- * General unit thiss.
+ * General unit tests.
  */
 
 'use strict';

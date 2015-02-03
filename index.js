@@ -10,10 +10,11 @@ var url = require('url')
 var _ = require('lodash')
 var events = require('events')
 var IodU = require('./lib/iod')
+var T = require('./lib/transform')
 var SchemaU = require('./lib/schema')
 var async = require('./lib/async-ext')
 var CONSTANTS = require('./lib/constants')
-var eventEmitter = new events.EventEmitter();
+var eventEmitter = new events.EventEmitter()
 
 /**
  * Creates a IOD object with specified apiKey, host and port.
@@ -160,12 +161,13 @@ IOD.prototype.VERSIONS = CONSTANTS.VERSIONS
  * )
  *
  * @param {Object} IODOpts - IOD options
+ * @param {Object} [reqOpts] - Request options for current request
  * @param {Function} callback - Callback(err, IOD response)
  * @see sync.js for IODOpts schema
  */
-IOD.prototype.sync = function(IODOpts, callback) {
+IOD.prototype.sync = function(IODOpts, reqOpts, callback) {
 	var IOD = this
-	IodU.syncAction(IOD, _.cloneDeep(IODOpts), IOD.TYPES.SYNC, callback)
+	IodU.syncAction(IOD, _.cloneDeep(IODOpts), IOD.TYPES.SYNC, reqOpts, callback)
 }
 
 /**
@@ -181,12 +183,13 @@ IOD.prototype.sync = function(IODOpts, callback) {
  * )
  *
  * @param {Object} IODOpts - IOD options
+ * @param {Object} [reqOpts] - Request options for current request
  * @param {Function} callback - Callback(err, IOD response)
  * @see async.js for IODOpts schema
  */
-IOD.prototype.async = function(IODOpts, callback) {
+IOD.prototype.async = function(IODOpts, reqOpts, callback) {
 	var IOD = this
-	IodU.asyncAction(IOD, _.cloneDeep(IODOpts), IOD.TYPES.ASYNC, callback)
+	IodU.asyncAction(IOD, _.cloneDeep(IODOpts), IOD.TYPES.ASYNC, reqOpts, callback)
 }
 
 /**
@@ -200,12 +203,13 @@ IOD.prototype.async = function(IODOpts, callback) {
  * })
  *
  * @param {Object} IODOpts - IOD options
+ * @param {Object} [reqOpts] - Request options for current request
  * @param {Function} callback - Callback(err, IOD response)
  * @see result.js for IODOpts schema
  */
-IOD.prototype.result = function(IODOpts, callback) {
+IOD.prototype.result = function(IODOpts, reqOpts, callback) {
 	var IOD = this
-	IodU.syncAction(IOD, _.cloneDeep(IODOpts), IOD.TYPES.RESULT, callback)
+	IodU.syncAction(IOD, _.cloneDeep(IODOpts), IOD.TYPES.RESULT, reqOpts, callback)
 }
 
 /**
@@ -219,12 +223,13 @@ IOD.prototype.result = function(IODOpts, callback) {
  * })
  *
  * @param {Object} IODOpts - IOD options
+ * @param {Object} [reqOpts] - Request options for current request
  * @param {Function} callback - Callback(err, IOD response)
  * @see status.js for IODOpts schema
  */
-IOD.prototype.status = function(IODOpts, callback) {
+IOD.prototype.status = function(IODOpts, reqOpts, callback) {
 	var IOD = this
-	IodU.syncAction(IOD, _.cloneDeep(IODOpts), IOD.TYPES.STATUS, callback)
+	IodU.syncAction(IOD, _.cloneDeep(IODOpts), IOD.TYPES.STATUS, reqOpts, callback)
 }
 
 /**
@@ -243,26 +248,67 @@ IOD.prototype.status = function(IODOpts, callback) {
  * })
  *
  * @param {Object} IODOpts - IOD options
+ * @param {Object} [reqOpts] - Request options for current request
  * @param {Function} callback - Callback(err, IOD response)
  * @see job.js for IODOpts schema
  */
-IOD.prototype.job = function(IODOpts, callback) {
+IOD.prototype.job = function(IODOpts, reqOpts, callback) {
 	var IOD = this
-	IodU.asyncAction(IOD, _.cloneDeep(IODOpts), IOD.TYPES.JOB, callback)
+	IodU.asyncAction(IOD, _.cloneDeep(IODOpts), IOD.TYPES.JOB, reqOpts, callback)
 }
 
 /**
- * Listens for when an async/job request finishes then call the listener function
- * `callback` where the first parameter is an error if one occurs and the second parameter
- * is the results of the async/job request.
+ * Transform a list of `SYNC` api type IODOpts into a `JOB` api type IODOpts.
  *
- * @param {String} jobId - Job id
- * @param {Function} callback - Callback(err, res)
+ * @param {Object | Array} IODOptsList - List of `SYNC` api type IODOpts
+ * @param {Object} [override] - Default or override properties for job
+ *
+ * @returns {Object} - `JOB` api type IODOpts
  */
-IOD.prototype.onFinished = function(jobId, callback) {
-	var IOD = this
-	IOD.eventEmitter.once(jobId, callback)
-}
+// TODO: Allow multiple files in a job action
+//IOD.prototype.IODOptsToJob = function(IODOptsList, override) {
+//	var IOD = this
+//	IODOptsList = T.maybeToArray(IODOptsList)
+//
+//	var errors = []
+//	var job = {}
+//	var actions = []
+//	var fileCount = 1
+//
+//	_.each(IODOptsList, function(IODOpts) {
+//		var error = SchemaU.validateWithPrettyErr(IOD, IOD.TYPES.SYNC, IODOpts)
+//		if (error) errors.push(error)
+//		else {
+//			var action = {
+//				name: IODOpts.action,
+//				version: IODOpts.apiVersion,
+//				params: IODOpts.params || {}
+//			}
+//
+//			_.each(T.maybeToArray(IODOpts.files), function(filePath) {
+//				if (action.params.file) {
+//					if (_.isArray(action.params.file)) {
+//						action.params.file.push('file' + fileCount)
+//					}
+//					else action.params.file = [action.params.file, 'file' + fileCount]
+//				}
+//				else action.params.file = 'file' + fileCount
+//
+//				job.files = job.files || []
+//				job.files.push({ name: 'file' + fileCount, path: filePath })
+//				fileCount++
+//			})
+//
+//			actions.push(action)
+//		}
+//	})
+//
+//	if (errors.length) {
+//		throw Error('Validating IODOptsList resulted in the following errors: ' +
+//			JSON.stringify(errors, null, 2))
+//	}
+//	else return _.defaults({}, override || {}, { job: { actions: actions } }, job)
+//}
 
 /**
  * Send an IOD discovery request.
@@ -275,10 +321,11 @@ IOD.prototype.onFinished = function(jobId, callback) {
  * })
  *
  * @param {Object} IODOpts - IOD options
+ * @param {Object} [reqOpts] - Request options for current request
  * @param {Function} callback - Callback(err, IOD response)
  * @see job.js for IODOpts schema
  */
-IOD.prototype.discovery = function(IODOpts, callback) {
+IOD.prototype.discovery = function(IODOpts, reqOpts, callback) {
 	var IOD = this
-	IodU.syncAction(IOD, _.cloneDeep(IODOpts), IOD.TYPES.DISCOVERY, callback)
+	IodU.syncAction(IOD, _.cloneDeep(IODOpts), IOD.TYPES.DISCOVERY, reqOpts, callback)
 }

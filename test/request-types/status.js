@@ -31,9 +31,9 @@ exports.noActionSchema = true
 exports.schemaTests = function(IOD) {
 	return [
 		RSTests.empty(),
-		RSTests.invalidMajorVer(IOD),
-		RSTests.invalidMethod(IOD),
-		RSTests.invalidJobId(IOD)
+		RSTests.invalidMajorVer(),
+		RSTests.invalidMethod(),
+		RSTests.invalidJobId()
 	]
 }
 
