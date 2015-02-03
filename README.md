@@ -13,7 +13,8 @@ IOD provides the following benefits:
 3. Client side validation of parameter pairs (Parameters that are of array type and are required to have the same length as another parameter).
 4. Cliend side validation of flavor specific parameters (i.e. createtextindex, createconnector).
 5. Polling for results from async/job requests.
-6. Automatic retry on 5000(Backend request failed) and 7000(Request timeout) errors for sync requests.
+6. Automatic retry on 5000(Backend request failed) and 7000(Request timeout) errors for sync/discovery/result requests(Defaults to 3).
+7. Sending results from async/job requests to specified callback uri.
 
 
 It uses the request package to handle all http request and file uploads for you. The only information you need to know is how to create an `IODOpt` object. Each IOD request type has their own JSON schema for creating the `IODOpt` object described by [Json-Schema](http://json-schema.org).
@@ -31,7 +32,7 @@ The reason the create function accepts a callback is because it is asynchronous.
 With the IOD object, you can make a request by simply creating an `IODOpts` object following the schema of your request type. In this example we will be making a `sync` request with `analyzesentiment` action.
 
 ```javascript
-var iod = require('IOD')
+var iod = require('iod')
 
 iod.create('my api key', function(err, IOD) {
 	console.log('ERROR: ', err)
@@ -84,7 +85,7 @@ This method is synchronous and will return you a new IOD object right away, but 
 With the IOD object, you can make a request by simply creating an `IODOpts` object following the schema of your request type. In this example we will be making a `sync` request with `analyzesentiment` action.
 
 ```javascript
-var iod = require('IOD')
+var iod = require('iod')
 var IOD = new iod('my api key')
 
 // IODOpts object for sync request with analyzesentiment action
@@ -132,7 +133,7 @@ When creating a IOD object either through `create` method or creating new instan
 ### 1.) Overriding IDOL onDemand host and port
 
 ```javascript
-var iod = require('IOD')
+var iod = require('iod')
 
 // via create method
 iod.create('my api key', 'override host', 8080, function(err, IOD) {
@@ -150,7 +151,7 @@ console.log('IDOL onDemand port: ', IOD.port)
 ### 2.) Overriding request options
 
 ```javascript
-var iod = require('IOD')
+var iod = require('iod')
 
 // via create method
 iod.create('my api key', { timeout: 50000, jar: true }, function(err, IOD) {
@@ -286,31 +287,14 @@ IOD.create('api key', function(err, IOD) {
 })
 ```
 
-<a name="onFinished" />
-### onFinished(jobID, listener)
-
-Listens for an async/job request based off the specified `jobID` to finish. Then call `listener` passing in an error as the first argument and the results of the job as the second.
-
-#### Parameters
-* `jobID` - JobID returned from an async/job request.
-* `listener` - `Listener(err, res)` that gets called when job is finished that accepts an error as its first argument `err` and the response from the async/job requests as its second `res`.
-
-#### Example
-```javascript
-// JobID can be obtained when sending an async/job request.
-IOD.onFinished(jobID, function(err, res) {
-	console.log('ERR: ', err)
-	console.log('RES: ', res)
-})
-```
-
 <a name="async" />
-### async(IODOpts, callback)
+### async(IODOpts, [reqOpts], callback)
 
 Makes an async request to IDOL onDemand with options specified from `IODOpts`. Async request returns a `jobId` in which case you can get the status/result of the action using the [`status`](#status)/[`result`](#result) methods. More information can be found [here](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm).
 
 #### Parameters
 * `IODOpts` - IOD options (see Schema below)
+* [`reqOpts`] - Optional request options to override for this request.
 * `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from IDOL onDemand as its second `res`.
 
 <a name="asyncSchema" />
@@ -363,6 +347,22 @@ Makes an async request to IDOL onDemand with options specified from `IODOpts`. A
 			"type": "integer",
 			"description": "Number of ms to wait between polling results.",
 			"default": 5000
+		},
+		"callback": {
+			"type": "object",
+			"properties": {
+				"uri": {
+					"type": "string",
+					"description": "Uri to be called with a POST request containing results."
+				},
+				"method": {
+					"enum": ["encoded", "multipart"],
+					"default": "encoded",
+					"description": "Method to send results, either urlencoded or multipart."
+				}
+			},
+			"required": ["uri"],
+			"description": "Object containing parameters for getting results through a callback."
 		}
 	},
 	"required": [ "action" ]
@@ -373,9 +373,9 @@ Makes an async request to IDOL onDemand with options specified from `IODOpts`. A
 ```javascript
 // IODOpts for async request
 var IODOpts = {
-	majorVersion: IOD.VERSIONS.MAJOR.V1,
-	action: IOD.ACTIONS.API.ANALYZESENTIMENT,
-	apiVersion: IOD.VERSIONS.API.V1,
+	majorVersion: IOD.VERSIONS.MAJOR.V1, // 1
+	action: IOD.ACTIONS.API.ANALYZESENTIMENT, // analyzesentiment
+	apiVersion: IOD.VERSIONS.API.V1, // v1
 	method: 'get',
 	params: {
 		text: '=)'
@@ -389,11 +389,28 @@ IOD.async(IODOpts, function(err, res) {
 })
 ```
 
+#### Example overriding request options
+```javascript
+// IODOpts for async request, using defaults
+var IODOpts = {
+	action: IOD.ACTIONS.API.ANALYZESENTIMENT, // analyzesentiment
+	params: {
+		text: '=)'
+	}
+}
+
+// Override timeout to 30000
+IOD.async(IODOpts, { timeout: 30000 }, function(err, res) {
+	console.log('ERROR: ', err)
+	console.log('RESPONSE: ', res)
+})
+```
+
 #### Example with file
 ```javascript
-// IODOpts for async request with a file. Using default values.
+// IODOpts for async request with a file, using defaults
 var IODOpts = {
-	action: IOD.ACTIONS.API.ANALYZESENTIMENT,
+	action: IOD.ACTIONS.API.ANALYZESENTIMENT, // analyzesentiment
 	files: ['path/to/file']
 }
 
@@ -403,11 +420,11 @@ IOD.async(IODOpts, function(err, res) {
 })
 ```
 
-#### Example listening for onFinished event
+#### Example listening for results through event
 ```javascript
 // IODOpts for async request, polling every 3 seconds for results
 var IODOpts = {
-	action: IOD.ACTIONS.ANALYZESENTIMENT,
+	action: IOD.ACTIONS.API.ANALYZESENTIMENT, // analyzesentiment
 	params: { text: '=)' },
 	pollingInterval: 3000
 }
@@ -417,21 +434,42 @@ IOD.async(IODOpts, function(err, res) {
 	if (err) console.log('ERR: ', err)
 	else {
 		var jobID = res.jobID
-		IOD.onFinished(jobID, function(err, res) {
+		// Listen on `jobID` for results
+		IOD.eventEmitter.once(jobID, function(err, res) {
 			console.log('FINERR: ', err)
 			console.log('RES: ', res)
 		})
 	}
+})
+```
+
+#### Example getting results through callback
+```javascript
+// IODOpts for async request, using defaults
+var IODOpts = {
+	action: IOD.ACTIONS.API.ANALYZESENTIMENT, // analyzesentiment
+	params: { text: '=)' },
+	// Setup callback to send results as multipart form data
+	callback: {
+		uri: 'http://valid url',
+		method: 'multipart'
+	}
 }
+
+IOD.async(IODOpts, function(err, res) {
+	console.log('ERROR: ', err)
+	console.log('RESPONSE: ', res)
+})
 ```
 
 <a name="sync" />
-### sync(IODOpts, callback)
+### sync(IODOpts, [reqOpts], callback)
 
 Makes an sync request to IDOL onDemand with options specified from `IODOpts`. Sync request returns the result of the action right away. More information can be found [here](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm).
 
 #### Parameters
 * `IODOpts` - IOD options (see Schema below)
+* [`reqOpts`] - Optional request options to override for this request.
 * `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from IDOL onDemand as its second `res`.
 
 <a name="syncSchema" />
@@ -476,10 +514,10 @@ Makes an sync request to IDOL onDemand with options specified from `IODOpts`. Sy
 			},
 			"description": "IOD action input files. Should be array of file paths."
 		},
-		retries: {
+		"retries": {
 			"type": "integer",
 			"description": "Number of times to retry on timeout or unknown errors.",
-			"default": 1
+			"default": 3
 		}
 	},
 	"required": [ "action" ]
@@ -490,9 +528,9 @@ Makes an sync request to IDOL onDemand with options specified from `IODOpts`. Sy
 ```javascript
 // IODOpts for sync request
 var IODOpts = {
-	majorVersion: IOD.VERSIONS.MAJOR.V1,
-	action: IOD.ACTIONS.API.ANALYZESENTIMENT,
-	apiVersion: IOD.VERSIONS.API.V1,
+	majorVersion: IOD.VERSIONS.MAJOR.V1, // 1
+	action: IOD.ACTIONS.API.ANALYZESENTIMENT, // analyzesentiment
+	apiVersion: IOD.VERSIONS.API.V1, // v1
 	method: 'get',
 	params: {
 		text: '=)'
@@ -505,11 +543,28 @@ IOD.sync(IODOpts, function(err, res) {
 })
 ```
 
+#### Example overriding request options
+```javascript
+// IODOpts for sync request, using defaults
+var IODOpts = {
+	action: IOD.ACTIONS.API.ANALYZESENTIMENT, // analyzesentiment
+	params: {
+		text: '=)'
+	}
+}
+
+// Override timeout with 30000
+IOD.sync(IODOpts, { timeout: 30000 }, function(err, res) {
+	console.log('ERROR: ', err)
+	console.log('RESPONSE: ', res)
+})
+```
+
 #### Example with file
 ```javascript
-// IODOpts for sync request with a file. Using default values.
+// IODOpts for sync request with a file, using defaults
 var IODOpts = {
-	action: IOD.ACTIONS.API.ANALYZESENTIMENT,
+	action: IOD.ACTIONS.API.ANALYZESENTIMENT, // analyzesentiment
 	files: ['path/to/file']
 }
 
@@ -521,11 +576,11 @@ IOD.sync(IODOpts, function(err, res) {
 
 #### Example with retries
 ```javascript
-// IODOpts for sync request that retries 3 times on 5000 or 7000 errors.
+// IODOpts for sync request that retries 2 times on 5000 or 7000 errors.
 var IODOpts = {
-	action: IOD.ACTIONS.API.ANALYZESENTIMENT,
+	action: IOD.ACTIONS.API.ANALYZESENTIMENT, // analyzesentiment
 	params: { text: '=)' },
-	retries: 3
+	retries: 2
 }
 
 IOD.sync(IODOpts, function(err, res) {
@@ -535,12 +590,13 @@ IOD.sync(IODOpts, function(err, res) {
 ```
 
 <a name="job" />
-### job(IODOpts, callback)
+### job(IODOpts, [reqOpts], callback)
 
 Makes a job request to IDOL onDemand with options specified from `IODOpts`. Job request is asynchronous and allows you to send multiple actions at a time. It will return a `jobId` in which case you can get the status/result of the action by calling the [`status`](#status)/[`result`](#result) methods. More information can be found [here](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm).
 
 #### Parameters
 * `IODOpts` - IOD options (see Schema below)
+* [`reqOpts`] - Optional request options to override for this request.
 * `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from IDOL onDemand as its second `res`.
 
 <a name="jobSchema" />
@@ -616,6 +672,22 @@ Makes a job request to IDOL onDemand with options specified from `IODOpts`. Job 
 			"type": "integer",
 			"description": "Number of ms to wait between polling results.",
 			"default": 5000
+		},
+		"callback": {
+			"type": "object",
+			"properties": {
+				"uri": {
+					"type": "string",
+					"description": "Uri to be called with a POST request containing results."
+				},
+				"method": {
+					"enum": ["encoded", "multipart"],
+					"default": "encoded",
+					"description": "Method to send results, either urlencoded or multipart."
+				}
+			},
+			"required": ["uri"],
+			"description": "Object containing parameters for getting results through a callback."
 		}
 	},
 	"required": [ "job" ]
@@ -630,15 +702,15 @@ var IODOpts = {
 	job: {
 		actions: [
 			{
-				name: IOD.ACTIONS.API.ANALYZESENTIMENT,
-				version: IOD.VERSIONS.API.V1,
+				name: IOD.ACTIONS.API.ANALYZESENTIMENT, // analyzesentiment
+				version: IOD.VERSIONS.API.V1, // v1
 				params: {
 					text: '=)'
 				}
 			},
 			{
-				name: IOD.ACTIONS.API.ANALYZESENTIMENT,
-				version: IOD.VERSIONS.API.V1,
+				name: IOD.ACTIONS.API.ANALYZESENTIMENT, // analyzesentiment
+				version: IOD.VERSIONS.API.V1, // v1
 				params: {
 					text: '=('
 				}
@@ -654,20 +726,49 @@ IOD.job(IODOpts, function(err, res) {
 })
 ```
 
-#### Example with file
+#### Example with overridng request options
 ```javascript
-// IODOpts for job request with a file. Using default values.
+// IODOpts for job request, using defaults
 var IODOpts = {
 	job: {
 		actions: [
 			{
-				name: IOD.ACTIONS.API.ANALYZESENTIMENT,
+				name: IOD.ACTIONS.API.ANALYZESENTIMENT, // analyzesentiment
+				params: {
+					text: '=)'
+				}
+			},
+			{
+				name: IOD.ACTIONS.API.ANALYZESENTIMENT, // analyzesentiment
+				params: {
+					text: '=('
+				}
+			}
+		]
+	}
+}
+
+// Override timeout with 30000
+IOD.job(IODOpts, { timeout: 30000 }, function(err, res) {
+	console.log('ERROR: ', err)
+	console.log('RESPONSE: ', res)
+})
+```
+
+#### Example with file
+```javascript
+// IODOpts for job request with a file, using defaults
+var IODOpts = {
+	job: {
+		actions: [
+			{
+				name: IOD.ACTIONS.API.ANALYZESENTIMENT, // analyzesentiment
 				params: {
 					file: 'name for the file'
 				}
 			},
 			{
-				name: IOD.ACTIONS.API.ANALYZESENTIMENT,
+				name: IOD.ACTIONS.API.ANALYZESENTIMENT, // analyzesentiment
 				params: {
 					file: 'another name for the file1'
 				}
@@ -682,7 +783,7 @@ var IODOpts = {
 		{
 			name: 'another name for the file1',
 			path: 'path/to/file1'
-		},
+		}
 	]
 }
 
@@ -692,7 +793,7 @@ IOD.job(IODOpts, function(err, res) {
 })
 ```
 
-#### Example listening for onFinished event
+#### Example listening for results through event
 ```javascript
 // IODOpts for job request, polling every 3 seconds for results
 var IODOpts = {
@@ -700,15 +801,13 @@ var IODOpts = {
 	job: {
 		actions: [
 			{
-				name: IOD.ACTIONS.API.ANALYZESENTIMENT,
-				version: IOD.VERSIONS.API.V1,
+				name: IOD.ACTIONS.API.ANALYZESENTIMENT, // analyzesentiment
 				params: {
 					text: '=)'
 				}
 			},
 			{
-				name: IOD.ACTIONS.API.ANALYZESENTIMENT,
-				version: IOD.VERSIONS.API.V1,
+				name: IOD.ACTIONS.API.ANALYZESENTIMENT, // analyzesentiment
 				params: {
 					text: '=('
 				}
@@ -723,21 +822,23 @@ IOD.job(IODOpts, function(err, res) {
 	if (err) console.log('ERR: ', err)
 	else {
 		var jobID = res.jobID
-		IOD.onFinished(jobID, function(err, res) {
+		// Listen on `jobID` for results
+		IOD.eventEmitter.once(jobID, function(err, res) {
 			console.log('FINERR: ', err)
 			console.log('RES: ', res)
 		})
 	}
-}
+})
 ```
 
 <a name="status" />
-### status(IODOpts, callback)
+### status(IODOpts, [reqOpts], callback)
 
 Makes a status request to IDOL onDemand with options specified from `IODOpts`. Status request returns the current status of a job based off `jobId`. More information can be found [here](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm).
 
 #### Parameters
 * `IODOpts` - IOD options (see Schema below)
+* [`reqOpts`] - Optional request options to override for this request.
 * `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from IDOL onDemand as its second `res`.
 
 <a name="statusSchema" />
@@ -781,13 +882,28 @@ IOD.status(IODOpts, function(err, res) {
 })
 ```
 
+#### Example overriding request options
+```javascript
+// IODOpts for status request, using defaults
+var IODOpts = {
+	jobId: 'Job id of your async/job request'
+}
+
+// Override timeout with 30000
+IOD.status(IODOpts, { timeout: 30000 }, function(err, res) {
+	console.log('ERROR: ', err)
+	console.log('RESPONSE: ', res)
+})
+```
+
 <a name="result" />
-### result(IODOpts, callback)
+### result(IODOpts, [reqOpts], callback)
 
 Makes a result request to IDOL onDemand with options specified from `IODOpts`. Result request waits until a job specified by `jobId` is finished or error and returns the results. More information can be found [here](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm).
 
 #### Parameters
 * `IODOpts` - IOD options (see Schema below)
+* [`reqOpts`] - Optional request options to override for this request.
 * `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from IDOL onDemand as its second `res`.
 
 <a name="resultSchema" />
@@ -810,6 +926,11 @@ Makes a result request to IDOL onDemand with options specified from `IODOpts`. R
 		"jobId": {
 			"type": "string",
 			"description": "Job id returned from asynchronous request"
+		},
+		"retries": {
+			"type": "integer",
+			"description": "Number of times to retry on timeout or unknown errors.",
+			"default": 3
 		}
 	},
 	"required": [ "jobId" ]
@@ -831,13 +952,28 @@ IOD.result(IODOpts, function(err, res) {
 })
 ```
 
+#### Example overriding request options
+```javascript
+// IODOpts for result request, using defaults
+var IODOpts = {
+	jobId: 'Job id of your async/job request'
+}
+
+// Override timeout with 30000
+IOD.result(IODOpts, { timeout: 30000 }, function(err, res) {
+	console.log('ERROR: ', err)
+	console.log('RESPONSE: ', res)
+})
+```
+
 <a name="discovery" />
-### discovery(IODOpts, callback)
+### discovery(IODOpts, [reqOpts], callback)
 
 Makes a discovery api request to IDOL onDemand with options specified from `IODOpts`. More information about discovery actions can be found [here](https://www.idolondemand.com/developer/docs/APIDiscovery.html).
 
 #### Parameters
 * `IODOpts` - IOD options (see Schema below)
+* [`reqOpts`] - Optional request options to override for this request.
 * `callback` - `Callback(err, res)` that accepts an error as its first argument `err` and the response from IDOL onDemand as its second `res`.
 
 <a name="discoverySchema" />
@@ -862,6 +998,11 @@ Makes a discovery api request to IDOL onDemand with options specified from `IODO
 		"action": {
 			"enum": actions.DISCOVERY,
 			"description": "IOD descovery actions."
+		},
+		"retries": {
+			"type": "integer",
+			"description": "Number of times to retry on timeout or unknown errors.",
+			"default": 3
 		}
 	},
 	"required": [ "action" ]
@@ -874,13 +1015,30 @@ Makes a discovery api request to IDOL onDemand with options specified from `IODO
 var IODOpts = {
 	majorVersion: IOD.VERSIONS.MAJOR.V1,
 	method: 'get',
-	action: IOD.ACTIONS.DISCOVERY.API,
+	action: IOD.ACTIONS.DISCOVERY.API, // api
 	params: {
 		max_results: 10
 	}
 }
 
 IOD.discovery(IODOpts, function(err, res) {
+	console.log('ERROR: ', err)
+	console.log('RESPONSE: ', res)
+})
+```
+
+#### Example with overriding request options
+```javascript
+// IODOpts for discovery request with defaults
+var IODOpts = {
+	action: IOD.ACTIONS.DISCOVERY.API, // api
+	params: {
+		max_results: 10
+	}
+}
+
+// Override timeout with 30000
+IOD.discovery(IODOpts, { timeout: 30000 }, function(err, res) {
 	console.log('ERROR: ', err)
 	console.log('RESPONSE: ', res)
 })
