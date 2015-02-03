@@ -1,12 +1,12 @@
 #IOD.js
 
-For the entire README, I will be refering to the IOD.js package as **IOD** and the IDOL onDemand server as **IDOL onDemand**.
+For the entire README, I will be referring to the IOD.js package as **IOD** and the IDOL onDemand server as **IDOL onDemand**.
 
-IOD is an IDOL onDemand framework which makes it easy to send api requests to IDOL onDemand. It is easy to make all the [different types of request](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm) using all the [different allowed actions](https://www.idolondemand.com/developer/docs/APIDiscovery.html) that are available to you.
+IOD is an IDOL onDemand REST client which makes it easy to send api requests to IDOL onDemand. It is easy to make all the [different types of request](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm) using all the [different allowed actions](https://www.idolondemand.com/developer/docs/APIDiscovery.html) that are available to you.
 
-If you are new to what IDOL onDemand has to offer, check out their website at: [IDOL onDemand](http://www.idolondemand.com)
+If you are new to what IDOL onDemand has to offer, check out their [website](http://www.idolondemand.com)
 
-IOD provides the following benifits:
+IOD provides the following benefits:
 
 1. Client side parameter schema validation of all allowed actions along with aliases.
 2. Client side validation of required input sources.
@@ -14,6 +14,7 @@ IOD provides the following benifits:
 4. Cliend side validation of flavor specific parameters (i.e. createtextindex, createconnector).
 5. Polling for results from async/job requests.
 6. Automatic retry on 5000(Backend request failed) and 7000(Request timeout) errors for sync requests.
+
 
 It uses the request package to handle all http request and file uploads for you. The only information you need to know is how to create an `IODOpt` object. Each IOD request type has their own JSON schema for creating the `IODOpt` object described by [Json-Schema](http://json-schema.org).
 
@@ -78,7 +79,7 @@ iod.create('my api key', function(err, IOD) {
 
 To make an IDOL onDemand request, simply create a new instance of IOD class and pass in your IDOL onDemand api key.
 
-This method is synchronous and will return you a new IOD object right away, but the tradeoff with this approach is that no client side validation will be done for you. The avialible actions for your api key will not be loaded.
+This method is synchronous and will return you a new IOD object right away, but the trade off with this approach is that no client side validation will be done for you. The available actions for your api key will not be loaded.
 
 With the IOD object, you can make a request by simply creating an `IODOpts` object following the schema of your request type. In this example we will be making a `sync` request with `analyzesentiment` action.
 
@@ -89,7 +90,7 @@ var IOD = new iod('my api key')
 // IODOpts object for sync request with analyzesentiment action
 var IODOpts = {
 	majorVersion: IOD.VERSIONS.MAJOR.V1,
-	// ACTIONS aren't loaded with your availible actions
+	// ACTIONS aren't loaded with your available actions
 	action: 'analyzesentiment',
 	apiVersion: IOD.VERSIONS.API.V1,
 	method: 'get',
@@ -222,7 +223,7 @@ There are two types of actions:
 2. `ACTIONS.API`
   * List of allowed actions and their aliases from [`API`](https://www.idolondemand.com/developer/docs/APIDiscovery.html).
   * This only exists if IOD object is created via `create` method.
-  * (e.g. `ACTIONS.API.EXTRACTEXT`)
+  * (e.g. `ACTIONS.API.EXTRACTTEXT`)
   
 <a name="types" />
 #### `TYPES` - Object with properties containing all the different request types
@@ -275,7 +276,7 @@ Creates an IOD object with specified `apiKey` and returns it as the second argum
 * `host` - Optionally, can override IDOL onDemand host (for developers)
 * `port` - Optionally, can override IDOL onDemand port (for developers)
 * `reqOpts` - Optionally, can override the request options when making request.
-* `callback` - `Callback(err, IOD)` that accepts an error as its first argument `err` and an IOD object as the second arugument `IOD`
+* `callback` - `Callback(err, IOD)` that accepts an error as its first argument `err` and an IOD object as the second argument `IOD`
 
 #### Example
 ```javascript
@@ -291,7 +292,7 @@ IOD.create('api key', function(err, IOD) {
 Listens for an async/job request based off the specified `jobID` to finish. Then call `listener` passing in an error as the first argument and the results of the job as the second.
 
 #### Parameters
-* `jobID` - JobID reeturned from an async/job request.
+* `jobID` - JobID returned from an async/job request.
 * `listener` - `Listener(err, res)` that gets called when job is finished that accepts an error as its first argument `err` and the response from the async/job requests as its second `res`.
 
 #### Example
@@ -783,7 +784,7 @@ IOD.status(IODOpts, function(err, res) {
 <a name="result" />
 ### result(IODOpts, callback)
 
-Makes a result request to IDOL onDemand with options specified from `IODOpts`. Result request waits until a job specified by `jobId` is finished or errored and returns the results. More information can be found [here](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm).
+Makes a result request to IDOL onDemand with options specified from `IODOpts`. Result request waits until a job specified by `jobId` is finished or error and returns the results. More information can be found [here](https://www.idolondemand.com/developer/docs/AsynchronousAPI.htm).
 
 #### Parameters
 * `IODOpts` - IOD options (see Schema below)
