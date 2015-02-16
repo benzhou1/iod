@@ -23,11 +23,14 @@ catch(e) {}
 var apiKey = config.apiKey
 var host = config.host
 var port = config.port
+var timeout = config.timeout
 var testCon = exports.testCon = config.testCon
 var testIndex = exports.testIndex = config.testIndex
 var testStore = exports.testStore = config.testStore
 exports.testUser = config.testUser
+exports.testRole = config.testRole
 exports.testPass = config.testPass
+exports.testServiceName = config.testServiceName
 
 // New instance of IOD class.
 exports.IOD = new IOD(apiKey, host, port)
@@ -113,17 +116,25 @@ var commonPaths = exports.paths = {
 	EXTRACTC: T.walk(['actions', 0, 'result', 'EXTRACTCONCEPTS']),
 	ADDSTORE: T.walk(['actions', 0, 'result', 'ADDSTORE']),
 	ADDUSER: T.walk(['actions', 0, 'result', 'ADDUSER']),
+	ADDROLE: T.walk(['actions', 0, 'result', 'ADDROLE']),
 	LISTSTORE: T.walk(['actions', 0, 'result', 'LISTSTORES']),
 	LISTUSER: T.walk(['actions', 0, 'result', 'LISTUSERS']),
+	LISTROLES: T.walk(['actions', 0, 'result', 'LISTROLES']),
 	DELSTORE: T.walk(['actions', 0, 'result', 'DELETESTORE']),
 	DELUSER: T.walk(['actions', 0, 'result', 'DELETEUSER']),
+	DELROLE: T.walk(['actions', 0, 'result', 'DELROLE']),
 	AUTH: T.walk(['actions', 0, 'result', 'AUTHENTICATE']),
+	ASSIGNROLE: T.walk(['actions', 0, 'result', 'ASSIGNROLE']),
+	UNASSIGNROLE: T.walk(['actions', 0, 'result', 'UNASSIGNROLE']),
 	CONSTATUS: T.walk(['actions', 0, 'result', 'CONNECTORSTATUS']),
 	CREATECON: T.walk(['actions', 0, 'result', 'CREATECONNECTOR']),
 	DELCON: T.walk(['actions', 0, 'result', 'DELETECONNECTOR']),
 	RETRIEVECON: T.walk(['actions', 0, 'result', 'RETRIEVECONFIG']),
 	STARTCON: T.walk(['actions', 0, 'result', 'STARTCONNECTOR']),
-	UPDATECON: T.walk(['actions', 0, 'result', 'UPDATECONNECTOR'])
+	UPDATECON: T.walk(['actions', 0, 'result', 'UPDATECONNECTOR']),
+	CONHISTORY: T.walk(['actions', 0, 'result', 'CONNECTORHISTORY']),
+	TRAINPRED: T.walk(['actions', 0, 'result', 'TRAINPREDICTOR']),
+	PREDICT: T.walk(['actions', 0, 'result', 'PREDICT'])
 }
 
 /**
@@ -378,8 +389,7 @@ var commonIODReq = exports.IODReq = {
 				throw new Error('List of private resources not found: ' + prettyPrint(res))
 			}
 			else {
-				//TODO: wait for listresources schema fix on null description
-//				iodRequestResultCheck('listresources', res)
+				iodRequestResultCheck('listresources', res)
 				callback(null, res)
 			}
 		})
@@ -559,7 +569,7 @@ exports.createJobAction = function(IODOpts, i) {
  * @param {Object} that - this
  */
 exports.timeout = function(that) {
-	that.timeout(300000)
+	that.timeout(timeout)
 }
 
 /**

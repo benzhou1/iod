@@ -139,6 +139,22 @@ module.exports = {
 		}
 	},
 	/**
+	 * Returns a ActionSchemaTest which should check for a above maximum error.
+	 */
+	invalidMiximum: function(IOD, paramName, max, path, action) {
+		return {
+			name: max + ' for ' + paramName,
+			IODOpts: {
+				action: T.attempt(U.paths[path], action)(IOD),
+				params: T.maplet(paramName)(max)
+			},
+			it: [
+				U.shouldError,
+				_.partial(U.shouldBeInSchemaError, 'maximum', paramName)
+			]
+		}
+	},
+	/**
 	 * Returns a ActionSchemaTest which should check for a invalid array string type error.
 	 */
 	invalidArrayString: function(IOD, paramName, path, action) {

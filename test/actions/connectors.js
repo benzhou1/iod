@@ -26,6 +26,8 @@ var updateAction = 'updateconnector'
 var prependUpdateAction = ASTests.withPrepend(updateAction)
 var retrieveAction = 'retrieveconfig'
 var prependRetrieveAction = ASTests.withPrepend(retrieveAction)
+var historyAction = 'connectorhistory'
+var prependHistoryAction = ASTests.withPrepend(historyAction)
 
 /**
  * Specific type of action.
@@ -98,6 +100,23 @@ exports.schemaTests = function(IOD) {
 		prependUpdateAction.invalidObjType(IOD, 'destination', 'UPDATECON', updateAction),
 		prependUpdateAction.invalidObjType(IOD, 'schedule', 'UPDATECON', updateAction),
 		prependUpdateAction.invalidStringType(IOD, 'description', 'UPDATECON', updateAction),
+
+		// Connectorhistory
+		prependHistoryAction.invalidArrayString(IOD, 'connectors', 'CONHISTORY', historyAction),
+		prependHistoryAction.invalidArrayString(IOD, 'tokens', 'CONHISTORY', historyAction),
+		prependHistoryAction.invalidNumberType(IOD, 'start', 'CONHISTORY', historyAction),
+		prependHistoryAction.invalidMinimum(IOD, 'start', 0, 'CONHISTORY', historyAction),
+		prependHistoryAction.invalidNumberType(IOD, 'max_page_results', 'CONHISTORY', historyAction),
+		prependHistoryAction.invalidMinimum(IOD, 'max_page_results', 0, 'CONHISTORY', historyAction),
+		prependHistoryAction.invalidMiximum(IOD, 'max_page_results', 101, 'CONHISTORY', historyAction),
+		prependHistoryAction.invalidNumberType(IOD, 'absolute_max_results', 'CONHISTORY', historyAction),
+		prependHistoryAction.invalidMinimum(IOD, 'absolute_max_results', 0, 'CONHISTORY', historyAction),
+		prependHistoryAction.invalidMiximum(IOD, 'absolute_max_results', 10001, 'CONHISTORY', historyAction),
+		prependHistoryAction.invalidStringType(IOD, 'min_date', 'CONHISTORY', historyAction),
+		prependHistoryAction.invalidStringType(IOD, 'max_date', 'CONHISTORY', historyAction),
+		prependHistoryAction.invalidArrayString(IOD, 'statuses', 'CONHISTORY', historyAction),
+		prependHistoryAction.invalidEnumValue(IOD, 'statuses', 'CONHISTORY', historyAction),
+		prependHistoryAction.invalidBooleanType(IOD, 'show_latest_only', 'CONHISTORY', historyAction),
 
 		// Flavors
 		{
@@ -235,6 +254,23 @@ exports.tests = function(IOD, data) {
 			it: U.defIt(statusAction)
 		},
 		{
+			name: 'history connector=testconnector',
+			IODOpts: {
+				action: T.attempt(U.paths.CONHISTORY, historyAction)(IOD),
+				params: {
+					connectors: U.testCon,
+					start: 2,
+					max_page_results: 2,
+					absolute_max_results: 5,
+					min_date: '-1',
+					max_date: '1',
+					statuses: 'finished',
+					show_latest_only: true
+				}
+			},
+			it: U.defIt(historyAction)
+		},
+		{
 			name: 'delete connector=testconnector',
 			IODOpts: {
 				action: T.attempt(U.paths.DELETECON, deleteAction)(IOD),
@@ -257,15 +293,12 @@ exports.tests = function(IOD, data) {
  * 2.) Prepares a clean connector test, deletes test connector if it doesn't already exists.
  *
  * @param {IOD} IOD - IOD object
- * @param {Function} callback - Function(data)
+ * @param {Function} done - Function(data)
  * @throws {Error} - If failed to delete existing test index
  */
-// TODO: right now requires that test index already exists
-exports.prepare = function(IOD, callback) {
+exports.prepare = function(IOD, done) {
 	async.series({
-//		index: apply(U.prepare.testIndex, IOD),
-
 		clean: apply(U.prepare.cleanConnector, IOD),
 		index: apply(U.prepare.testIndex, IOD)
-	}, callback)
+	}, done)
 }

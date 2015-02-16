@@ -17,6 +17,9 @@ module.exports = {
 	// Can override port, defaults to 443
 	port: null,
 
+	// Timeout for unit test
+	timeout: 300000,
+
 	// Test connector name for connector tests
 	testCon: 'testcon',
 	// Test index name for textindexing tests
@@ -25,8 +28,12 @@ module.exports = {
 	testStore: 'teststore',
 	// Test user name for usermanagement tests
 	testUser: 'test@test.com',
+	// Test role for usermanagement tests
+	testRole: 'testrole',
 	// Test password for usermanagement tests
 	testPass: 'testpassword',
+	// Test service name for prediction tests
+	testServiceName: 'testservicename',
 
 	/**
 	 * Configuration parameters for request.js

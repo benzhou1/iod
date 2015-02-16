@@ -58,11 +58,6 @@ exports.skipTypes = ['result', 'status', 'job']
  * @returns {Array} - List of SchemaTests
  */
 exports.schemaTests = function(IOD) {
-	var defParams = {
-		index: 'index',
-		flavor: 'standard'
-	}
-
 	return [
 		// Addtotextindex
 		prependAddAction.withRequired({ index: 'test' }).noInputs(IOD, 'ADDTOTI', action),
@@ -81,26 +76,16 @@ exports.schemaTests = function(IOD) {
 		prependCreateAction.invalidStringType(IOD, 'flavor', 'CREATETI', createAction),
 		prependCreateAction.invalidStringType(IOD, 'description', 'CREATETI', createAction),
 
-		// Basic createtextindex standard
-		ASTests.withRequired(defParams)
-			.invalidNumberType(IOD, 'expire_time', 'CREATETI', createAction),
-		// TODO: wait for fix in flavors items
-//		ASTests.withRequired(defParams)
-//			.invalidArrayString(IOD, 'index_fields', 'CREATETI', createAction),
-//		ASTests.withRequired(defParams)
-//			.invalidArrayString(IOD, 'parametric_fields', 'CREATETI', createAction),
-
 		// Deletetextindex
 		prependDeleteAction.missingRequired(IOD, 'index', 'DELETETI', deleteAction),
 		prependDeleteAction.invalidStringType(IOD, 'index', 'DELETETI', deleteAction),
 		prependDeleteAction.invalidStringType(IOD, 'confirm', 'DELETETI', deleteAction),
 
 		// Deletefromtextindex
-		// TODO: wait for fix in production for index_reference
 		prependDelFromAction.missingRequired(IOD, 'index', 'DELFROMTI', deleteFromAction),
 		prependDelFromAction.invalidStringType(IOD, 'index', 'DELFROMTI', deleteFromAction),
-//		prependDelFromAction.withRequired({ index: 'test1' })
-// 			.invalidArrayString(IOD, 'index_reference', 'DELFROMTI', deleteFromAction),
+		prependDelFromAction.withRequired({ index: 'test1' })
+			.invalidArrayString(IOD, 'index_reference', 'DELFROMTI', deleteFromAction),
 		prependDelFromAction.withRequired({ index: 'test1' })
 			.invalidBooleanType(IOD, 'delete_all_documents', 'DELFROMTI', deleteFromAction),
 
@@ -268,21 +253,20 @@ exports.tests = function(IOD, data) {
 				_.partial(U.shouldHaveResults, deleteFromAction)
 			]
 		},
-		// TODO: wait for fix in production for delete_all_documents
-//		{
-//			name: 'deletefrom index=test,delete_all_documents=true',
-//			IODOpts: {
-//				action: T.attempt(U.paths.DELFROMTI, deleteFromAction)(IOD),
-//				params: {
-//					index: U.testIndex,
-//					delete_all_documents: true
-//				}
-//			},
-//			it: [
-//				U.shouldBeSuccessful,
-//				_.partial(U.shouldHaveResults, deleteFromAction)
-//			]
-//		},
+		{
+			name: 'deletefrom index=test,delete_all_documents=true',
+			IODOpts: {
+				action: T.attempt(U.paths.DELFROMTI, deleteFromAction)(IOD),
+				params: {
+					index: U.testIndex,
+					delete_all_documents: true
+				}
+			},
+			it: [
+				U.shouldBeSuccessful,
+				_.partial(U.shouldHaveResults, deleteFromAction)
+			]
+		},
 		{
 			name: 'indexstatus index=test',
 			IODOpts: {
@@ -292,8 +276,7 @@ exports.tests = function(IOD, data) {
 			},
 			it: [
 				U.shouldBeSuccessful,
-				// TODO: wait for indexstatus schema fix
-//				_.partial(U.shouldHaveResults, statusAction)
+				_.partial(U.shouldHaveResults, statusAction)
 			]
 		},
 		{
@@ -327,11 +310,10 @@ exports.tests = function(IOD, data) {
  * 3.) Prepare object store reference.
  *
  * @param {IOD} IOD - IOD object
- * @param {Function} callback - Function(data)
+ * @param {Function} done - Function(data)
  * @throws {Error} - If failed to delete existing test index
  */
-// TODO: right now requires that test index already exists
-exports.prepare = function(IOD, callback) {
+exports.prepare = function(IOD, done) {
 	async.series({
 		clean: apply(U.prepare.cleanIndex, IOD),
 
@@ -339,6 +321,6 @@ exports.prepare = function(IOD, callback) {
 		// Always get a new store object reference
 		ref: apply(U.prepare.reference, IOD, 'nocache', filePath)
 	}, function(err, res) {
-		callback(res)
+		done(res)
 	})
 }
