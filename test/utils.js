@@ -43,7 +43,7 @@ exports.createIOD = function(fn) {
 	if (cachedIOD) fn(null, cachedIOD)
 	else {
 		IOD.create(apiKey, host, port, function(err, IOD) {
-			if (err) fn(err)
+			if (err) throw Error('Failed to create IOD object: ' + err)
 			else {
 				cachedIOD = IOD
 				fn(null, IOD)

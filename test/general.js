@@ -17,8 +17,6 @@ describe('#GENERAL', function() {
 		var gen = this.gen
 
 		U.createIOD(function(err, IOD) {
-			if (err) return callback()
-
 			async.waterfall([
 				function withDefHostPort(done) {
 					iod.create(IOD.apiKey, U.beforeDoneFn(gen, 'defhostdefport', done))

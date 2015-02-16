@@ -72,8 +72,7 @@ _.each(ReqTests, function(ReqTest, reqType) {
 						}
 					})
 
-					if (err) throw Error('Failed to create IOD object: ' + err)
-					else async.waterfall(beforeFns, callback)
+					async.waterfall(beforeFns, callback)
 				})
 			})
 
@@ -99,9 +98,9 @@ _.each(ReqTests, function(ReqTest, reqType) {
 			 */
 			if (ActionTest.skipTypes && _.contains(ActionTest.skipTypes, reqType)) return
 			/**
-			 * If simpleTest is set to true, skip `result` and `status` RequestTests
+			 * If simpleTest is set to true, skip `result` RequestTests
 			 */
-			if (simpleTest && (reqType === 'result' || reqType === 'status')) return
+			if (simpleTest && reqType === 'result') return
 
 			describe('#' + action.toUpperCase(), function() {
 				/**
@@ -117,8 +116,6 @@ _.each(ReqTests, function(ReqTest, reqType) {
 							var env = this[action].actSchema
 
 							U.createIOD(function(err, IOD) {
-								if (err) return callback()
-
 								var beforeFns = _.map(ActionTest.schemaTests(IOD),
 									function(ActSchemaTest) {
 										return function(done) {
@@ -165,8 +162,7 @@ _.each(ReqTests, function(ReqTest, reqType) {
 								var env = this[action][reqTest.name]
 
 								U.createIOD(function(err, IOD) {
-									if (err) callback()
-									else beforeActionTest(IOD, reqTest, ActionTest, env, callback)
+									beforeActionTest(IOD, reqTest, ActionTest, env, callback)
 								})
 							})
 

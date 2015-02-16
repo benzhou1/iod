@@ -4,7 +4,6 @@
 
 'use strict';
 
-var _ = require('lodash')
 var U = require('./utils')
 var should = require('should')
 var async = require('../lib/async-ext')
@@ -13,12 +12,9 @@ describe('#IOD', function() {
 	U.timeout(this)
 
 	it('should be new instance of IOD', function(callback) {
-		U.createIOD(function(err, IOD) {
-			if (err) callback(err)
-			else {
-				should.exists(U.IOD)
-				callback()
-			}
+		U.createIOD(function() {
+			should.exists(U.IOD)
+			callback()
 		})
 	})
 

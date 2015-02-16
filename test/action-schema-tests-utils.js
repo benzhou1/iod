@@ -223,6 +223,8 @@ module.exports = {
  * @param {Object} required - Required parameters object
  * @returns {Object} - Action schema test
  */
+// TODO: make this chainable
+// TODO: use curry instead of partials
 module.exports.withRequired = function(required) {
 	return _.mapValues(module.exports, function(schemaTest) {
 		return function() {

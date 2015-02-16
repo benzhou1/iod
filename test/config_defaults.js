@@ -37,7 +37,7 @@ module.exports = {
 	// List of request-type tests to exclude in test run
 	excludeReq: [],
 	// List of action tests to include in test run
-	includeAct: [],
+	includeAct: ['analyzesentiment', 'api', 'viewdocument', 'connectors', 'extracttext'],
 	/*
 	 * List of action tests to exclude in test run.
 	 * Quota for expandcontainer is 500, don't run unless we really have to

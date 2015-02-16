@@ -78,7 +78,7 @@ exports.schemaTests = function(IOD) {
 		ASTests.withRequired(defParams).missingRequired(IOD, 'action', 'CREATECON', createAction),
 		ASTests.withRequired(defParams).missingRequired(IOD, 'index', 'CREATECON', createAction),
 
-		// Deletetextindex
+		// Deleteconnector
 		prependDeleteAction.missingRequired(IOD, 'connector', 'DELETECON', deleteAction),
 		prependDeleteAction.invalidStringType(IOD, 'connector', 'DELETECON', deleteAction),
 
@@ -97,7 +97,41 @@ exports.schemaTests = function(IOD) {
 		prependUpdateAction.invalidObjType(IOD, 'config', 'UPDATECON', updateAction),
 		prependUpdateAction.invalidObjType(IOD, 'destination', 'UPDATECON', updateAction),
 		prependUpdateAction.invalidObjType(IOD, 'schedule', 'UPDATECON', updateAction),
-		prependUpdateAction.invalidStringType(IOD, 'description', 'UPDATECON', updateAction)
+		prependUpdateAction.invalidStringType(IOD, 'description', 'UPDATECON', updateAction),
+
+		// Flavors
+		{
+			name: 'web_cloud missing required parameter url',
+			IODOpts: {
+				action: T.attempt(U.paths.CREATECON, createAction)(IOD),
+				params: {
+					connector: 'connector',
+					config: {},
+					destination: {},
+					flavor: 'web_cloud'
+				}
+			},
+			it: [
+				U.shouldError,
+				_.partial(U.shouldBeInSchemaError, 'required', 'url')
+			]
+		},
+		{
+			name: 'filesystem_onsite missing required parameter directoryPathCSVs',
+			IODOpts: {
+				action: T.attempt(U.paths.CREATECON, createAction)(IOD),
+				params: {
+					connector: 'connector',
+					config: {},
+					destination: {},
+					flavor: 'filesystem_onsite'
+				}
+			},
+			it: [
+				U.shouldError,
+				_.partial(U.shouldBeInSchemaError, 'required', 'directoryPathCSVs')
+			]
+		}
 	]
 }
 

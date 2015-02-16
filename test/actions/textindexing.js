@@ -27,6 +27,11 @@ var prependDeleteAction = ASTests.withPrepend(deleteAction)
 var deleteFromAction = 'deletefromtextindex'
 var prependDelFromAction = ASTests.withPrepend(deleteFromAction)
 
+var standardPrepend = ASTests.withPrepend('standard')
+var customFieldsPrepend = ASTests.withPrepend('custom_fields')
+var explorerPrepend = ASTests.withPrepend('explorer')
+var categorizationPrepend = ASTests.withPrepend('categorization')
+
 var action = 'addtotextindex'
 var prependAddAction = ASTests.withPrepend(action)
 var filePath = __dirname + '/../files/' + action
@@ -113,7 +118,17 @@ exports.schemaTests = function(IOD) {
 		prependListRAction.invalidEnumValue(IOD, 'type', 'LISTR', listRAction),
 		prependListRAction.invalidEnumValue(IOD, 'flavor', 'LISTR', listRAction),
 		prependListRAction.invalidArrayString(IOD, 'type', 'LISTR', listRAction),
-		prependListRAction.invalidArrayString(IOD, 'flavor', 'LISTR', listRAction)
+		prependListRAction.invalidArrayString(IOD, 'flavor', 'LISTR', listRAction),
+
+		// Flavors
+		standardPrepend.withRequired({ index: 'test1', flavor: 'standard' })
+			.invalidNumberType(IOD, 'expire_time', 'CREATETI', createAction),
+		customFieldsPrepend.withRequired({ index: 'test1', flavor: 'custom_fields' })
+			.invalidNumberType(IOD, 'expire_time', 'CREATETI', createAction),
+		explorerPrepend.withRequired({ index: 'test1', flavor: 'explorer' })
+			.invalidNumberType(IOD, 'expire_time', 'CREATETI', createAction),
+		categorizationPrepend.withRequired({ index: 'test1', flavor: 'categorization' })
+			.invalidNumberType(IOD, 'expire_time', 'CREATETI', createAction)
 	]
 }
 
