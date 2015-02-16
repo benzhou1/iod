@@ -34,7 +34,10 @@ exports.schemaTests = function(IOD) {
 		RSTests.invalidMajorVer(),
 		RSTests.invalidAction(),
 		RSTests.invalidMethod(),
-		RSTests.invalidParams()
+		RSTests.invalidParams(),
+		RSTests.invalidRetries(),
+		RSTests.invalidErrorCodesArr(),
+		RSTests.invalidErrorCodesInt()
 	]
 }
 

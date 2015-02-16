@@ -182,5 +182,44 @@ module.exports = {
 				_.partial(U.shouldBeInSchemaError, 'enum', 'method')
 			]
 		}
+	},
+	/**
+	 * Returns a ReqSchemaTest which should check valid integer for retries property.
+	 */
+	invalidRetries: function() {
+		return {
+			name: 'retries not an integer',
+			IODOpts: { retries: 'not an integer' },
+			it: [
+				U.shouldError,
+				_.partial(U.shouldBeInSchemaError, 'type', 'retries')
+			]
+		}
+	},
+	/**
+	 * Returns a ReqSchemaTest which should check valid array for errorCodes property.
+	 */
+	invalidErrorCodesArr: function() {
+		return {
+			name: 'errorCodes not an array',
+			IODOpts: { errorCodes: { not: 'an array' } },
+			it: [
+				U.shouldError,
+				_.partial(U.shouldBeInSchemaError, 'type', 'errorCodes')
+			]
+		}
+	},
+	/**
+	 * Returns a ReqSchemaTest which should check valid array integers for errorCodes property.
+	 */
+	invalidErrorCodesInt: function() {
+		return {
+			name: 'errorCodes array not integers',
+			IODOpts: { errorCodes: ['not an integer'] },
+			it: [
+				U.shouldError,
+				_.partial(U.shouldBeInSchemaError, 'type', 'errorCodes')
+			]
+		}
 	}
 }

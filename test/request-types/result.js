@@ -33,7 +33,8 @@ exports.schemaTests = function(IOD) {
 		RSTests.empty(),
 		RSTests.invalidMajorVer(),
 		RSTests.invalidMethod(),
-		RSTests.invalidJobId()
+		RSTests.invalidJobId(),
+		RSTests.invalidRetries()
 	]
 }
 

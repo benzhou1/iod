@@ -34,24 +34,9 @@ exports.schemaTests = function(IOD) {
 		RSTests.invalidMethod(),
 		RSTests.invalidParams(),
 		RSTests.invalidFiles(),
-
-		{
-			name: 'retries not an integer',
-			IODOpts: {
-				majorVersion: T.attempt(U.paths.MAJORV1)(IOD),
-				action: T.attempt(U.paths.SENTIMENT)(IOD),
-				apiVersion: T.attempt(U.paths.APIV1)(IOD),
-				method: 'get',
-				params: { text: '=)'},
-				files: ['files'],
-				getResults: 'not a boolean',
-				retries: 'a string'
-			},
-			it: [
-				U.shouldError,
-				_.partial(U.shouldBeInSchemaError, 'type', 'retries')
-			]
-		}
+		RSTests.invalidRetries(),
+		RSTests.invalidErrorCodesArr(),
+		RSTests.invalidErrorCodesInt()
 	]
 }
 
