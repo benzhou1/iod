@@ -13,8 +13,9 @@ IOD provides the following benefits:
 3. Client side validation of parameter pairs (Parameters that are of array type and are required to have the same length as another parameter).
 4. Cliend side validation of flavor specific parameters (i.e. createtextindex, createconnector).
 5. Polling for results from async/job requests.
-6. Automatic retry on 5000(Backend request failed) and 7000(Request timeout) errors for sync/discovery/result requests(Defaults to 3).
-7. Sending results from async/job requests to specified callback uri.
+6. Automatic retry on 5000(Backend request failed) and 7000(Request timeout) errors for sync/discovery/result request types(Defaults to 3).
+7. Automatic retry for specified list of [Idol OnDemand error codes](https://www.idolondemand.com/developer/docs/ErrorCodes.html) for sync/discovery requests types.
+8. Sending results from async/job requests to specified callback uri.
 
 
 
@@ -519,6 +520,14 @@ Makes an sync request to IDOL onDemand with options specified from `IODOpts`. Sy
 			"type": "integer",
 			"description": "Number of times to retry on timeout or unknown errors.",
 			"default": 3
+		},
+		"errorCodes": {
+			"type": "array",
+			"items": {
+				"type": "integer",
+				"description": "Error code to retry on."
+			},
+			"description": "List of error codes. See https://www.idolondemand.com/developer/docs/ErrorCodes.html."
 		}
 	},
 	"required": [ "action" ]
@@ -577,10 +586,11 @@ IOD.sync(IODOpts, function(err, res) {
 
 #### Example with retries
 ```javascript
-// IODOpts for sync request that retries 2 times on 5000 or 7000 errors.
+// IODOpts for sync request that retries 2 times on 5000 or 7000 or 4006 errors.
 var IODOpts = {
 	action: IOD.ACTIONS.API.ANALYZESENTIMENT, // analyzesentiment
 	params: { text: '=)' },
+	errorCodes: [4006]
 	retries: 2
 }
 
@@ -967,6 +977,22 @@ IOD.result(IODOpts, { timeout: 30000 }, function(err, res) {
 })
 ```
 
+#### Example with retries
+```javascript
+// IODOpts for result request that retries 2 times on 7000 errors.
+var IODOpts = {
+	majorVersion: IOD.VERSIONS.MAJOR.V1,
+	method: 'get',
+	jobId: 'Job id of your async/job request',
+	retries: 2
+}
+
+IOD.result(IODOpts, function(err, res) {
+	console.log('ERROR: ', err)
+	console.log('RESPONSE: ', res)
+})
+```
+
 <a name="discovery" />
 ### discovery(IODOpts, [reqOpts], callback)
 
@@ -1004,6 +1030,14 @@ Makes a discovery api request to IDOL onDemand with options specified from `IODO
 			"type": "integer",
 			"description": "Number of times to retry on timeout or unknown errors.",
 			"default": 3
+		},
+		"errorCodes": {
+			"type": "array",
+			"items": {
+				"type": "integer",
+				"description": "Error code to retry on."
+			},
+			"description": "List of error codes. See https://www.idolondemand.com/developer/docs/ErrorCodes.html."
 		}
 	},
 	"required": [ "action" ]
@@ -1045,9 +1079,20 @@ IOD.discovery(IODOpts, { timeout: 30000 }, function(err, res) {
 })
 ```
 
+#### Example with retries
+```javascript
+// IODOpts for discovery request that retries 2 times on 5000 or 7000 or 4006 errors.
+var IODOpts = {
+	action: IOD.ACTIONS.DISCOVERY.API, // api
+	params: {
+		max_results: 10
+	}
+	errorCodes: [4006]
+	retries: 2
+}
 
-
- 
-
-
-
+IOD.discovery(IODOpts, function(err, res) {
+	console.log('ERR: ', err)
+	console.log('RES: ', res)
+})
+```
